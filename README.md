@@ -2,7 +2,7 @@
 
 Eine kleine Website für den Fernseher am Empfang der Wallimann Druck AG. Sie läuft im Vollbild und wechselt zwischen drei Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch und der Solarstrom der eigenen Anlage.
 
-**Stand 25.11.2026:** Testversion mit Beispieldaten. Im Internet ist noch nichts veröffentlicht. Die Begrüssung und die Solar-Ansicht sind ausgeschaltet, bis ihre Zugänge getestet sind.
+**Stand 25.11.2026:** Testversion mit Beispieldaten. Im Internet steht nur die Testseite für den Fernseher (`https://empfang.wallimann.workers.dev/test/`), sie enthält keine Besuchsdaten. Die eigentliche Website ist noch nicht veröffentlicht. Die Begrüssung und die Solar-Ansicht sind ausgeschaltet, bis ihre Zugänge getestet sind.
 
 Dieses Projekt ist öffentlich einsehbar. Es enthält darum keine Geheimnisse und keine echten Kundennamen. Alle Firmen und Personen in Beispielen und Tests sind erfunden.
 
@@ -30,7 +30,7 @@ In der Testversion wechseln Begrüssung und News alle 10 Minuten ab, damit man b
 npm test
 ```
 
-176 Tests prüfen Zeitlogik, Kalender, News, Solar, Schutz und Ausfälle. Sie brauchen kein Internet.
+177 Tests prüfen Zeitlogik, Kalender, News, Solar, Schutz und Ausfälle. Sie brauchen kein Internet.
 
 Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neuladen ohne Internet, Wechsel der Ansichten). Sie brauchen das Werkzeug Playwright, das bewusst nicht zum Projekt gehört: zuerst `npm start`, dann in einem zweiten Fenster `node test/browser/anzeige.mjs`.
 

@@ -160,6 +160,24 @@ describe('Schutz der Anzeige', () => {
     assert.match(r.antwort.headers.get('x-robots-tag'), /noindex/);
   });
 
+  test('unverschlüsselte Aufrufe bekommen nie Daten und werden auf HTTPS umgeleitet', async () => {
+    const unsicher = (pfad, init) => worker.fetch(new Request('http://empfang.test' + pfad, init), env, ctx);
+    const a = await unsicher('/api/anzeige', { headers: { 'X-Anzeige-Schluessel': SCHLUESSEL } });
+    assert.equal(a.status, 308);
+    assert.equal(a.headers.get('location'), 'https://empfang.test/api/anzeige');
+    assert.equal(await a.text(), '');
+    const seite = await unsicher('/anzeige/');
+    assert.equal(seite.status, 308);
+    const post = await unsicher('/api/status/anmelden', { method: 'POST', body: JSON.stringify({ passwort: PASSWORT }) });
+    assert.equal(post.status, 400);
+    assert.equal(post.headers.get('set-cookie'), null);
+    // Verschlüsselt: Der Browser bekommt die Anweisung, künftig nur noch HTTPS zu verwenden
+    const sicher = await anzeige();
+    assert.match(sicher.antwort.headers.get('strict-transport-security'), /max-age=31536000/);
+    const datei = await rufe('/anzeige/');
+    assert.match(datei.antwort.headers.get('strict-transport-security'), /max-age=31536000/);
+  });
+
   test('unbekannte Adressen unter /api/ geben nichts heraus', async () => {
     assert.equal((await rufe('/api/besuche')).status, 404);
     assert.equal((await rufe('/api/status/besuche')).status, 401);

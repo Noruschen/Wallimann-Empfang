@@ -4,7 +4,7 @@ Stand: 25.11.2026
 
 ## Kurz erklärt
 
-Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt im Vollbild eine Website. Die Website wechselt zwischen drei Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch und Solarstrom der eigenen Anlage. Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt) und ihr Code liegt auf GitHub (eine Plattform für Programmdateien). Den Besuch holt die Website aus einem eigenen Outlook.com-Kalender: Mitarbeitende laden die Adresse `empfang.wallimann@outlook.com` zum Termin ein. Heute läuft die Testversion nur bei dir lokal, mit Beispieldaten. Im Internet ist noch nichts veröffentlicht. Die Begrüssung und die Solar-Ansicht sind in den Einstellungen noch ausgeschaltet. Du betreust das Ganze. Programmieren musst du nichts: Claude führt dich durch alle Schritte.
+Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt im Vollbild eine Website. Die Website wechselt zwischen drei Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch und Solarstrom der eigenen Anlage. Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt) und ihr Code liegt auf GitHub (eine Plattform für Programmdateien). Den Besuch holt die Website aus einem eigenen Outlook.com-Kalender: Mitarbeitende laden die Adresse `empfang.wallimann@outlook.com` zum Termin ein. Heute läuft die Testversion nur bei dir lokal, mit Beispieldaten. Im Internet steht bisher nur die Testseite für den Fernseher, sie enthält keine Besuchsdaten. Die Begrüssung und die Solar-Ansicht sind in den Einstellungen noch ausgeschaltet. Du betreust das Ganze. Programmieren musst du nichts: Claude führt dich durch alle Schritte.
 
 ## Lokal ansehen am Mac
 
@@ -23,7 +23,7 @@ Eine Vorschau ohne Server gibt es auch: `/anzeige/?demo=alles`. Weitere Möglich
 
 ## Statusseite
 
-Die Statusseite ist deine Kontrollstelle. Sie ist mit einem Passwort geschützt. Adresse: `BEISPIEL-ADRESSE/status/` (die echte Adresse steht erst nach dem Einrichten fest).
+Die Statusseite ist deine Kontrollstelle. Sie ist mit einem Passwort geschützt. Adresse: `https://empfang.wallimann.workers.dev/status/` (sie funktioniert erst, wenn die Website veröffentlicht ist).
 
 ### Was sie zeigt
 
@@ -52,7 +52,7 @@ Der Fernseher übernimmt Änderungen innert einer Minute.
 | Beginn vor dem Termin | Wie viele Minuten vor Terminbeginn die Begrüssung startet. | 30 Minuten |
 | Ende nach Terminbeginn | Wie viele Minuten nach Terminbeginn sie endet. | 15 Minuten |
 | Wechsel bei mehreren Besuchen | Sekunden pro Besuch, wenn mehrere gleichzeitig da sind. | 10 Sekunden |
-| Erlaubte Adressen der Organisatoren | Nur Termine von Personen mit dieser Domain (Teil der E-Mail-Adresse nach dem @) erscheinen. | `wallimann.ch` (bitte bestätigen) |
+| Erlaubte Adressen der Organisatoren | Nur Termine von Personen mit dieser Domain (Teil der E-Mail-Adresse nach dem @) erscheinen. | `wallimann.ch` (von dir bestätigt am 25.11.2026) |
 | Kalender holen alle | Wie oft die Website den Kalender holt. | 5 Minuten |
 | Anzahl Artikel | Wie viele News-Artikel gezeigt werden. | 10 |
 | Nur diese Gemeinden | Filter nach Gemeinde. Leer heisst alle. | Leer (alle) |
@@ -96,12 +96,12 @@ Nicht angezeigt werden: abgesagte Termine, als «privat» markierte Termine, gan
 
 Es gibt zwei Geheimnisse, die du wechseln kannst: den geheimen Teil der Adresse für den Fernseher (`ANZEIGE_SCHLUESSEL`, mindestens 20 Zeichen) und das Passwort der Statusseite (`STATUS_PASSWORT`, mindestens 12 Zeichen). Nichts davon darf im Chat oder auf GitHub stehen, denn das GitHub-Projekt ist öffentlich einsehbar.
 
-1. Öffne die Hilfsseite `BEISPIEL-ADRESSE/status/schluessel/` (lokal: `http://localhost:8787/status/schluessel/`). Sie erzeugt in deinem Browser einen zufälligen Schlüssel und ein zufälliges Passwort. Nichts davon wird gesendet oder gespeichert.
+1. Öffne die Hilfsseite `https://empfang.wallimann.workers.dev/status/schluessel/` (lokal: `http://localhost:8787/status/schluessel/`). Sie erzeugt in deinem Browser einen zufälligen Schlüssel und ein zufälliges Passwort. Nichts davon wird gesendet oder gespeichert.
 2. Kopiere die neuen Werte an einen sicheren Ort, zum Beispiel in deinen Passwortmanager.
-3. Melde dich im Cloudflare-Konto an und öffne den Worker «wallimann-empfang» (so heisst das Serverprogramm). Gehe zu «Settings», dann «Variables and Secrets».
+3. Melde dich im Cloudflare-Konto an und öffne den Worker «empfang» (so heisst das Serverprogramm). Gehe zu «Settings», dann «Variables and Secrets».
 4. Trage den neuen Wert beim gleichen Namen als «Secret» ein, also `ANZEIGE_SCHLUESSEL` oder `STATUS_PASSWORT`, und speichere («Deploy»).
 5. Nach einem Wechsel von `STATUS_PASSWORT` sind alle Anmeldungen an der Statusseite sofort ungültig. Melde dich mit dem neuen Passwort neu an.
-6. Nach einem Wechsel von `ANZEIGE_SCHLUESSEL` zeigt der Fernseher nur noch das Logo, bis die neue Adresse eingetragen ist. Die neue Adresse lautet `BEISPIEL-ADRESSE/anzeige/#k=GEHEIMER-SCHLUESSEL`, mit deinem neuen Schlüssel statt GEHEIMER-SCHLUESSEL.
+6. Nach einem Wechsel von `ANZEIGE_SCHLUESSEL` zeigt der Fernseher nur noch das Logo, bis die neue Adresse eingetragen ist. Die neue Adresse lautet `https://empfang.wallimann.workers.dev/anzeige/#k=GEHEIMER-SCHLUESSEL`, mit deinem neuen Schlüssel statt GEHEIMER-SCHLUESSEL.
 7. Trage die neue Adresse am Fernseher ein (mit der Fernbedienung, als Lesezeichen oder als Startseite). Ist ein Zusatzgerät am Fernseher, trägst du sie dort ein. Die IT hilft dabei.
 8. Prüfe, ob der Fernseher wieder Inhalte zeigt.
 
@@ -127,7 +127,7 @@ Das sind die Schritte, die dann anstehen. Claude begleitet dich bei jedem und ze
 2. Den Bildspeicher für die News-Bilder anlegen.
 3. Die Geheimnisse eintragen: `ANZEIGE_SCHLUESSEL` und `STATUS_PASSWORT`. Der Kalender-Link kommt später.
 4. GitHub mit Cloudflare verbinden, damit Änderungen automatisch veröffentlicht werden.
-5. Die Testseite `BEISPIEL-ADRESSE/test/` am Fernseher öffnen und den angezeigten Code (zum Beispiel `1920x1080-11111111111`) an Claude melden.
+5. Die Testseite `https://empfang.wallimann.workers.dev/test/` am Fernseher öffnen und den angezeigten Code (zum Beispiel `1920x1080-11111111111`) an Claude melden. Die Testseite ist seit dem 25.11.2026 online, diesen Schritt kannst du jederzeit machen.
 6. Den Kalender in Outlook.com als ICS-Link veröffentlichen (Berechtigung «Alle Details anzeigen») und den Link als `KALENDER_URL` bei Cloudflare eintragen. Die genauen Bezeichnungen in Outlook können abweichen.
 7. Mit echten Einladungen testen, siehe «Besuch testen».
 8. Die Begrüssung auf der Statusseite einschalten.
@@ -139,7 +139,7 @@ Bevor es losgeht, fragt Claude dich um Erlaubnis.
 | Zeichen | Wahrscheinliche Ursache | Was tun |
 |---|---|---|
 | Bildschirm schwarz | Ausserhalb der Betriebszeiten (Montag bis Freitag, 06:30 bis 18:00) oder Fernseher ausgeschaltet oder nach Stromausfall nicht wieder eingeschaltet. | Betriebszeiten auf der Statusseite prüfen. Fernseher einschalten. Bei wiederholtem Problem die IT fragen (Timer, Verhalten nach Stromausfall). |
-| Nur Logo | Der geheime Schlüssel in der Adresse fehlt oder ist falsch, zum Beispiel nach einem Wechsel. Oder es gibt noch gar keine Daten. | Adresse am Fernseher prüfen: `BEISPIEL-ADRESSE/anzeige/#k=GEHEIMER-SCHLUESSEL`. Danach auf der Statusseite schauen, ob die Anzeige Daten abholt. |
+| Nur Logo | Der geheime Schlüssel in der Adresse fehlt oder ist falsch, zum Beispiel nach einem Wechsel. Oder es gibt noch gar keine Daten. | Adresse am Fernseher prüfen: `https://empfang.wallimann.workers.dev/anzeige/#k=GEHEIMER-SCHLUESSEL`. Danach auf der Statusseite schauen, ob die Anzeige Daten abholt. |
 | Keine Begrüssung | Begrüssung ausgeschaltet. Oder Termin nicht im Kalender oder nicht erlaubt (privat, ganztägig, abgesagt, fremde Domain, kein Organisator). Oder der letzte Kalenderabruf ist älter als 15 Minuten. Oder der Kalender-Link wurde zurückgesetzt. | Auf der Statusseite «Kalender jetzt abrufen» drücken und die Besuche und die Gründe für nicht angezeigte Termine ansehen. Einstellung «Begrüssung» prüfen. Ist der Link ungültig, meldet das die Statusseite: neuen Link veröffentlichen und eintragen. |
 | Alte News | michelnews.ch war nicht erreichbar, dann laufen die zuletzt gespeicherten Artikel weiter. Oder der Fernseher hat kein Internet. | Auf der Statusseite ansehen, wann News zuletzt geladen wurden. Internet am Empfang prüfen. Meist erledigt sich das von selbst. |
 | Keine Solar-Ansicht | Die Quelle ist ausgeschaltet, oder die Solarwerte sind älter als 10 Minuten. | Einstellung «Quelle» bei Solar prüfen. Echte Solardaten gibt es erst, wenn der Zugang geklärt ist. |

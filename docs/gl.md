@@ -46,19 +46,19 @@ Offen ist, wie bei Abwesenheit oder Austritt der Zugang gesichert wird. Für das
 
 - **Geheimer Link:** Die Anzeige am Fernseher öffnet sich nur mit einem geheimen Schlüssel im Link. Ohne gültigen Schlüssel zeigt sie nur das Logo und bekommt keine Daten.
 - **Statusseite mit Passwort:** Nach 5 falschen Versuchen innert 15 Minuten wird der Absender 15 Minuten gesperrt. Die Anmeldung gilt 12 Stunden.
-- **Nur Wallimann-Organisatoren:** Besuche erscheinen nur, wenn der Termin von einer Adresse der erlaubten Domain angelegt wurde (Annahme: wallimann.ch, noch zu bestätigen).
+- **Nur Wallimann-Organisatoren:** Besuche erscheinen nur, wenn der Termin von einer Adresse der erlaubten Domain angelegt wurde (wallimann.ch, von Alexander Fischer am 25.11.2026 bestätigt).
 - **Grenzen:** Der Organisator einer Einladung lässt sich fälschen. Die Regel schützt darum nicht vollständig. Zusätzlich möglich und noch zu testen: in Outlook.com nur sichere Absender zulassen. Wer den geheimen Link kennt, kann die Anzeige sehen.
 
 ## Stand
 
-Die Testversion läuft lokal mit Beispieldaten. Im Internet ist nichts veröffentlicht. Die Begrüssung ist ausgeschaltet, bis der Kalender mit echten Einladungen getestet ist. Die Solar-Ansicht ist ausgeschaltet, bis der Zugang zu den Solardaten geklärt ist. Welches Gerät die Website am Fernseher anzeigt, ist offen.
+Die Testversion läuft lokal mit Beispieldaten. Im Internet steht bisher nur die Testseite für den Fernseher, sie enthält keine Besuchsdaten. Die Adresse der Website ist `https://empfang.wallimann.workers.dev`. Die Begrüssung ist ausgeschaltet, bis der Kalender mit echten Einladungen getestet ist. Die Solar-Ansicht ist ausgeschaltet, bis der Zugang zu den Solardaten geklärt ist. Welches Gerät die Website am Fernseher anzeigt, ist offen.
 
 ## Was die GL entscheiden muss
 
 1. Ist die GL mit der Speicherung bei Cloudflare und Outlook.com einverstanden, nach Prüfung des Vertrags zur Auftragsbearbeitung?
 2. Dürfen die Konten vorerst privat auf Alexander Fischer laufen, oder sollen sie auf die Firma umziehen?
 3. Wo werden die Zugangsdaten hinterlegt?
-4. Gilt wallimann.ch als erlaubte Domain für Organisatoren?
+4. Ist die GL einverstanden, dass nur Termine von Adressen mit wallimann.ch erscheinen (von Alexander Fischer so bestätigt)?
 5. Soll später auf ein Postfach im Firmen-Outlook umgestiegen werden?
 6. Soll für Warn-E-Mails eine Domain zu Cloudflare genommen werden (grob CHF 10 bis 20 pro Jahr), oder reicht die Statusseite?
 7. Passt das Logo «wallimann medien und kommunikation» am Empfang, oder soll das Logo der Wallimann Druck AG geliefert werden?

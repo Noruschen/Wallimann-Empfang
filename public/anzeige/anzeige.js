@@ -613,6 +613,12 @@
   }
 
   function start() {
+    // Nie unverschlüsselt: Sonst ginge der geheime Schlüssel offen übers Netz. Ausnahme: lokales Testen.
+    var ort = window.location;
+    if (ort.protocol === 'http:' && ort.hostname !== 'localhost' && ort.hostname !== '127.0.0.1') {
+      ort.replace('https://' + ort.host + ort.pathname + ort.search + ort.hash);
+      return;
+    }
     passeGroesseAn();
     window.onresize = passeGroesseAn;
 

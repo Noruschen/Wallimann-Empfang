@@ -40,7 +40,7 @@ const KOPF = {
 function json(daten, status = 200, zusatz = {}) {
   return new Response(JSON.stringify(daten), {
     status,
-    headers: { 'Content-Type': 'application/json; charset=utf-8', ...KOPF, ...zusatz },
+    headers: { 'Content-Type': 'application/json; charset=utf-8', 'Strict-Transport-Security': 'max-age=31536000', ...KOPF, ...zusatz },
   });
 }
 
@@ -325,6 +325,14 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const pfad = url.pathname;
+    // Nur verschlüsselt: Unverschlüsselte Aufrufe werden auf HTTPS umgeleitet und bekommen nie Daten.
+    // Ausnahme ist der eigene Rechner beim lokalen Testen.
+    const lokal = url.hostname === 'localhost' || url.hostname === '127.0.0.1';
+    if (url.protocol === 'http:' && !lokal) {
+      if (request.method !== 'GET' && request.method !== 'HEAD') return json({ ok: false, fehler: 'Nur über HTTPS' }, 400);
+      url.protocol = 'https:';
+      return new Response(null, { status: 308, headers: { Location: url.toString(), ...KOPF } });
+    }
     try {
       if (pfad === '/api/anzeige' && request.method === 'GET') return await anzeige(request, env, ctx);
       if (pfad.startsWith('/newsbild/') && request.method === 'GET') return await newsbild(pfad, env);
@@ -336,7 +344,12 @@ export default {
       console.log('Fehler bei', pfad, fehler && fehler.name);
       return json({ ok: false, fehler: 'Interner Fehler' }, 500);
     }
-    return env.ASSETS.fetch(request);
+    const datei = await env.ASSETS.fetch(request);
+    if (lokal) return datei;
+    // Der Browser soll sich merken, dass diese Website nur verschlüsselt erreichbar ist
+    const antwort = new Response(datei.body, datei);
+    antwort.headers.set('Strict-Transport-Security', 'max-age=31536000');
+    return antwort;
   },
 
   async scheduled(ereignis, env, ctx) {

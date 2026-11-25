@@ -6,7 +6,7 @@ Stand: 25.11.2026
 
 Am Empfang der Wallimann Druck AG in Beromünster hängt ein Fernseher im Querformat (Full HD). Er zeigt im Vollbild eine Website. Sie wechselt zwischen der Begrüssung von Besuch, den neusten Artikeln von michelnews.ch und dem Solarstrom der eigenen Anlage (Fronius). Alexander Fischer, Stv. Leiter Druck, betreut das Ganze. Er ist kein Programmierer.
 
-Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt), der Code liegt auf GitHub. Der Fernseher braucht nur einen Browser und eine Internetverbindung. Noch ist nichts veröffentlicht, die Testversion läuft lokal mit Beispieldaten.
+Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt), der Code liegt auf GitHub. Der Fernseher braucht nur einen Browser und eine Internetverbindung. Im Internet steht bisher nur die Testseite für den Fernseher, sie enthält keine Besuchsdaten. Die eigentliche Website läuft erst als Testversion lokal mit Beispieldaten.
 
 Von euch brauchen wir den Fernseher richtig eingerichtet, Auskünfte zum Netzwerk und Hilfe bei den Konten.
 
@@ -14,8 +14,8 @@ Von euch brauchen wir den Fernseher richtig eingerichtet, Auskünfte zum Netzwer
 
 Marke und Modell des Fernsehers sind noch nicht bekannt. Darum steht hier alles allgemein. Bitte prüft jeden Punkt am Gerät.
 
-1. **Testseite öffnen und Code melden.** Öffnet im Browser des Fernsehers die Adresse `BEISPIEL-ADRESSE/test/`. Die echte Adresse ist erst nach dem Einrichten bei Cloudflare bekannt, Alexander oder Claude geben sie euch. Die Testseite zeigt die Auflösung, die Schriften und was der Browser kann. Unten steht ein Code, zum Beispiel `1920x1080-11111111111`. Diesen Code meldet Alexander an Claude. Die Seite enthält keine Besuchsdaten.
-2. **Anzeige-Adresse eintragen.** Die Adresse lautet `BEISPIEL-ADRESSE/anzeige/#k=GEHEIMER-SCHLUESSEL`. Der geheime Teil ist lang. Gebt ihn mit der Fernbedienung ein oder speichert die Adresse als Lesezeichen oder als Startseite. Ohne gültigen Schlüssel zeigt die Anzeige nur das Logo. Den echten Schlüssel gibt euch Alexander, er steht nirgends im Projekt. Schickt ihn nicht per E-Mail an Unbeteiligte.
+1. **Testseite öffnen und Code melden.** Öffnet im Browser des Fernsehers die Adresse `https://empfang.wallimann.workers.dev/test/`. Die Testseite ist online und enthält keine Besuchsdaten. Die Testseite zeigt die Auflösung, die Schriften und was der Browser kann. Unten steht ein Code, zum Beispiel `1920x1080-11111111111`. Diesen Code meldet Alexander an Claude. Die Seite enthält keine Besuchsdaten.
+2. **Anzeige-Adresse eintragen.** Die Adresse lautet `https://empfang.wallimann.workers.dev/anzeige/#k=GEHEIMER-SCHLUESSEL`. Der geheime Teil ist lang. Gebt ihn mit der Fernbedienung ein oder speichert die Adresse als Lesezeichen oder als Startseite. Ohne gültigen Schlüssel zeigt die Anzeige nur das Logo. Den echten Schlüssel gibt euch Alexander, er steht nirgends im Projekt. Schickt ihn nicht per E-Mail an Unbeteiligte.
 3. **Energiesparen und Abschalten ausschalten.** Schaltet Energiesparen, automatisches Abschalten, den Bildschirmschoner und «Abschalten bei Inaktivität» aus. Die Bezeichnungen unterscheiden sich je nach Gerät.
 4. **Timer stellen.** Stellt den Ein- und Aus-Timer passend zu den Betriebszeiten: einschalten kurz vor 06:30, ausschalten nach 18:00. Die Betriebszeiten sind Montag bis Freitag. Ausserhalb zeigt die Seite ein schwarzes Bild. Eine Begrüssung hat Vorrang und erscheint auch ausserhalb der Betriebszeiten, sofern der Fernseher dann eingeschaltet ist.
 5. **Verhalten nach Stromausfall prüfen.** Schaltet der Fernseher von selbst wieder ein, und öffnet er die Anzeige wieder? Oft gibt es dafür eine Einstellung wie «Einschalten nach Stromausfall» oder ähnlich. Nicht bei allen Geräten ist sie vorhanden.
@@ -39,7 +39,7 @@ Das Gerät am Fernseher braucht nur ausgehende Verbindungen ins Internet über H
 
 | Was | Wofür |
 |---|---|
-| Ausgehend per HTTPS zur Website bei Cloudflare | Anzeige und Daten. Die genaue Adresse steht erst nach dem Einrichten fest (`BEISPIEL-ADRESSE`). |
+| Ausgehend per HTTPS zur Website bei Cloudflare | Anzeige und Daten. Die Adresse lautet `https://empfang.wallimann.workers.dev`. |
 | Nur mit Zusatzgerät für Solar: Verbindung zum Wechselrichter im Firmennetz | Abfrage der Solarwerte. Dafür brauchen wir die IP-Adresse des Wechselrichters. Am besten ist sie fest vergeben, siehe Abschnitt zu Solar. |
 
 Hinweis: Welche Domains genau freigegeben werden müssen, ist noch offen, bis die Adresse bei Cloudflare bekannt ist. Die Seite holt die News und den Kalender nicht vom Fernseher, sondern von der Website bei Cloudflare.
