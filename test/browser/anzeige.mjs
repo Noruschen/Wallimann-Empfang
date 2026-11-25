@@ -41,7 +41,7 @@ function antwort(zeit, zusatz = {}) {
   };
 }
 
-const besuch = (zeit, firma, name = null) => ({ von: zeit - 10 * MIN, bis: zeit + 30 * MIN, firma, name, ansprechperson: 'Petra Muster' });
+const besuch = (zeit, firma, name = null) => ({ von: zeit - 10 * MIN, bis: zeit + 30 * MIN, firma, name });
 
 async function neueSeite(browser, { zeit = START, liefert, mitSchluessel = true } = {}) {
   const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
@@ -88,13 +88,13 @@ const browser = await chromium.launch();
 {
   const { ctx, seite, fehler } = await neueSeite(browser, { liefert: (z) => antwort(z, { begruessungen: [besuch(START, 'Muster Verpackungen AG', 'Frau Anna Beispiel')] }) });
   let s = await sicht(seite);
-  pruefe('Begrüssung erscheint mit Firma, Name und Ansprechperson', s.art === 'begruessung' && s.text.includes('Herzlich willkommen') && s.text.includes('Muster Verpackungen AG') && s.text.includes('Frau Anna Beispiel') && s.text.includes('Petra Muster'), s.text);
+  pruefe('Begrüssung erscheint mit Firma und Name, ohne Ansprechperson', s.art === 'begruessung' && s.text.includes('Herzlich willkommen') && s.text.includes('Muster Verpackungen AG') && s.text.includes('Frau Anna Beispiel') && !s.text.includes('Ansprechperson'), s.text);
   pruefe('Datum und Uhrzeit kommen vom Server (Zürcher Zeit)', s.datum === 'Mittwoch, 25.11.2026' && s.uhr === '09:00', s.datum + ' ' + s.uhr);
   await vor(seite, 40000);
   s = await sicht(seite);
   pruefe('während der Begrüssung laufen keine News', s.art === 'begruessung', s.art);
   const gespeichert = await seite.evaluate(() => JSON.stringify(Object.assign({}, window.localStorage)));
-  pruefe('Namen von Besuchen werden nicht auf dem Gerät gespeichert', !gespeichert.includes('Muster Verpackungen') && !gespeichert.includes('Beispiel') && !gespeichert.includes('Petra'), gespeichert.slice(0, 200));
+  pruefe('Namen von Besuchen werden nicht auf dem Gerät gespeichert', !gespeichert.includes('Muster Verpackungen') && !gespeichert.includes('Beispiel'), gespeichert.slice(0, 200));
   pruefe('keine Skriptfehler', fehler.length === 0, fehler.join(' | '));
   await ctx.close();
 }
@@ -221,17 +221,16 @@ const browser = await chromium.launch();
   const m = await seite.evaluate(() => {
     const f = document.querySelector('.ebene.sichtbar .firma'); const r = f.getBoundingClientRect();
     const b = document.querySelector('.ebene.sichtbar .besuch').getBoundingClientRect();
-    const k = document.querySelector('.ebene.sichtbar .kontakt').getBoundingClientRect();
     const skala = document.getElementById('buehne').getBoundingClientRect().width / 1920;
-    return { rechts: r.right / skala, hoehe: r.height / skala, besuchUnten: b.bottom / skala, kontaktOben: k.top / skala, schrift: parseInt(getComputedStyle(f).fontSize, 10) };
+    return { rechts: r.right / skala, hoehe: r.height / skala, besuchUnten: b.bottom / skala, schrift: parseInt(getComputedStyle(f).fontSize, 10) };
   });
-  pruefe('ein sehr langer Firmenname passt auf den Bildschirm (Schrift wird kleiner, nichts überlappt)', m.rechts <= 1830 && m.besuchUnten < m.kontaktOben && m.schrift < 168 && m.schrift >= 84, JSON.stringify(m));
+  pruefe('ein sehr langer Firmenname passt auf den Bildschirm (Schrift wird kleiner, nichts überlappt)', m.rechts <= 1830 && m.besuchUnten <= 1050 && m.schrift < 168 && m.schrift >= 84, JSON.stringify(m));
   await ctx.close();
 }
 {
   // Besuch um 10:00: Die Anzeige bekommt ihn kurz vorher und schaltet genau zur Fensterzeit um
   const termin = START + 60 * MIN;
-  const { ctx, seite } = await neueSeite(browser, { zeit: START + 29 * MIN, liefert: (z) => antwort(z, { begruessungen: [{ von: termin - 30 * MIN, bis: termin + 15 * MIN, firma: 'Pünktlich AG', name: null, ansprechperson: null }] }) });
+  const { ctx, seite } = await neueSeite(browser, { zeit: START + 29 * MIN, liefert: (z) => antwort(z, { begruessungen: [{ von: termin - 30 * MIN, bis: termin + 15 * MIN, firma: 'Pünktlich AG', name: null }] }) });
   pruefe('31 Minuten vor dem Termin: noch News', (await sicht(seite)).art.startsWith('news'));
   await vor(seite, 62 * 1000);
   pruefe('30 Minuten vor dem Termin: Begrüssung', (await sicht(seite)).art === 'begruessung');

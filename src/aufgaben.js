@@ -113,7 +113,7 @@ export async function kalenderAbrufen(env, db, e, zustand, jetzt, abruf = fetch)
     const bis = new Date(von.getTime() + 50 * 60 * 60 * 1000); // heute und morgen
     let ergebnis;
     try {
-      ergebnis = leseKalender(text, { von, bis, domains: e.domains });
+      ergebnis = leseKalender(text, { von, bis, domains: e.domains, organisatorPflicht: e.organisatorPflicht });
     } catch {
       throw oeffentlicherFehler('Der Kalender-Link liefert keinen gültigen Kalender. Vermutlich ist er ungültig oder wurde zurückgesetzt.');
     }

@@ -154,7 +154,7 @@ body {
   position: absolute;
   left: 110px;
   width: 1700px;
-  top: 46%;
+  top: 49%;
   -webkit-transform: translateY(-50%);
   transform: translateY(-50%);
 }
@@ -499,7 +499,7 @@ body {
 .hoch .punkte { width: 1080px; bottom: 44px; }
 
 /* Begrüssung */
-.hoch .begruessung .mitte { left: 70px; width: 940px; top: 40%; }
+.hoch .begruessung .mitte { left: 70px; width: 940px; top: 43%; }
 .hoch .begruessung .gruss { font-size: 80px; margin-bottom: 34px; }
 .hoch .begruessung .firma { font-size: 136px; line-height: 1.06; }
 .hoch .begruessung .besuch { font-size: 80px; margin-top: 36px; }

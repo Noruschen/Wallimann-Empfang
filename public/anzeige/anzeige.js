@@ -213,7 +213,6 @@
     h += '<div class="firma passend" data-min="84">' + text(b.firma) + '</div>';
     if (b.name) { h += '<div class="besuch">' + text(b.name) + '</div>'; }
     h += '</div>';
-    if (b.ansprechperson) { h += '<div class="kontakt">Ihre Ansprechperson: <b>' + text(b.ansprechperson) + '</b></div>'; }
     h += '<div class="stoerer"><span>Wir freuen<br>uns auf Sie!</span></div>';
     h += '</div>';
     return h;
@@ -289,11 +288,11 @@
         t.style.fontSize = groesse + 'px';
         runden++;
       }
-      // Begrüssung: Der ganze Block (Gruss, Firma, Name) muss über der Zeile mit der Ansprechperson Platz haben
+      // Begrüssung: Der ganze Block (Gruss, Firma, Name) muss auf den Bildschirm passen
       if (t.className.indexOf('firma') >= 0) {
         var block = t.parentNode;
         var ansicht = block.parentNode;
-        var platz = hochkant ? 1150 : ansicht.clientHeight - 250;
+        var platz = hochkant ? 1250 : ansicht.clientHeight - 170;
         while (block.offsetHeight > platz && groesse > min && runden < 80) {
           groesse -= 4;
           t.style.fontSize = groesse + 'px';

@@ -1,6 +1,6 @@
 // Zugriff auf die Datenbank (Cloudflare D1).
 // Gespeichert wird so wenig wie möglich:
-//   besuche   Firma, Name, Ansprechperson und Zeit der Besuche von heute und morgen
+//   besuche   Firma, Name und Zeit der Besuche von heute und morgen
 //   news      Titel, Ort, Rubrik, Datum und Bildverweis der neusten Artikel
 //   zustand   Zeitpunkte der letzten Abrufe, Einstellungen, Solarwerte
 //   versuche  Zähler für falsche Passwörter (nur ein Hashwert des Absenders, keine IP-Adresse)
@@ -52,20 +52,21 @@ export async function setzeZustand(db, eintraege) {
 // ---------- Besuche ----------
 
 // Ersetzt alle gespeicherten Besuche durch die frisch gelesenen. Abgesagte Termine
-// verschwinden damit von selbst.
+// verschwinden damit von selbst. Die Spalten «ende» und «ansprechperson» bleiben aus
+// früheren Versionen bestehen und sind immer leer.
 export async function ersetzeBesuche(db, besuche) {
   const schritte = [db.prepare('DELETE FROM besuche')];
   for (const b of besuche) {
     schritte.push(db
       .prepare('INSERT OR REPLACE INTO besuche (uid, start, ende, firma, name, ansprechperson) VALUES (?1, ?2, ?3, ?4, ?5, ?6)')
-      .bind(b.uid, Date.parse(b.start), null, b.firma, b.name ?? null, b.ansprechperson ?? null)); // das Ende des Termins wird nicht gebraucht
+      .bind(b.uid, Date.parse(b.start), null, b.firma, b.name ?? null, null));
   }
   await db.batch(schritte);
 }
 
 export async function ladeBesuche(db, vonMs, bisMs) {
   const { results } = await db
-    .prepare('SELECT uid, start, ende, firma, name, ansprechperson FROM besuche WHERE start >= ?1 AND start < ?2 ORDER BY start, firma')
+    .prepare('SELECT uid, start, ende, firma, name FROM besuche WHERE start >= ?1 AND start < ?2 ORDER BY start, firma')
     .bind(vonMs, bisMs).all();
   return results;
 }

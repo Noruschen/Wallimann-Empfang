@@ -42,6 +42,7 @@
   function fuelleFormular(e) {
     var f = formular.elements;
     f.begruessungAn.checked = !!e.begruessungAn;
+    f.organisatorPflicht.checked = !!e.organisatorPflicht;
     ['vorlaufMin', 'nachlaufMin', 'dauerBesuchSek', 'kalenderMinuten', 'newsAnzahl', 'newsMinuten',
       'solarNachArtikeln', 'dauerAnsichtSek', 'feedUrl', 'betriebVon', 'betriebBis', 'alarmEmail', 'alarmAbsender'
     ].forEach(function (name) { f[name].value = e[name] === undefined || e[name] === null ? '' : e[name]; });
@@ -52,8 +53,8 @@
     f.solarQuelle.value = e.solarQuelle;
     f.design.value = String(e.design);
     f.drehung.value = String(e.drehung || 0);
-    // 24:00 kennt das Zeitfeld nicht
-    if (f.betriebBis.value === '24:00') { f.betriebBis.value = '23:59'; }
+    // 24:00 kennt das Zeitfeld nicht, darum zeigt es 23:59
+    if (e.betriebBis === '24:00') { f.betriebBis.value = '23:59'; }
     Array.prototype.forEach.call(formular.querySelectorAll('input[name="tag"]'), function (feld) {
       feld.checked = (e.betriebTage || []).indexOf(Number(feld.value)) >= 0;
     });
@@ -68,6 +69,7 @@
     });
     return {
       begruessungAn: f.begruessungAn.checked,
+      organisatorPflicht: f.organisatorPflicht.checked,
       vorlaufMin: Number(f.vorlaufMin.value),
       nachlaufMin: Number(f.nachlaufMin.value),
       dauerBesuchSek: Number(f.dauerBesuchSek.value),
@@ -131,8 +133,8 @@
     var b = $('besuche');
     b.textContent = '';
     b.parentNode.className = 'tabelle besuchstabelle';
-    if (!s.besuche.length) { zeile(b, ['Keine Besuche eingetragen.', '', '', '']); }
-    s.besuche.forEach(function (x) { zeile(b, [x.tag + ', ' + x.zeit, x.firma, x.name || '', x.ansprechperson || '']); });
+    if (!s.besuche.length) { zeile(b, ['Keine Besuche eingetragen.', '', '']); }
+    s.besuche.forEach(function (x) { zeile(b, [x.tag + ', ' + x.zeit, x.firma, x.name || '']); });
 
     var v = $('verworfen');
     v.textContent = '';

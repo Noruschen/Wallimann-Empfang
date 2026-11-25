@@ -10,7 +10,9 @@ export const STANDARD = Object.freeze({
   vorlaufMin: 30,              // Begrüssung beginnt so viele Minuten vor dem Termin
   nachlaufMin: 15,             // und endet so viele Minuten nach Terminbeginn
   dauerBesuchSek: 10,          // Wechsel bei mehreren Besuchen gleichzeitig
-  domains: ['wallimann.ch'],   // nur Termine von Organisatoren mit dieser Adresse
+  domains: ['wallimann.ch'],   // Termine von Organisatoren mit anderer Adresse werden weggelassen
+  organisatorPflicht: false,   // true: Termine ohne Organisator weglassen. Der Kalender-Link von
+                               // Outlook.com liefert keinen Organisator, darum steht das auf false.
   kalenderMinuten: 5,          // Kalender alle 5 Minuten holen
 
   // News
@@ -117,6 +119,7 @@ export function pruefeEinstellungen(roh) {
     nachlaufMin: ganzzahl(r.nachlaufMin, 0, 240, s.nachlaufMin),
     dauerBesuchSek: ganzzahl(r.dauerBesuchSek, 5, 30, s.dauerBesuchSek),
     domains: domains.length ? domains : [...s.domains],
+    organisatorPflicht: r.organisatorPflicht === true || r.organisatorPflicht === 'true',
     kalenderMinuten: ganzzahl(r.kalenderMinuten, 1, 60, s.kalenderMinuten),
     newsAnzahl: ganzzahl(r.newsAnzahl, 1, 20, s.newsAnzahl),
     newsZeiten: r.newsZeiten === undefined ? [...s.newsZeiten] : zeitListe(r.newsZeiten),

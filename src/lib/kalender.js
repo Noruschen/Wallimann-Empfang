@@ -3,9 +3,9 @@
  *
  * Liest den ICS-Text eines veröffentlichten Outlook.com-Kalenders und liefert
  * die Besuche, die der Bildschirm am Empfang begrüssen soll. Es wird so wenig
- * wie möglich weitergegeben: Firma, Name des Besuchs, Ansprechperson, Start,
- * Ende und eine Uid. Beschreibung, Ort, Teilnehmende und E-Mail-Adressen
- * werden gar nicht erst gelesen.
+ * wie möglich weitergegeben: Firma, Name des Besuchs, Start, Ende und eine Uid.
+ * Beschreibung, Ort, Teilnehmende, Name des Organisators und E-Mail-Adressen
+ * werden nicht weitergegeben. Vom Organisator wird nur die Domain geprüft.
  *
  * Reines JavaScript ohne Abhängigkeiten und ohne Node-APIs (nur Standard-JS
  * und Intl), damit der Baustein auch in einem Cloudflare Worker läuft. Die
@@ -477,7 +477,7 @@ function istAbsageBetreff(betreff) {
   return ABSAGE.test(s) || ABSAGE.test(entfernePraefixe(s).replace(/^[\s\p{Cc}\p{Cf}]+/u, ''));
 }
 
-/** Gemeinsame Bereinigung für Betreff und Ansprechperson (ohne Teilen). */
+/** Bereinigung des Betreffs (ohne Teilen). */
 function saeubere(text) {
   return text
     .normalize('NFC')
@@ -511,14 +511,6 @@ function bereinigeBetreff(roh, opt) {
   return { firma, name: name || null };
 }
 
-function bereinigePerson(cn, max) {
-  if (cn == null) return null;
-  const c = String(cn).trim();
-  if (!c || c.includes('@')) return null;
-  const s = kuerze(randTrim(saeubere(c).replace(/\|/g, ' ').replace(/ {2,}/g, ' ')), max);
-  return s || null;
-}
-
 const ADRESSE = /^([A-Za-z0-9._+'\-]+)@([A-Za-z0-9.\-]+)$/;
 
 function leseDomain(wert) {
@@ -540,7 +532,7 @@ function istGanztaegig(props) {
   return false;
 }
 
-/** Prüft einen Termin. Ergebnis: { grund } oder { firma, name, ansprechperson }. */
+/** Prüft einen Termin. Ergebnis: { grund } oder { firma, name }. */
 function pruefe(props, opt) {
   if (istGanztaegig(props)) return { grund: GRUENDE.GANZTAEGIG };
   const betreff = textWert(erste(props, 'SUMMARY'));
@@ -556,17 +548,17 @@ function pruefe(props, opt) {
   const betreffRoh = erste(props, 'SUMMARY');
   if (betreffRoh && PRIVAT_PLATZHALTER.test(betreffRoh.wert.trim())) return { grund: GRUENDE.PRIVAT };
   const org = erste(props, 'ORGANIZER');
-  let ansprechperson = null;
+  // Der Kalender-Link von Outlook.com liefert keinen Organisator. Ob solche Termine erscheinen,
+  // bestimmt die Einstellung organisatorPflicht. Steht ein Organisator da, muss seine Domain erlaubt sein.
   if (!org || !org.wert.trim()) {
     if (opt.organisatorPflicht) return { grund: GRUENDE.ORGANISATOR_FEHLT };
   } else {
     const domain = leseDomain(org.wert);
     if (!domain || !opt.domains.includes(domain)) return { grund: GRUENDE.ORGANISATOR_FREMD };
-    ansprechperson = bereinigePerson(org.params.CN, opt.maxLaengeName);
   }
   const { firma, name } = bereinigeBetreff(betreff, opt);
   if (!firma) return { grund: GRUENDE.FIRMA_LEER };
-  return { firma, name, ansprechperson };
+  return { firma, name };
 }
 
 // ---------------------------------------------------------------------------
@@ -883,7 +875,7 @@ function sequenz(props) {
  * @param {{von: Date, bis: Date, domains?: string[], organisatorPflicht?: boolean,
  *   maxLaengeFirma?: number, maxLaengeName?: number, maxWiederholungen?: number}} optionen
  * @returns {{besuche: Array<{uid: string, start: string, ende: string, firma: string,
- *   name: string|null, ansprechperson: string|null}>, verworfen: Array<{grund: string, anzahl: number}>}}
+ *   name: string|null}>, verworfen: Array<{grund: string, anzahl: number}>}}
  */
 export function leseKalender(icsText, optionen) {
   const opt = pruefeOptionen(optionen);
@@ -914,7 +906,6 @@ export function leseKalender(icsText, optionen) {
       ende: new Date(startUtc + dauer).toISOString(),
       firma: ergebnis.firma,
       name: ergebnis.name,
-      ansprechperson: ergebnis.ansprechperson,
     });
   };
 

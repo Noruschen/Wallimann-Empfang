@@ -76,8 +76,8 @@ function icsZeit(ms) {
 function ics(termine) {
   const zeilen = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Microsoft Corporation//Outlook 16.0 MIMEDIR//EN'];
   for (const t of termine) {
-    zeilen.push('BEGIN:VEVENT', `UID:${t.uid}`, `DTSTART:${icsZeit(t.start)}`, `DTEND:${icsZeit(t.start + 60 * MIN)}`,
-      `SUMMARY:${t.betreff}`, `ORGANIZER;CN=${t.cn || 'Petra Muster'}:mailto:${t.von || 'petra.muster@wallimann.ch'}`);
+    zeilen.push('BEGIN:VEVENT', `UID:${t.uid}`, `DTSTART:${icsZeit(t.start)}`, `DTEND:${icsZeit(t.start + 60 * MIN)}`, `SUMMARY:${t.betreff}`);
+    if (!t.ohneOrganisator) zeilen.push(`ORGANIZER;CN=${t.cn || 'Petra Muster'}:mailto:${t.von || 'petra.muster@wallimann.ch'}`);
     if (t.zusatz) zeilen.push(t.zusatz);
     zeilen.push('END:VEVENT');
   }
@@ -317,11 +317,41 @@ describe('Besuche aus dem Kalender', () => {
     assert.equal((await anzeige()).inhalt.begruessungen.length, 1);
   });
 
-  test('Begrüssung mit Firma, Name, Ansprechperson und Zeitfenster', async () => {
+  test('Begrüssung mit Firma, Name und Zeitfenster, ohne Ansprechperson', async () => {
     await setzeEinstellungen({ begruessungAn: true });
     await takt(kalender([{ uid: 'a', start: START + 20 * MIN, betreff: 'Muster Verpackungen AG | Frau Anna Beispiel', cn: 'Alexander Fischer', von: 'alexander.fischer@wallimann.ch' }]));
     const b = (await anzeige()).inhalt.begruessungen;
-    assert.deepEqual(b, [{ von: START - 10 * MIN, bis: START + 35 * MIN, firma: 'Muster Verpackungen AG', name: 'Frau Anna Beispiel', ansprechperson: 'Alexander Fischer' }]);
+    assert.deepEqual(b, [{ von: START - 10 * MIN, bis: START + 35 * MIN, firma: 'Muster Verpackungen AG', name: 'Frau Anna Beispiel' }]);
+  });
+
+  test('der Kalender-Link von Outlook.com liefert keinen Organisator: Solche Termine erscheinen trotzdem', async () => {
+    await setzeEinstellungen({ begruessungAn: true });
+    await takt(kalender([
+      { uid: 'ohne', start: START + 10 * MIN, betreff: 'Muster AG | Herr Fischer', ohneOrganisator: true },
+      { uid: 'nurfirma', start: START + 10 * MIN, betreff: 'Nur Firma GmbH', ohneOrganisator: true },
+    ]));
+    const b = (await anzeige()).inhalt.begruessungen;
+    assert.deepEqual(b.map((x) => [x.firma, x.name]), [['Muster AG', 'Herr Fischer'], ['Nur Firma GmbH', null]]);
+    assert.ok(!('ansprechperson' in b[0]));
+  });
+
+  test('mit der Einstellung «Termine ohne Organisator weglassen» erscheinen sie nicht', async () => {
+    await setzeEinstellungen({ begruessungAn: true, organisatorPflicht: true });
+    await takt(kalender([{ uid: 'ohne', start: START + 10 * MIN, betreff: 'Muster AG', ohneOrganisator: true }]));
+    assert.deepEqual((await anzeige()).inhalt.begruessungen, []);
+    const cookie = await sitzung();
+    const s = (await rufe('/api/status', { kopf: { Cookie: cookie } })).inhalt;
+    assert.equal(Object.fromEntries(s.kalender.verworfen.map((v) => [v.grund, v.anzahl]))['Organisator fehlt'], 1);
+  });
+
+  test('die Ansprechperson wird weder gespeichert noch herausgegeben', async () => {
+    await setzeEinstellungen({ begruessungAn: true });
+    await takt(kalender([{ uid: 'a', start: START + 10 * MIN, betreff: 'Muster AG', cn: 'Geheimer Organisator' }]));
+    const { results } = await env.DB.prepare('SELECT ansprechperson FROM besuche').all();
+    assert.deepEqual(results, [{ ansprechperson: null }]);
+    const cookie = await sitzung();
+    const alles = JSON.stringify((await anzeige()).inhalt) + JSON.stringify((await rufe('/api/status', { kopf: { Cookie: cookie } })).inhalt);
+    assert.ok(!alles.includes('Geheimer Organisator'));
   });
 
   test('ein Besuch wird erst kurz vor dem Fenster herausgegeben', async () => {

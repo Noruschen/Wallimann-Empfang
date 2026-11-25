@@ -48,7 +48,7 @@
       <h2>Besuche heute und morgen</h2>
       <p class="klein">So liest die Website die Einladungen. Auf dem Fernseher erscheint ein Besuch erst kurz vor dem Termin.</p>
       <table class="tabelle">
-        <thead><tr><th>Wann</th><th>Firma</th><th>Name</th><th>Ansprechperson</th></tr></thead>
+        <thead><tr><th>Wann</th><th>Firma</th><th>Name</th></tr></thead>
         <tbody id="besuche"></tbody>
       </table>
       <div id="verworfenBlock" class="versteckt">
@@ -66,7 +66,8 @@
           <label>Beginn vor dem Termin (Minuten) <input type="number" name="vorlaufMin" min="0" max="240"></label>
           <label>Ende nach Terminbeginn (Minuten) <input type="number" name="nachlaufMin" min="0" max="240"></label>
           <label>Wechsel bei mehreren Besuchen (Sekunden) <input type="number" name="dauerBesuchSek" min="5" max="30"></label>
-          <label>Erlaubte Adressen der Organisatoren (Domain, mehrere mit Komma) <input type="text" name="domains"></label>
+          <label>Erlaubte Adressen der Organisatoren (Domain, mehrere mit Komma). Wirkt nur, wenn der Kalender den Organisator mitliefert. Der Kalender-Link von Outlook.com tut das nicht. <input type="text" name="domains"></label>
+          <label class="schalter"><input type="checkbox" name="organisatorPflicht"> Termine ohne Organisator weglassen (mit dem Kalender-Link von Outlook.com erscheint dann kein Besuch)</label>
           <label>Kalender holen alle (Minuten) <input type="number" name="kalenderMinuten" min="1" max="60"></label>
         </fieldset>
         <fieldset>

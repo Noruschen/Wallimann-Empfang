@@ -283,7 +283,6 @@ async function statusDaten(env) {
       zeit: formatZeit(new Date(b.start)),
       firma: b.firma,
       name: b.name,
-      ansprechperson: b.ansprechperson,
     })),
     besucheHeute: besuche.filter((b) => b.start < morgen).length,
     mailEingerichtet: mailEingerichtet(env, e),

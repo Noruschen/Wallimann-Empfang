@@ -51,7 +51,7 @@ export function begruessungenFuerAnzeige(besuche, jetzt, e) {
     const von = b.start - e.vorlaufMin * 60000;
     const bis = b.start + e.nachlaufMin * 60000;
     if (bis > jetzt && von <= jetzt + 3 * 60000) {
-      aus.push({ von, bis, firma: b.firma, name: b.name ?? null, ansprechperson: b.ansprechperson ?? null });
+      aus.push({ von, bis, firma: b.firma, name: b.name ?? null });
     }
   }
   return aus;

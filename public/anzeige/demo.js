@@ -34,8 +34,8 @@ window.EMPFANG_DEMO = function (art) {
   ];
   var solar = { zeit: 0, leistungKw: 86.4, tagesertragKwh: 412, gesamtMwh: 1284, beispiel: true };
   var besuche = [
-    { von: 0, bis: 9e15, firma: 'Muster Verpackungen AG', name: 'Frau Anna Beispiel', ansprechperson: 'Alexander Fischer' },
-    { von: 0, bis: 9e15, firma: 'Beispiel Handwerk GmbH', name: null, ansprechperson: 'Petra Muster' }
+    { von: 0, bis: 9e15, firma: 'Muster Verpackungen AG', name: 'Frau Anna Beispiel' },
+    { von: 0, bis: 9e15, firma: 'Beispiel Handwerk GmbH', name: null }
   ];
 
   // Mittwoch, 25.11.2026, 09:42 Zürcher Zeit (Winterzeit, eine Stunde vor UTC)
@@ -49,7 +49,7 @@ window.EMPFANG_DEMO = function (art) {
   };
   if (art === 'begruessung') { d.begruessungen = [besuche[0]]; }
   else if (art === 'begruessung2') { d.begruessungen = besuche; }
-  else if (art === 'begruessunglang') { d.begruessungen = [{ von: 0, bis: 9e15, firma: 'Genossenschaft für nachhaltige Verpackungslösungen Zentralschweiz', name: 'Herr Dr. Maximilian von Beispielhausen', ansprechperson: 'Alexander Fischer' }]; }
+  else if (art === 'begruessunglang') { d.begruessungen = [{ von: 0, bis: 9e15, firma: 'Genossenschaft für nachhaltige Verpackungslösungen Zentralschweiz', name: 'Herr Dr. Maximilian von Beispielhausen' }]; }
   else if (art === 'news') { d.news = news; }
   else if (art === 'newsklein') { d.news = [news[9]]; }
   else if (art === 'newshoch') { d.news = [news[3]]; }

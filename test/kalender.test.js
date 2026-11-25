@@ -102,7 +102,6 @@ describe('Beispieldatei im Stil von Outlook', () => {
         ende: '2026-11-26T10:00:00.000Z',
         firma: 'Muster Bau AG',
         name: 'Anna Beispiel',
-        ansprechperson: 'Keller, Peter',
       },
       {
         uid: '040000008200E00074C5B7101A82E00800000000SERIE0000000000000000000000001_20261126T073000Z',
@@ -110,7 +109,6 @@ describe('Beispieldatei im Stil von Outlook', () => {
         ende: '2026-11-27T14:00:00.000Z',
         firma: 'Beispiel Treuhand GmbH',
         name: 'Marco Test',
-        ansprechperson: 'Sandra Wallimann',
       },
       {
         uid: '040000008200E00074C5B7101A82E00800000000UTC0000000000000000000000001',
@@ -118,7 +116,6 @@ describe('Beispieldatei im Stil von Outlook', () => {
         ende: '2026-11-27T16:00:00.000Z',
         firma: 'Gamma Software AG',
         name: 'Lena Probst',
-        ansprechperson: null,
       },
     ]);
     assert.deepEqual(r.verworfen, [
@@ -142,7 +139,7 @@ describe('Beispieldatei im Stil von Outlook', () => {
     assert.doesNotMatch(text, /mailto/i);
     assert.doesNotMatch(text, /Parkplatz|Rigi|outlook\.com|muster-bau/i);
     for (const b of r.besuche) {
-      assert.deepEqual(Object.keys(b).sort(), ['ansprechperson', 'ende', 'firma', 'name', 'start', 'uid']);
+      assert.deepEqual(Object.keys(b).sort(), ['ende', 'firma', 'name', 'start', 'uid']);
     }
     for (const v of r.verworfen) assert.deepEqual(Object.keys(v).sort(), ['anzahl', 'grund']);
     assert.doesNotMatch(JSON.stringify(r.verworfen), /Alpha|Arzttermin|Werbung|Jonas/);
@@ -243,36 +240,15 @@ describe('Betreff bereinigen', () => {
 describe('Organisator', () => {
   const mit = (organisator, optionen) => lies(kalender(termin({ organisator })), optionen);
 
-  test('Ansprechperson aus CN, auch in Anführungszeichen mit Komma', () => {
-    assert.equal(einzig(kalender(termin())).ansprechperson, 'Peter Keller');
-    assert.equal(
-      einzig(kalender(termin({ organisator: 'ORGANIZER;CN="Keller, Peter";SENT-BY="mailto:x@wallimann.ch":mailto:peter.keller@wallimann.ch' })))
-        .ansprechperson,
-      'Keller, Peter',
-    );
+  test('der Name des Organisators (CN) wird nie weitergegeben, auch nicht in Anführungszeichen mit Komma', () => {
+    const b = einzig(kalender(termin({ organisator: 'ORGANIZER;CN="Keller, Peter";SENT-BY="mailto:x@wallimann.ch":mailto:peter.keller@wallimann.ch' })));
+    assert.ok(!('ansprechperson' in b));
+    assert.ok(!JSON.stringify(b).includes('Keller'));
   });
 
   test('MAILTO in Grossbuchstaben, Domain ohne Gross-/Kleinschreibung, ohne CN', () => {
     const b = einzig(kalender(termin({ organisator: 'ORGANIZER:MAILTO:Peter.Keller@WALLIMANN.CH' })));
-    assert.equal(b.ansprechperson, null);
-  });
-
-  test('CN leer oder selbst eine E-Mail-Adresse ergibt Ansprechperson null', () => {
-    assert.equal(einzig(kalender(termin({ organisator: 'ORGANIZER;CN=:mailto:p@wallimann.ch' }))).ansprechperson, null);
-    assert.equal(
-      einzig(kalender(termin({ organisator: 'ORGANIZER;CN=peter.keller@wallimann.ch:mailto:peter.keller@wallimann.ch' })))
-        .ansprechperson,
-      null,
-    );
-    assert.equal(
-      einzig(kalender(termin({ organisator: 'ORGANIZER;CN="🎉 <>":mailto:peter.keller@wallimann.ch' }))).ansprechperson,
-      null,
-    );
-  });
-
-  test('Ansprechperson wird bereinigt', () => {
-    const b = einzig(kalender(termin({ organisator: 'ORGANIZER;CN="Dr. Zoë <Müller> | www.x.example":mailto:z@wallimann.ch' })));
-    assert.equal(b.ansprechperson, 'Dr. Zoë Müller');
+    assert.equal(b.firma.length > 0, true);
   });
 
   test('Einladung von fremder Adresse wird verworfen', () => {
@@ -312,7 +288,7 @@ describe('Organisator', () => {
 
   test('ohne Organisatorpflicht wird ein Termin ohne Organisator gezeigt, fremde Domain bleibt verboten', () => {
     const b = einzig(kalender(termin({ ohne: ['ORGANIZER'] })), { organisatorPflicht: false });
-    assert.equal(b.ansprechperson, null);
+    assert.ok(b.firma);
     const r = mit('ORGANIZER:mailto:a@evil.example', { organisatorPflicht: false });
     assert.deepEqual(gruende(r), { [GRUENDE.ORGANISATOR_FREMD]: 1 });
   });
