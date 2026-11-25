@@ -25,7 +25,7 @@ Die Begrüssung erscheint 30 Minuten vor Beginn des Termins und verschwindet 15 
 
 ## Spontanbesuch
 
-Lege einen kurzen Termin an und lade wie oben **empfang.wallimann@outlook.com** ein. Die Begrüssung erscheint erst, wenn die Website den Kalender das nächste Mal holt (alle 5 Minuten) und der Termin bis dahin im Kalender des Empfangs steht. Wie schnell das im Alltag klappt, ist noch nicht getestet.
+Lege einen kurzen Termin an und lade wie oben **empfang.wallimann@outlook.com** ein. Die Begrüssung erscheint erst, wenn die Website den Kalender das nächste Mal holt (alle 5 Minuten) und der Termin bis dahin im Kalender des Kontos **empfang.wallimann@outlook.com** angekommen ist. Wie schnell das im Alltag klappt, ist noch nicht getestet.
 
 ## Hinweis bei der Einladung
 
@@ -45,5 +45,3 @@ Lade «empfang.wallimann@outlook.com» nicht ein oder markiere den Termin als «
 ## Fragen
 
 Wende dich an Alexander Fischer, Stv. Leiter Druck.
-
-Die Begrüssung wird erst eingeschaltet, nachdem sie mit echten Einladungen getestet wurde.

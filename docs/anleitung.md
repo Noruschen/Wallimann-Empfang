@@ -157,4 +157,4 @@ Der Bildschirm zeigt nie eine Fehlermeldung. Fällt das Internet am Empfang aus,
 - Der E-Mail-Versand für Warnungen. Dafür braucht es eine eigene Domain im Cloudflare-Konto, die es noch nicht gibt. Ob eine neue Domain (grob CHF 10 bis 20 pro Jahr) angeschafft wird, ist offen.
 - Echte Solardaten. Der Zugang ist noch nicht geklärt.
 
-Ein Hinweis zu den Konten: Cloudflare und GitHub laufen auf dich als Privatperson, nicht auf die Firma. Das muss die GL bestätigen. Melde dich zudem mindestens einmal pro Jahr im Outlook.com-Konto an, sonst kann Microsoft es schliessen.
+Ein Hinweis zu den Konten: Cloudflare und GitHub laufen auf dich als Privatperson, nicht auf die Firma, und auch das Outlook.com-Konto ist kein Firmenkonto. Das muss die GL bestätigen. Melde dich zudem mindestens einmal pro Jahr im Outlook.com-Konto an, sonst kann Microsoft es schliessen.

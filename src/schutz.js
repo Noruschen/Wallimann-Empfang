@@ -31,7 +31,10 @@ export function schluesselBrauchbar(s) {
 // Bei IPv6 hat ein einzelner Anschluss sehr viele Adressen. Darum zählt dort das Netz
 // (die ersten vier Blöcke der Adresse), nicht die einzelne Adresse.
 export function absenderNetz(ip) {
-  const t = String(ip || 'unbekannt').trim().toLowerCase();
+  let t = String(ip || 'unbekannt').trim().toLowerCase();
+  // IPv4-Adresse in IPv6-Schreibweise (::ffff:203.0.113.5): Es zählt die IPv4-Adresse
+  const eingebettet = /^(?:::ffff:|::)(\d{1,3}(?:\.\d{1,3}){3})$/.exec(t);
+  if (eingebettet) t = eingebettet[1];
   if (!t.includes(':')) return t;
   const [vorn, hinten] = t.split('::');
   const a = vorn ? vorn.split(':') : [];

@@ -230,6 +230,7 @@ async function sicher(aufgabe) {
 }
 
 export async function taktgeber(env, e, jetzt, { abruf = fetch, warte } = {}) {
+  const taktBeginn = Date.now();
   const db = env.DB;
   await speicher.stelleTabellenSicher(db);
   let zustand = await speicher.ladeZustand(db);
@@ -246,31 +247,33 @@ export async function taktgeber(env, e, jetzt, { abruf = fetch, warte } = {}) {
     await sicher(async () => {
       // Abstand zur Quelle einhalten, auch über zwei Takte hinweg: «quelle.zuletzt» ist der
       // Zeitpunkt des letzten Abrufs bei michelnews.ch.
-      const beginn = Date.now();
       let zuletzt = zustand.quelle && typeof zustand.quelle.zuletzt === 'number' ? zustand.quelle.zuletzt : 0;
-      let abgerufen = false;
       const warteAbstand = async () => {
         const rest = ABSTAND_MICHELNEWS_MS - (Date.now() - zuletzt);
         if (rest > 0 && rest <= ABSTAND_MICHELNEWS_MS) await pause(rest);
       };
-      const merke = () => { zuletzt = Date.now(); abgerufen = true; };
+      // Den Zeitpunkt sofort festhalten, nicht erst am Ende des Takts
+      const merke = async () => { zuletzt = Date.now(); await speicher.setzeZustand(db, { quelle: { zuletzt } }); };
 
       if (faellig(zustand.news && zustand.news.letzterVersuch, e.newsMinuten, jetzt, 0)) {
         await warteAbstand();
-        await newsAbrufen(env, db, e, zustand, jetzt, abruf);
-        merke();
+        await merke();
+        // Als Zeitpunkt des Versuchs zählt der echte Abruf, nicht der Beginn des Takts:
+        // So liegen zwischen zwei Abrufen der Liste immer volle 15 Minuten.
+        await newsAbrufen(env, db, e, zustand, Math.max(jetzt, zuletzt), abruf);
+        await merke();
       } else {
         // Zwischen den Abrufen der Liste: Bilder nachladen, höchstens zwei Abrufe pro Minute.
-        // Der zweite entfällt, wenn der Takt schon lange läuft: So überschneiden sich zwei Takte nie.
+        // Der zweite entfällt, wenn der Takt seit seinem Beginn schon 20 Sekunden läuft. Mit den
+        // Zeitgrenzen (Kalender 10, Warten 11, Bild 12 Sekunden) bleibt ein Takt so unter einer Minute.
         for (let i = 0; i < 2; i++) {
-          if (i > 0 && Date.now() - beginn > 25000) break;
+          if (i > 0 && Date.now() - taktBeginn > 20000) break;
           await warteAbstand();
           const gabArbeit = await bildSchritt(env, db, abruf);
           if (!gabArbeit) break;
-          merke();
+          await merke();
         }
       }
-      if (abgerufen) await speicher.setzeZustand(db, { quelle: { zuletzt } });
     });
   }
 

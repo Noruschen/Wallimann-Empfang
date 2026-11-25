@@ -234,6 +234,12 @@ describe('Schutz der Statusseite', () => {
     assert.equal((await anmelden(PASSWORT, '2001:db8:aa:cc::1')).status, 200);
   });
 
+  test('IPv4-Adressen in IPv6-Schreibweise teilen sich keine Sperre', async () => {
+    for (let i = 0; i < 5; i++) assert.equal((await anmelden('falsch', '::ffff:198.51.100.30')).status, 401);
+    assert.equal((await anmelden(PASSWORT, '198.51.100.30')).status, 429);       // dieselbe Adresse, andere Schreibweise
+    assert.equal((await anmelden(PASSWORT, '::ffff:198.51.100.31')).status, 200); // eine andere Adresse
+  });
+
   test('in der Datenbank steht keine IP-Adresse', async () => {
     await anmelden('falsch', '198.51.100.9');
     const { results } = await env.DB.prepare('SELECT absender FROM versuche').all();
