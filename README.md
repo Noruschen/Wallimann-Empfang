@@ -94,6 +94,7 @@ Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neulade
 
 ## Was noch nicht getestet werden konnte
 
-- Wie schnell gelöschte Termine aus dem Kalender-Link von Outlook.com verschwinden, und ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt.
+- Wie schnell gelöschte Termine aus dem Kalender-Link von Outlook.com verschwinden, ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt, und ob Einladungen im Junk-Ordner landen.
+- Die Rechenzeit bei Cloudflare über längere Zeit.
 - Der Browser des Fernsehers am Empfang und die Begrüssung auf diesem Fernseher.
 - Der E-Mail-Versand und echte Solardaten.

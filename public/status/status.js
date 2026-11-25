@@ -39,6 +39,8 @@
     return a.text;
   }
 
+  var endeWar24 = false;
+
   function fuelleFormular(e) {
     var f = formular.elements;
     f.begruessungAn.checked = !!e.begruessungAn;
@@ -53,8 +55,10 @@
     f.solarQuelle.value = e.solarQuelle;
     f.design.value = String(e.design);
     f.drehung.value = String(e.drehung || 0);
-    // 24:00 kennt das Zeitfeld nicht, darum zeigt es 23:59
-    if (e.betriebBis === '24:00') { f.betriebBis.value = '23:59'; }
+    // 24:00 kennt das Zeitfeld nicht, darum zeigt es 23:59. Beim Speichern wird daraus wieder 24:00,
+    // solange das Feld nicht geändert wurde.
+    endeWar24 = e.betriebBis === '24:00';
+    if (endeWar24) { f.betriebBis.value = '23:59'; }
     Array.prototype.forEach.call(formular.querySelectorAll('input[name="tag"]'), function (feld) {
       feld.checked = (e.betriebTage || []).indexOf(Number(feld.value)) >= 0;
     });
@@ -88,7 +92,7 @@
       drehung: Number(f.drehung.value),
       betriebTage: tage,
       betriebVon: f.betriebVon.value,
-      betriebBis: f.betriebBis.value,
+      betriebBis: (endeWar24 && f.betriebBis.value === '23:59') ? '24:00' : f.betriebBis.value,
       alarmEmail: f.alarmEmail.value,
       alarmAbsender: f.alarmAbsender.value
     };

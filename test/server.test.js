@@ -335,6 +335,15 @@ describe('Besuche aus dem Kalender', () => {
     assert.ok(!('ansprechperson' in b[0]));
   });
 
+  test('früher gespeicherte Einstellungen ohne das Feld organisatorPflicht: Termine ohne Organisator erscheinen', async () => {
+    await setzeEinstellungen({ begruessungAn: true });
+    const alt = JSON.parse((await env.DB.prepare("SELECT wert FROM zustand WHERE name = 'einstellungen'").first()).wert);
+    delete alt.organisatorPflicht;
+    await env.DB.prepare("UPDATE zustand SET wert = ?1 WHERE name = 'einstellungen'").bind(JSON.stringify(alt)).run();
+    await takt(kalender([{ uid: 'ohne', start: START + 10 * MIN, betreff: 'Muster AG', ohneOrganisator: true }]));
+    assert.deepEqual((await anzeige()).inhalt.begruessungen.map((x) => x.firma), ['Muster AG']);
+  });
+
   test('mit der Einstellung «Termine ohne Organisator weglassen» erscheinen sie nicht', async () => {
     await setzeEinstellungen({ begruessungAn: true, organisatorPflicht: true });
     await takt(kalender([{ uid: 'ohne', start: START + 10 * MIN, betreff: 'Muster AG', ohneOrganisator: true }]));

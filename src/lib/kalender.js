@@ -840,6 +840,8 @@ function pruefeOptionen(optionen) {
     von: o.von,
     bis: o.bis,
     domains: domains.filter((d) => typeof d === 'string').map((d) => d.trim().toLowerCase()).filter(Boolean),
+    // Ohne Angabe ist der Baustein streng. Die Website gibt den Wert immer ausdrücklich mit
+    // (Einstellung organisatorPflicht, Standard aus, weil der Link von Outlook.com keinen Organisator liefert).
     organisatorPflicht: o.organisatorPflicht !== false,
     maxLaengeFirma: ganzzahl(o.maxLaengeFirma, 60),
     maxLaengeName: ganzzahl(o.maxLaengeName, 60),

@@ -248,7 +248,7 @@ describe('Organisator', () => {
 
   test('MAILTO in Grossbuchstaben, Domain ohne Gross-/Kleinschreibung, ohne CN', () => {
     const b = einzig(kalender(termin({ organisator: 'ORGANIZER:MAILTO:Peter.Keller@WALLIMANN.CH' })));
-    assert.equal(b.firma.length > 0, true);
+    assert.equal(b.firma, einzig(kalender(termin())).firma);
   });
 
   test('Einladung von fremder Adresse wird verworfen', () => {

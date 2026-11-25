@@ -2,7 +2,7 @@
 
 Am Empfang hängt ein Bildschirm. Er kann Besuch mit Namen begrüssen. Dafür musst du nur einen Termin in Outlook richtig anlegen.
 
-**Wichtig:** Die Begrüssung ist noch ausgeschaltet. Sie wird erst eingeschaltet, wenn der Test mit echten Einladungen geklappt hat. Alexander Fischer sagt Bescheid, sobald es losgeht.
+**Wichtig:** Die Begrüssung ist noch nicht in Betrieb. Sie wird erst eingeschaltet, wenn der Test am Fernseher am Empfang geklappt hat. Alexander Fischer sagt Bescheid, sobald es losgeht.
 
 ## In drei Schritten
 

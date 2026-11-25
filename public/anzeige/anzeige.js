@@ -319,7 +319,7 @@
     // etwas grösser als der Kreis selbst (Faktor 1.129).
     var mx = (s.left + s.right) / 2, my = (s.top + s.bottom) / 2;
     var radius = (s.right - s.left) / 2 / 1.129;
-    var teile = ebene.querySelectorAll('.firma, .besuch, .kontakt');
+    var teile = ebene.querySelectorAll('.firma, .besuch');
     for (var i = 0; i < teile.length; i++) {
       var bereich = document.createRange();
       bereich.selectNodeContents(teile[i]);

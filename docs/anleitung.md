@@ -48,7 +48,7 @@ Der Fernseher übernimmt Änderungen innert einer Minute.
 
 | Einstellung | Bedeutung | Standardwert |
 |---|---|---|
-| Begrüssung am Fernseher eingeschaltet | Schaltet die Begrüssung ein oder aus. | Aus, bis der Kalender mit echten Einladungen getestet ist |
+| Begrüssung am Fernseher eingeschaltet | Schaltet die Begrüssung ein oder aus. | Aus, bis die Begrüssung am Fernseher am Empfang geprüft ist |
 | Beginn vor dem Termin | Wie viele Minuten vor Terminbeginn die Begrüssung startet. | 30 Minuten |
 | Ende nach Terminbeginn | Wie viele Minuten nach Terminbeginn sie endet. | 15 Minuten |
 | Wechsel bei mehreren Besuchen | Sekunden pro Besuch, wenn mehrere gleichzeitig da sind. | 10 Sekunden |
@@ -90,7 +90,7 @@ Was du beim Test genau beobachten sollst:
 - Landet eine Einladung einmal im Junk-Ordner statt im Kalender?
 - Wie schnell erscheinen neue, geänderte und abgesagte Termine? Zum Teil erledigt: Neue Termine standen am 25.11.2026 innert 5 Minuten im Kalender-Link. Noch offen: wie schnell gelöschte Termine aus dem Link verschwinden. Ein gelöschter Termin stand nach 5 Minuten noch im Link, länger wurde nicht gemessen. Dauert es länger als 10 Minuten, taugt dieser Weg nicht und Claude schlägt einen anderen vor.
 - Erscheint der Organisator mit E-Mail-Adresse? Erledigt: Nein, der Kalender-Link von Outlook.com liefert keinen Organisator (getestet am 25.11.2026). Die Website zeigt solche Termine trotzdem an, kann aber nicht prüfen, wer eingeladen hat.
-- Funktioniert die Markierung «privat»? Zum Teil erledigt: Ein als «privat» versendeter Termin stand am 25.11.2026 nach etwa 30 Sekunden als privat im Kalender des Empfangskontos. Die Markierung steht auch im veröffentlichten Kalender-Link, die Website lässt den Termin weg (getestet am 25.11.2026).
+- Funktioniert die Markierung «privat»? Zum Teil erledigt: Ein als «privat» versendeter Termin stand am 25.11.2026 nach etwa 30 Sekunden als privat im Kalender des Empfangskontos. Die Markierung steht auch im veröffentlichten Kalender-Link. Die veröffentlichte Website hat den Termin weggelassen und auf der Statusseite als «Privater Termin» gezählt (getestet am 25.11.2026).
 - Bleiben abgesagte Termine als «Abgesagt: …» stehen? Erledigt: Ja, getestet am 25.11.2026. Die Website erkennt das und zeigt solche Termine nicht an.
 - Zieht der Kalender nach, wenn ein Termin verschoben wird? Erledigt: Ja, getestet am 25.11.2026.
 - Wie schnell klappt ein Spontanbesuch? Die Begrüssung beginnt frühestens beim nächsten Abruf des Kalenders (alle 5 Minuten).
@@ -136,7 +136,7 @@ Einstellungen auf der Statusseite brauchen das nicht. Sie gelten innert einer Mi
 | Testseite am Fernseher des Empfangs öffnen und Code melden | offen. Adresse: `https://empfang.wallimann.workers.dev` |
 | Kalender in Outlook.com als ICS-Link veröffentlichen (Berechtigung «Alle Details anzeigen») und als `KALENDER_URL` bei Cloudflare eintragen | erledigt am 25.11.2026 |
 | Mit echten Einladungen testen, siehe «Besuch testen» | zum Teil erledigt, siehe dort |
-| Begrüssung auf der Statusseite einschalten | zum Testen eingeschaltet am 25.11.2026. Für den Betrieb am Empfang entscheidest du nach dem Test am Fernseher |
+| Begrüssung auf der Statusseite einschalten | offen für den Betrieb. Für den Test vom 25.11.2026 war sie eingeschaltet. Danach wieder ausschalten, bis die Begrüssung am Fernseher am Empfang geprüft ist |
 | GitHub mit Cloudflare verbinden, damit Änderungen automatisch veröffentlicht werden | offen, am grossen Bildschirm |
 
 ## Was tun bei Störungen
@@ -155,7 +155,7 @@ Der Bildschirm zeigt nie eine Fehlermeldung. Fällt das Internet am Empfang aus,
 
 ## Was noch nicht getestet ist
 
-- Wie schnell gelöschte Termine aus dem Kalender-Link von Outlook.com verschwinden, und ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt (siehe «Besuch testen»).
+- Wie schnell gelöschte Termine aus dem Kalender-Link von Outlook.com verschwinden, und ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt, und ob Einladungen im Junk-Ordner landen (siehe «Besuch testen»).
 - Der Browser des Fernsehers am Empfang und die Begrüssung auf diesem Fernseher. Marke und Modell sind noch nicht bekannt.
 - Die Rechenzeit bei Cloudflare über längere Zeit. Die Gratis-Stufe erlaubt 10 Millisekunden pro Aufruf. Reicht es nicht, kostet die nächste Stufe USD 5 pro Monat.
 - Der E-Mail-Versand für Warnungen. Dafür braucht es eine eigene Domain im Cloudflare-Konto, die es noch nicht gibt. Ob eine neue Domain (grob CHF 10 bis 20 pro Jahr) angeschafft wird, ist offen.

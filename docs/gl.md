@@ -51,7 +51,7 @@ Offen ist, wie bei Abwesenheit oder Austritt der Zugang gesichert wird. Für das
 
 ## Stand
 
-Die Website ist seit dem 25.11.2026 unter `https://empfang.wallimann.workers.dev` veröffentlicht. Ohne geheimen Schlüssel und ohne Passwort gibt sie nichts heraus. Die Adresse der Website ist `https://empfang.wallimann.workers.dev`. Die Begrüssung ist ausgeschaltet, bis der Kalender mit echten Einladungen getestet ist. Die Solar-Ansicht ist ausgeschaltet, bis der Zugang zu den Solardaten geklärt ist. Welches Gerät die Website am Fernseher anzeigt, ist offen.
+Die Website ist seit dem 25.11.2026 unter `https://empfang.wallimann.workers.dev` veröffentlicht. Ohne geheimen Schlüssel und ohne Passwort gibt sie nichts heraus. Die Adresse der Website ist `https://empfang.wallimann.workers.dev`. Die Begrüssung ist noch nicht in Betrieb: Der Kalender ist seit dem 25.11.2026 angebunden und mit einer Testeinladung geprüft, der Test am Fernseher am Empfang steht noch aus. Die Solar-Ansicht ist ausgeschaltet, bis der Zugang zu den Solardaten geklärt ist. Welches Gerät die Website am Fernseher anzeigt, ist offen.
 
 ## Was die GL entscheiden muss
 
