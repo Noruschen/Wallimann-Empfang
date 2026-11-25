@@ -35,6 +35,13 @@ export function absenderNetz(ip) {
   // IPv4-Adresse in IPv6-Schreibweise (::ffff:203.0.113.5): Es zählt die IPv4-Adresse
   const eingebettet = /^(?:::ffff:|::)(\d{1,3}(?:\.\d{1,3}){3})$/.exec(t);
   if (eingebettet) t = eingebettet[1];
+  // Dasselbe in Hex-Schreibweise (::ffff:cb00:7105 ist 203.0.113.5)
+  const hexForm = /^::ffff:([0-9a-f]{1,4}):([0-9a-f]{1,4})$/.exec(t);
+  if (hexForm) {
+    const a = parseInt(hexForm[1], 16);
+    const b = parseInt(hexForm[2], 16);
+    t = [a >> 8, a & 255, b >> 8, b & 255].join('.');
+  }
   if (!t.includes(':')) return t;
   const [vorn, hinten] = t.split('::');
   const a = vorn ? vorn.split(':') : [];

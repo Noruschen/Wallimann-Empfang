@@ -238,6 +238,8 @@ describe('Schutz der Statusseite', () => {
     for (let i = 0; i < 5; i++) assert.equal((await anmelden('falsch', '::ffff:198.51.100.30')).status, 401);
     assert.equal((await anmelden(PASSWORT, '198.51.100.30')).status, 429);       // dieselbe Adresse, andere Schreibweise
     assert.equal((await anmelden(PASSWORT, '::ffff:198.51.100.31')).status, 200); // eine andere Adresse
+    assert.equal((await anmelden(PASSWORT, '::ffff:c633:641e')).status, 429);     // 198.51.100.30 in Hex-Schreibweise
+    assert.equal((await anmelden(PASSWORT, '::ffff:c633:6420')).status, 200);     // 198.51.100.32 in Hex-Schreibweise
   });
 
   test('in der Datenbank steht keine IP-Adresse', async () => {
