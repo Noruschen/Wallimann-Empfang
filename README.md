@@ -30,7 +30,7 @@ In der Testversion wechseln Begrüssung und News alle 10 Minuten ab, damit man b
 npm test
 ```
 
-170 Tests prüfen Zeitlogik, Kalender, News, Solar, Schutz und Ausfälle. Sie brauchen kein Internet.
+175 Tests prüfen Zeitlogik, Kalender, News, Solar, Schutz und Ausfälle. Sie brauchen kein Internet.
 
 Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neuladen ohne Internet, Wechsel der Ansichten). Sie brauchen das Werkzeug Playwright, das bewusst nicht zum Projekt gehört: zuerst `npm start`, dann in einem zweiten Fenster `node test/browser/anzeige.mjs`.
 

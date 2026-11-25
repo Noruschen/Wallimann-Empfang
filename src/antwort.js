@@ -60,7 +60,10 @@ export function begruessungenFuerAnzeige(besuche, jetzt, e) {
 export function solarFuerAnzeige(solar, jetzt, e) {
   if (e.solarQuelle === 'aus' || !solar || typeof solar.zeit !== 'number') return null;
   if (jetzt - solar.zeit > SOLAR_MAX_ALTER_MS) return null; // lieber keine als alte Zahlen
-  const aus = { zeit: solar.zeit, beispiel: e.solarQuelle === 'beispiel' };
+  // Die Werte müssen zur gewählten Quelle passen: Beispielwerte erscheinen nie als echte Werte
+  const sindBeispiel = solar.beispiel === true;
+  if (sindBeispiel !== (e.solarQuelle === 'beispiel')) return null;
+  const aus = { zeit: solar.zeit, beispiel: sindBeispiel };
   for (const feld of ['leistungKw', 'tagesertragKwh', 'gesamtMwh', 'eigenverbrauchProzent', 'co2Tonnen']) {
     if (typeof solar[feld] === 'number' && Number.isFinite(solar[feld])) aus[feld] = solar[feld];
   }

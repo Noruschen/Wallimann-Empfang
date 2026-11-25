@@ -28,9 +28,22 @@ export function schluesselBrauchbar(s) {
   return typeof s === 'string' && s.length >= MIN_LAENGE_SCHLUESSEL;
 }
 
+// Bei IPv6 hat ein einzelner Anschluss sehr viele Adressen. Darum zählt dort das Netz
+// (die ersten vier Blöcke der Adresse), nicht die einzelne Adresse.
+export function absenderNetz(ip) {
+  const t = String(ip || 'unbekannt').trim().toLowerCase();
+  if (!t.includes(':')) return t;
+  const [vorn, hinten] = t.split('::');
+  const a = vorn ? vorn.split(':') : [];
+  const b = hinten !== undefined && hinten ? hinten.split(':') : [];
+  const fehlend = hinten !== undefined ? Math.max(0, 8 - a.length - b.length) : 0;
+  const alle = [...a, ...Array(fehlend).fill('0'), ...b].map((g) => g.replace(/^0+(?=.)/, ''));
+  return alle.slice(0, 4).join(':') + '::/64';
+}
+
 // Absender für die Bremse: Die IP-Adresse wird nicht gespeichert, nur ein Hashwert davon.
 export async function absenderKennung(ip, salz) {
-  return (await sha256(String(salz) + '|' + String(ip || 'unbekannt'))).slice(0, 32);
+  return (await sha256(String(salz) + '|' + absenderNetz(ip))).slice(0, 32);
 }
 
 // ---------- Bremse bei falschen Passwörtern (pro Absender) ----------
@@ -41,26 +54,8 @@ export const BREMSE = Object.freeze({
   sperreMs: 15 * 60 * 1000,      // danach so lange gesperrt
 });
 
-// eintrag: { anzahl, erster, gesperrtBis } oder null
-export function istGesperrt(eintrag, jetzt) {
-  if (!eintrag || !eintrag.gesperrtBis) return { gesperrt: false, wartenSek: 0 };
-  if (jetzt >= eintrag.gesperrtBis) return { gesperrt: false, wartenSek: 0 };
-  return { gesperrt: true, wartenSek: Math.ceil((eintrag.gesperrtBis - jetzt) / 1000) };
-}
-
-export function nachFehlversuch(eintrag, jetzt) {
-  let e = eintrag;
-  // Fenster abgelaufen oder alte Sperre vorbei: von vorne zählen
-  if (!e || jetzt - e.erster > BREMSE.fensterMs || (e.gesperrtBis && jetzt >= e.gesperrtBis)) {
-    e = { anzahl: 0, erster: jetzt, gesperrtBis: 0 };
-  }
-  const anzahl = e.anzahl + 1;
-  return {
-    anzahl,
-    erster: e.erster,
-    gesperrtBis: anzahl >= BREMSE.maxVersuche ? jetzt + BREMSE.sperreMs : 0,
-  };
-}
+// Gezählt wird in der Datenbank in einem einzigen Schritt (siehe speicher.js, zaehleVersuch).
+// So gehen auch bei vielen gleichzeitigen Versuchen keine Zählungen verloren.
 
 // ---------- Sitzung der Statusseite ----------
 

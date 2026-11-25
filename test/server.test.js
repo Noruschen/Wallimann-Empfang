@@ -218,6 +218,22 @@ describe('Schutz der Statusseite', () => {
     assert.equal((await anmelden(PASSWORT, ip)).status, 200);
   });
 
+  test('viele gleichzeitige Versuche: höchstens 5 Passwörter werden geprüft, auch das richtige hilft danach nicht', async () => {
+    const ip = '198.51.100.20';
+    const antworten = await Promise.all(Array.from({ length: 12 }, (_, i) => anmelden(i === 11 ? PASSWORT : 'falsch' + i, ip)));
+    const geprueft = antworten.filter((a) => a.status === 401 || a.status === 200).length;
+    assert.ok(geprueft <= 5, 'geprüft: ' + geprueft);
+    assert.equal(antworten.filter((a) => a.status === 429).length, 12 - geprueft);
+    assert.equal((await anmelden(PASSWORT, ip)).status, 429);
+  });
+
+  test('bei IPv6 zählt das Netz, nicht die einzelne Adresse', async () => {
+    for (let i = 0; i < 5; i++) assert.equal((await anmelden('falsch', '2001:db8:aa:bb::' + (i + 1))).status, 401);
+    assert.equal((await anmelden(PASSWORT, '2001:db8:aa:bb:1234:5678:9abc:def0')).status, 429);
+    // Ein anderes Netz ist nicht betroffen
+    assert.equal((await anmelden(PASSWORT, '2001:db8:aa:cc::1')).status, 200);
+  });
+
   test('in der Datenbank steht keine IP-Adresse', async () => {
     await anmelden('falsch', '198.51.100.9');
     const { results } = await env.DB.prepare('SELECT absender FROM versuche').all();
@@ -426,13 +442,38 @@ describe('News', () => {
     assert.equal((await rufe('/newsbild/nichtda')).status, 404);
   });
 
-  test('zwischen zwei Abrufen der Liste lädt der Taktgeber höchstens drei Schritte pro Minute', async () => {
+  test('zwischen zwei Abrufen der Liste lädt der Taktgeber höchstens zwei Schritte pro Minute', async () => {
     const abruf = news();
     await takt(abruf);
     const vorher = abruf.aufrufe.length;
     setzeZeit(START + 1 * MIN);
     await takt(abruf);
-    assert.equal(abruf.aufrufe.length - vorher, 3);
+    assert.equal(abruf.aufrufe.length - vorher, 2);
+  });
+
+  test('zwischen zwei Abrufen bei michelnews.ch liegen mindestens 10 Sekunden, auch über zwei Takte hinweg', async () => {
+    const abruf = news();
+    const pausen = [];
+    const lauf = async () => taktgeber(env, await wirksam(), jetzt(), { abruf, warte: async (ms) => { pausen.push(ms); } });
+    await lauf();                       // Liste um 09:00:00
+    setzeZeit(START + 4000);            // der nächste Takt kommt schon 4 Sekunden später
+    await lauf();
+    // Vor dem ersten Abruf wird der Rest auf 11 Sekunden gewartet, vor dem zweiten nochmals 11 Sekunden
+    assert.equal(pausen[0], 7000);
+    assert.ok(pausen.length >= 2 && pausen.slice(1).every((p) => p >= 10000));
+  });
+
+  test('die Liste wird frühestens nach vollen 15 Minuten wieder geholt', async () => {
+    const abruf = news();
+    await takt(abruf);
+    const listen = () => abruf.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
+    assert.equal(listen(), 1);
+    setzeZeit(START + 15 * MIN - 1000);
+    await takt(abruf);
+    assert.equal(listen(), 1);
+    setzeZeit(START + 15 * MIN);
+    await takt(abruf);
+    assert.equal(listen(), 2);
   });
 
   test('was kein Bild ist, wird nicht gespeichert', async () => {
@@ -519,6 +560,16 @@ describe('Solar', () => {
     assert.ok((await anzeige()).inhalt.solar);
     setzeZeit(START + 10 * MIN + 1000);
     assert.equal((await anzeige()).inhalt.solar, null);
+  });
+
+  test('nach dem Umschalten von Beispieldaten auf das Zusatzgerät erscheinen keine alten Beispielwerte', async () => {
+    await setzeEinstellungen({ solarQuelle: 'beispiel' });
+    await takt(attrappe([['kalender.invalid', () => ics([])], ['michelnews.ch', STARTSEITE]]));
+    assert.equal((await anzeige()).inhalt.solar.beispiel, true);
+    await setzeEinstellungen({ solarQuelle: 'empfang' });
+    assert.equal((await anzeige()).inhalt.solar, null);
+    await sende({ leistungKw: 12 });
+    assert.deepEqual((await anzeige()).inhalt.solar, { zeit: START, beispiel: false, leistungKw: 12 });
   });
 
   test('Beispieldaten sind als Beispiel markiert', async () => {

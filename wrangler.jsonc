@@ -31,5 +31,7 @@
   // Kennung der veröffentlichten Fassung: Die Anzeige lädt sich nach einer Änderung selbst neu
   "version_metadata": { "binding": "VERSION" },
 
-  "observability": { "enabled": true }
+  // Protokolle bei Cloudflare bleiben ausgeschaltet: Sie könnten sonst Kopfzeilen der Anfragen
+  // festhalten, und darin steht der geheime Schlüssel. Den Zustand zeigt die Statusseite.
+  "observability": { "enabled": false }
 }

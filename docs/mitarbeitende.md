@@ -2,6 +2,8 @@
 
 Am Empfang hängt ein Bildschirm. Er kann Besuch mit Namen begrüssen. Dafür musst du nur einen Termin in Outlook richtig anlegen.
 
+**Wichtig:** Die Begrüssung ist noch ausgeschaltet. Sie wird erst eingeschaltet, wenn der Test mit echten Einladungen geklappt hat. Alexander Fischer sagt Bescheid, sobald es losgeht.
+
 ## In drei Schritten
 
 1. Lege den Termin wie gewohnt in Outlook an.
@@ -19,11 +21,11 @@ Der Name erscheint nur, wenn er im Betreff steht. Als Ansprechperson zeigt der B
 
 ## Was der Bildschirm wann zeigt
 
-Die Begrüssung erscheint 30 Minuten vor Beginn des Termins und verschwindet 15 Minuten nach Beginn. Sie zeigt «Herzlich willkommen», die Firma, den Namen des Besuchs und deine Ansprechperson. Hat es mehrere Besuche gleichzeitig, wechseln sie alle 10 Sekunden.
+Die Begrüssung erscheint 30 Minuten vor Beginn des Termins und verschwindet 15 Minuten nach Beginn. Sie zeigt «Herzlich willkommen», die Firma, den Namen des Besuchs und dich als Ansprechperson. Hat es mehrere Besuche gleichzeitig, wechseln sie alle 10 Sekunden.
 
 ## Spontanbesuch
 
-Lege einen kurzen Termin mit derselben Einladung an. Die Begrüssung erscheint erst, wenn der Bildschirm den Kalender das nächste Mal holt. Das geschieht alle 5 Minuten. Wie schnell es im Alltag klappt, ist noch nicht getestet.
+Lege einen kurzen Termin an und lade wie oben **empfang.wallimann@outlook.com** ein. Die Begrüssung erscheint erst, wenn die Website den Kalender das nächste Mal holt (alle 5 Minuten) und der Termin bis dahin im Kalender des Empfangs steht. Wie schnell das im Alltag klappt, ist noch nicht getestet.
 
 ## Hinweis bei der Einladung
 

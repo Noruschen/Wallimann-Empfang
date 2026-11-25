@@ -16,7 +16,7 @@ Immer sichtbar sind Logo, Datum und Uhrzeit. Ausserhalb der Betriebszeiten (Mont
 
 - **Cloudflare:** Die Website läuft bei Cloudflare. Die Datenbank wird beim Einrichten auf den Speicherort EU festgelegt. Das Serverprogramm läuft im weltweiten Netz von Cloudflare und verarbeitet die Daten dort kurzzeitig.
 - **Outlook.com:** Die Termine liegen in einem eigenen Outlook.com-Konto bei Microsoft, ausserhalb des Firmen-Outlooks. Dort bleiben sie, solange sie im Kalender stehen.
-- **Was gespeichert wird:** Firma, Name des Besuchs, Ansprechperson und Zeit der Besuche von heute und morgen. Dazu News-Titel und Bilder, Zeitpunkte der letzten Abrufe und Einstellungen. Besuchsdaten werden am Tag nach dem Termin gelöscht. Auf dem Fernseher selbst werden keine Namen gespeichert.
+- **Was gespeichert wird:** Firma, Name des Besuchs, Ansprechperson und Zeit der Besuche von heute und morgen. Dazu News-Titel und Bilder, Zeitpunkte der letzten Abrufe und Einstellungen. Besuchsdaten werden am Tag nach dem Termin gelöscht. Auf dem Fernseher selbst werden keine Namen gespeichert. Zu beachten: Cloudflare hält von der Datenbank automatisch Sicherungen für einige Tage (laut Cloudflare in der Gratis-Stufe 7 Tage). Gelöschte Besuche sind darin so lange noch enthalten.
 - **Vertrag zur Auftragsbearbeitung:** Cloudflare stellt einen Standardvertrag bereit (Data Processing Addendum, «DPA»). Er ist Teil der Nutzungsbedingungen: https://www.cloudflare.com/cloudflare-customer-dpa/. Die GL kann ihn prüfen. Zu klären: Er gilt für den Kontoinhaber, und das Konto läuft privat auf Alexander Fischer.
 - Die Verbindung ist immer verschlüsselt. Alle Seiten sind für Suchmaschinen gesperrt.
 

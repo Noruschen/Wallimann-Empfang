@@ -58,7 +58,7 @@ export async function ersetzeBesuche(db, besuche) {
   for (const b of besuche) {
     schritte.push(db
       .prepare('INSERT OR REPLACE INTO besuche (uid, start, ende, firma, name, ansprechperson) VALUES (?1, ?2, ?3, ?4, ?5, ?6)')
-      .bind(b.uid, Date.parse(b.start), b.ende ? Date.parse(b.ende) : null, b.firma, b.name ?? null, b.ansprechperson ?? null));
+      .bind(b.uid, Date.parse(b.start), null, b.firma, b.name ?? null, b.ansprechperson ?? null)); // das Ende des Termins wird nicht gebraucht
   }
   await db.batch(schritte);
 }
@@ -138,16 +138,23 @@ export async function zaehleFehlversuch(db, link) {
 
 // ---------- Bremse bei falschen Passwörtern ----------
 
-export async function ladeVersuch(db, absender) {
-  const z = await db.prepare('SELECT anzahl, erster, gesperrt_bis FROM versuche WHERE absender = ?1').bind(absender).first();
-  return z ? { anzahl: z.anzahl, erster: z.erster, gesperrtBis: z.gesperrt_bis } : null;
+// Zählt einen Anmeldeversuch, und zwar bevor das Passwort geprüft wird und in einem einzigen
+// Schritt der Datenbank. Viele gleichzeitige Versuche bekommen so je eine eigene Nummer.
+// Ist das Zeitfenster abgelaufen oder eine alte Sperre vorbei, beginnt die Zählung neu.
+export async function zaehleVersuch(db, absender, jetzt, fensterMs) {
+  const z = await db
+    .prepare(`INSERT INTO versuche (absender, anzahl, erster, gesperrt_bis) VALUES (?1, 1, ?2, 0)
+              ON CONFLICT(absender) DO UPDATE SET
+                anzahl = CASE WHEN (?2 - erster > ?3) OR (gesperrt_bis > 0 AND gesperrt_bis <= ?2) THEN 1 ELSE anzahl + 1 END,
+                erster = CASE WHEN (?2 - erster > ?3) OR (gesperrt_bis > 0 AND gesperrt_bis <= ?2) THEN ?2 ELSE erster END,
+                gesperrt_bis = CASE WHEN gesperrt_bis > ?2 THEN gesperrt_bis ELSE 0 END
+              RETURNING anzahl, gesperrt_bis`)
+    .bind(absender, jetzt, fensterMs).first();
+  return { anzahl: z.anzahl, gesperrtBis: z.gesperrt_bis };
 }
 
-export async function speichereVersuch(db, absender, e) {
-  await db
-    .prepare(`INSERT INTO versuche (absender, anzahl, erster, gesperrt_bis) VALUES (?1, ?2, ?3, ?4)
-              ON CONFLICT(absender) DO UPDATE SET anzahl = ?2, erster = ?3, gesperrt_bis = ?4`)
-    .bind(absender, e.anzahl, e.erster, e.gesperrtBis).run();
+export async function sperreAbsender(db, absender, bis) {
+  await db.prepare('UPDATE versuche SET gesperrt_bis = ?2 WHERE absender = ?1 AND gesperrt_bis < ?2').bind(absender, bis).run();
 }
 
 export async function loescheVersuch(db, absender) {

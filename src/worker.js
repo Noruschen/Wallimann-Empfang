@@ -18,7 +18,7 @@
 import { pruefeEinstellungen, fuerZeitlogik } from './einstellungen.js';
 import { baueAnzeigeAntwort, solarFuerAnzeige } from './antwort.js';
 import {
-  gleich, schluesselBrauchbar, absenderKennung, istGesperrt, nachFehlversuch,
+  gleich, schluesselBrauchbar, absenderKennung, BREMSE,
   erstelleSitzung, pruefeSitzung, leseCookie, SITZUNG_MS,
 } from './schutz.js';
 import {
@@ -188,20 +188,26 @@ async function anmelden(request, env) {
   }
   await speicher.stelleTabellenSicher(env.DB);
   const absender = await absenderKennung(request.headers.get('CF-Connecting-IP'), passwort);
-  const eintrag = await speicher.ladeVersuch(env.DB, absender);
-  const sperre = istGesperrt(eintrag, jetzt);
-  if (sperre.gesperrt) {
-    return json({ ok: false, fehler: `Zu viele falsche Versuche. Bitte in ${Math.ceil(sperre.wartenSek / 60)} Minuten nochmals versuchen.` },
-      429, { 'Retry-After': String(sperre.wartenSek) });
+  // Zuerst zählen, dann prüfen: So lassen sich auch mit vielen gleichzeitigen Anfragen
+  // nicht mehr als 5 Passwörter in 15 Minuten durchprobieren.
+  const versuch = await speicher.zaehleVersuch(env.DB, absender, jetzt, BREMSE.fensterMs);
+  const abweisen = (bis) => {
+    const wartenSek = Math.max(1, Math.ceil((bis - jetzt) / 1000));
+    return json({ ok: false, fehler: `Zu viele falsche Versuche. Bitte in ${Math.ceil(wartenSek / 60)} Minuten nochmals versuchen.` },
+      429, { 'Retry-After': String(wartenSek) });
+  };
+  if (versuch.gesperrtBis > jetzt) return abweisen(versuch.gesperrtBis);
+  if (versuch.anzahl > BREMSE.maxVersuche) {
+    await speicher.sperreAbsender(env.DB, absender, jetzt + BREMSE.sperreMs);
+    return abweisen(jetzt + BREMSE.sperreMs);
   }
   let eingabe = '';
   try { eingabe = String((await request.json()).passwort || ''); } catch { eingabe = ''; }
   if (!(await gleich(eingabe, passwort))) {
-    const neu = nachFehlversuch(eintrag, jetzt);
-    await speicher.speichereVersuch(env.DB, absender, neu);
+    if (versuch.anzahl >= BREMSE.maxVersuche) await speicher.sperreAbsender(env.DB, absender, jetzt + BREMSE.sperreMs);
     return json({ ok: false, fehler: 'Das Passwort stimmt nicht.' }, 401);
   }
-  if (eintrag) await speicher.loescheVersuch(env.DB, absender);
+  await speicher.loescheVersuch(env.DB, absender);
   const zeichen = await erstelleSitzung(passwort, jetzt);
   return json({ ok: true }, 200, { 'Set-Cookie': sitzungsCookie(request, zeichen, Math.floor(SITZUNG_MS / 1000)) });
 }
@@ -230,9 +236,12 @@ async function statusDaten(env) {
   if (!beispiel && k.eingerichtet && k.fehler) hinweise.push('Kalender: ' + k.fehler);
   if (!e.begruessungAn) hinweise.push('Die Begrüssung ist ausgeschaltet. Am Fernseher erscheinen keine Namen.');
   if (e.begruessungAn && typeof k.letzterErfolg === 'number' && jetzt - k.letzterErfolg > 15 * 60000) {
-    hinweise.push('Der Kalender ist älter als 15 Minuten. Bis zum nächsten erfolgreichen Abruf erscheinen keine Begrüssungen.');
+    hinweise.push('Der letzte erfolgreiche Abruf des Kalenders ist älter als 15 Minuten. Bis zum nächsten erfolgreichen Abruf erscheinen keine Begrüssungen.');
   }
   if (n.fehler) hinweise.push('News: ' + n.fehler + ' Die zuletzt gespeicherten Artikel laufen weiter.');
+  if (!beispiel && !n.fehler && typeof n.letzterErfolg === 'number' && (n.anzahl ?? 0) === 0) {
+    hinweise.push('Zum eingestellten Filter passt im Moment kein Artikel. Es laufen keine News.');
+  }
   if (e.solarQuelle === 'aus') hinweise.push('Die Solar-Ansicht ist ausgeschaltet.');
   if (e.solarQuelle === 'beispiel') hinweise.push('Die Solar-Ansicht zeigt Beispieldaten.');
   if (e.solarQuelle !== 'aus' && !solarFuerAnzeige(zustand.solar, jetzt, e)) {

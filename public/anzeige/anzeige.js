@@ -212,7 +212,7 @@
     var ertrag = typeof s.tagesertragKwh === 'number' ? zahl(s.tagesertragKwh, s.tagesertragKwh < 100 ? 1 : 0) : '';
     var h = '<div class="ansicht solar">';
     h += '<div class="sonne"></div>';
-    h += '<div class="stitel">Solarstrom vom eigenen Dach</div>';
+    h += '<div class="stitel">Unser Solarstrom</div>';
     h += '<div class="suntertitel">So viel Strom liefert unsere Anlage gerade</div>';
     if (s.beispiel) { h += '<div class="beispiel">Beispieldaten</div>'; }
     h += '<div class="wert eins"><div class="zahl">' + leistung + '<span>kW</span></div><div class="label">aktuelle Leistung</div></div>';
@@ -251,6 +251,54 @@
         t.style.fontSize = groesse + 'px';
         runden++;
       }
+      // Begrüssung: Der ganze Block (Gruss, Firma, Name) muss über der Zeile mit der Ansprechperson Platz haben
+      if (t.className.indexOf('firma') >= 0) {
+        var block = t.parentNode;
+        var ansicht = block.parentNode;
+        var platz = ansicht.clientHeight - 250;
+        while (block.offsetHeight > platz && groesse > min && runden < 80) {
+          groesse -= 4;
+          t.style.fontSize = groesse + 'px';
+          runden++;
+        }
+        var besuch = block.querySelector('.besuch');
+        var klein = besuch ? (parseInt(window.getComputedStyle(besuch).fontSize, 10) || 92) : 0;
+        while (besuch && block.offsetHeight > platz && klein > 56 && runden < 100) {
+          klein -= 4;
+          besuch.style.fontSize = klein + 'px';
+          runden++;
+        }
+      }
+    }
+  }
+
+  // Der runde Störer «Wir freuen uns auf Sie!» verschwindet, wenn Firma oder Name so lang sind,
+  // dass sie ihn berühren würden.
+  function pruefeStoerer(ebene) {
+    var stoerer = ebene.querySelector('.stoerer');
+    if (!stoerer || !stoerer.getBoundingClientRect || !document.createRange) { return; }
+    var s = stoerer.getBoundingClientRect();
+    // Der Störer ist ein Kreis, um 8 Grad gedreht. Sein umschliessendes Rechteck ist darum
+    // etwas grösser als der Kreis selbst (Faktor 1.129).
+    var mx = (s.left + s.right) / 2, my = (s.top + s.bottom) / 2;
+    var radius = (s.right - s.left) / 2 / 1.129;
+    var teile = ebene.querySelectorAll('.firma, .besuch, .kontakt');
+    for (var i = 0; i < teile.length; i++) {
+      var bereich = document.createRange();
+      bereich.selectNodeContents(teile[i]);
+      // Jede Textzeile einzeln messen, nicht den ganzen Block
+      var zeilen = bereich.getClientRects ? bereich.getClientRects() : [bereich.getBoundingClientRect()];
+      for (var z = 0; z < zeilen.length; z++) {
+        var t = zeilen[z];
+        // Die Zeile ist höher als die Buchstaben selbst: oben und unten je 15 Prozent abziehen
+        var rand = (t.bottom - t.top) * 0.15;
+        var dx = mx - Math.max(t.left, Math.min(mx, t.right));
+        var dy = my - Math.max(t.top + rand, Math.min(my, t.bottom - rand));
+        if (dx * dx + dy * dy < radius * radius * 1.12) {
+          stoerer.style.display = 'none';
+          return;
+        }
+      }
     }
   }
 
@@ -275,7 +323,7 @@
     var neu = obenA ? el('ebeneB') : el('ebeneA');
     var alt = obenA ? el('ebeneA') : el('ebeneB');
     neu.innerHTML = html;
-    passeTextAn(neu);
+    try { passeTextAn(neu); pruefeStoerer(neu); } catch (e) { /* alter Browser: Text bleibt in Standardgrösse */ }
 
     function einblenden() {
       neu.className = 'ebene sichtbar';
@@ -291,10 +339,10 @@
         if (fertig) { return; }
         fertig = true;
         if (ok) {
-          setzeBild(neu, folie, bild);
+          try { setzeBild(neu, folie, bild); } catch (e) { /* egal */ }
         } else {
           var a = neu.querySelector('.ansicht');
-          if (a) { a.className = 'ansicht news ohnebild'; passeTextAn(neu); }
+          if (a) { a.className = 'ansicht news ohnebild'; try { passeTextAn(neu); } catch (e) { /* egal */ } }
         }
         einblenden();
       };
@@ -496,11 +544,30 @@
 
   // ---------- Selbstheilung ----------
 
+  // Merkt sich, wann zuletzt neu geladen wurde. Der Fenstername (window.name) übersteht ein Neuladen
+  // auch in Browsern ohne Speicher. So kann die Anzeige nie in eine Schleife von Neuladen geraten.
+  function liesNeuladen() {
+    var aus = {};
+    try {
+      var roh = String(window.name || '');
+      if (roh.indexOf('empfang:') === 0) { aus = JSON.parse(roh.substring(8)) || {}; }
+    } catch (e) { aus = {}; }
+    return aus;
+  }
+
   function darfNeuLaden(grund, abstandMs) {
-    var letzte = lies('neuladen.' + grund) || 0;
     var jetzt = new Date().getTime();
+    var gemerkt = liesNeuladen();
+    var letzte = Math.max(+gemerkt[grund] || 0, +lies('neuladen.' + grund) || 0);
     if (jetzt - letzte < abstandMs && jetzt >= letzte) { return false; }
+    // Zusätzlich: höchstens ein Neuladen pro Minute, egal aus welchem Grund
+    var irgendeins = Math.max(+gemerkt.alle || 0, +lies('neuladen.alle') || 0);
+    if (jetzt - irgendeins < 60000 && jetzt >= irgendeins) { return false; }
+    gemerkt[grund] = jetzt;
+    gemerkt.alle = jetzt;
+    try { window.name = 'empfang:' + JSON.stringify(gemerkt); } catch (e) { /* egal */ }
     merke('neuladen.' + grund, jetzt);
+    merke('neuladen.alle', jetzt);
     return true;
   }
 
@@ -561,6 +628,14 @@
     }
 
     takt();
+    // Sobald die Schriften geladen sind, die erste Ansicht neu zeichnen: Erst dann stimmen die Masse
+    // für das Einpassen langer Texte.
+    var neuZeichnen = function () { if (modus && modus !== 'schwarz' && folien[position]) { zeigeFolie(); } };
+    if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === 'function') {
+      document.fonts.ready.then(neuZeichnen);
+    } else {
+      window.setTimeout(neuZeichnen, 2500);
+    }
     window.setInterval(takt, 1000);
     window.setInterval(hole, ABFRAGE_MS);
     window.setInterval(wache, 20000);

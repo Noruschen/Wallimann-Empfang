@@ -113,7 +113,7 @@ Das Einrichten selbst ist noch nicht gemacht. Claude führt dich Schritt für Sc
 
 So läuft es, wenn alles eingerichtet ist:
 
-1. Die Änderung kommt auf GitHub in den Hauptzweig («main»). Das ist die Hauptversion des Projekts.
+1. Du sagst Claude, was sich ändern soll. Claude macht die Änderung, zeigt sie dir und legt sie nach deinem Einverständnis auf GitHub in den Hauptzweig («main»). Das ist die Hauptversion des Projekts.
 2. Cloudflare bemerkt die Änderung und veröffentlicht sie automatisch. Du musst nichts tun. Die Funktion heisst «Workers Builds».
 3. Die Anzeige am Fernseher lädt sich danach von selbst neu, innert etwa einer Minute.
 

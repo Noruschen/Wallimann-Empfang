@@ -19,7 +19,7 @@ Marke und Modell des Fernsehers sind noch nicht bekannt. Darum steht hier alles 
 3. **Energiesparen und Abschalten ausschalten.** Schaltet Energiesparen, automatisches Abschalten, den Bildschirmschoner und «Abschalten bei Inaktivität» aus. Die Bezeichnungen unterscheiden sich je nach Gerät.
 4. **Timer stellen.** Stellt den Ein- und Aus-Timer passend zu den Betriebszeiten: einschalten kurz vor 06:30, ausschalten nach 18:00. Die Betriebszeiten sind Montag bis Freitag. Ausserhalb zeigt die Seite ein schwarzes Bild. Eine Begrüssung hat Vorrang und erscheint auch ausserhalb der Betriebszeiten, sofern der Fernseher dann eingeschaltet ist.
 5. **Verhalten nach Stromausfall prüfen.** Schaltet der Fernseher von selbst wieder ein, und öffnet er die Anzeige wieder? Oft gibt es dafür eine Einstellung wie «Einschalten nach Stromausfall» oder ähnlich. Nicht bei allen Geräten ist sie vorhanden.
-6. **Kann der Fernseher etwas nicht?** Die wichtigste Frage: Kann der Browser nach dem Einschalten von selbst eine Adresse öffnen? Viele TV-Browser können das nicht. Dann müsste nach jedem Einschalten und nach jedem Stromausfall jemand den Link von Hand starten. Das ist im Alltag nicht tragbar. Gleiches gilt, wenn die Testseite zeigt, dass der Browser zu wenig kann, oder wenn sich die Energiespar- und Abschaltfunktionen nicht ausschalten lassen. In allen diesen Fällen braucht es das Zusatzgerät, siehe unten. Meldet das bitte Alexander.
+6. **Kann der Fernseher etwas nicht?** Die wichtigste Frage: Kann der Browser nach dem Einschalten von selbst eine Adresse öffnen? Viele TV-Browser können das nicht. Dann müsste nach jedem Einschalten und nach jedem Stromausfall jemand den Link von Hand starten, und es braucht ein Zusatzgerät, siehe unten. Dasselbe gilt, wenn die Testseite zeigt, dass der Browser zu wenig kann. Lassen sich Energiesparen oder automatisches Abschalten nicht ausschalten, meldet das bitte Alexander: Dann entscheiden wir gemeinsam, ob ein Zusatzgerät nötig ist.
 
 Die Anzeige ist in einfachem HTML, CSS und altem JavaScript geschrieben, damit sie auch in älteren TV-Browsern läuft. Ob der Browser des Fernsehers reicht, zeigt die Testseite. Zur Information: Gegen Einbrennen verschieben sich alle Inhalte alle 4 Minuten um wenige Pixel. Datum und Uhrzeit kommen vom Server (Zeitzone Europe/Zurich), die Uhr des Fernsehers hat keinen Einfluss.
 
@@ -40,7 +40,7 @@ Das Gerät am Fernseher braucht nur ausgehende Verbindungen ins Internet über H
 | Was | Wofür |
 |---|---|
 | Ausgehend per HTTPS zur Website bei Cloudflare | Anzeige und Daten. Die genaue Adresse steht erst nach dem Einrichten fest (`BEISPIEL-ADRESSE`). |
-| Nur mit Zusatzgerät für Solar: Verbindung zum Wechselrichter im Firmennetz | Abfrage der Solarwerte. Der Wechselrichter braucht dafür eine feste IP-Adresse, siehe Abschnitt zu Solar. |
+| Nur mit Zusatzgerät für Solar: Verbindung zum Wechselrichter im Firmennetz | Abfrage der Solarwerte. Dafür brauchen wir die IP-Adresse des Wechselrichters. Am besten ist sie fest vergeben, siehe Abschnitt zu Solar. |
 
 Hinweis: Welche Domains genau freigegeben werden müssen, ist noch offen, bis die Adresse bei Cloudflare bekannt ist. Die Seite holt die News und den Kalender nicht vom Fernseher, sondern von der Website bei Cloudflare.
 

@@ -22,11 +22,13 @@ export function istBeispiel(env) {
   return env.BEISPIELDATEN === '1';
 }
 
-function faellig(letzter, minuten, jetzt) {
-  return typeof letzter !== 'number' || jetzt - letzter >= minuten * 60000 - 20000;
+// toleranzMs: Der Taktgeber kommt nicht auf die Sekunde genau. Beim Kalender darf er darum
+// etwas früher dran sein. Bei den News gilt der Abstand streng (Toleranz 0).
+function faellig(letzter, minuten, jetzt, toleranzMs = 20000) {
+  return typeof letzter !== 'number' || jetzt - letzter >= minuten * 60000 - toleranzMs;
 }
 
-async function hole(abruf, url, zeitMs = 15000) {
+async function hole(abruf, url, zeitMs = 10000) {
   return abruf(url, {
     headers: { 'User-Agent': KENNUNG, Accept: '*/*' },
     redirect: 'follow',
@@ -37,9 +39,9 @@ async function hole(abruf, url, zeitMs = 15000) {
 // Fehlertext für die Statusseite. Adressen werden nie übernommen, weil der Kalender-Link geheim ist.
 function kurzerFehler(fehler) {
   const name = fehler && fehler.name;
-  if (name === 'TimeoutError' || name === 'AbortError') return 'Zeitüberschreitung beim Abruf';
+  if (name === 'TimeoutError' || name === 'AbortError') return 'Zeitüberschreitung beim Abruf.';
   if (fehler && fehler.oeffentlich) return fehler.message;
-  return 'Abruf fehlgeschlagen';
+  return 'Abruf fehlgeschlagen.';
 }
 
 function oeffentlicherFehler(text) {
@@ -113,7 +115,7 @@ export async function newsAbrufen(env, db, e, zustand, jetzt, abruf = fetch) {
     neu.anzahl = artikel.length;
   } catch (fehler) {
     // Die zuletzt gespeicherten Artikel bleiben stehen und laufen weiter.
-    neu.fehler = String((fehler && fehler.message) || 'Abruf fehlgeschlagen').slice(0, 300);
+    neu.fehler = String((fehler && fehler.message) || 'Abruf fehlgeschlagen.').slice(0, 300).replace(/[^.!?]$/, '$&.');
   }
   await speicher.setzeZustand(db, { news: neu });
 }
@@ -130,7 +132,7 @@ export async function bildSchritt(env, db, abruf = fetch) {
       const bild = leseArtikelBild(await antwort.text());
       await speicher.merkeArtikelBild(db, zeile.link, bild && /^https:\/\//.test(bild.bildUrl) ? bild : null);
     } else {
-      const antwort = await hole(abruf, zeile.quelle_bild, 20000);
+      const antwort = await hole(abruf, zeile.quelle_bild, 12000);
       const typ = (antwort.headers.get('content-type') || '').split(';')[0].trim().toLowerCase();
       if (!antwort.ok || !/^image\/(jpeg|png|webp|gif)$/.test(typ)) throw new Error('kein Bild');
       const daten = await antwort.arrayBuffer();
@@ -151,7 +153,7 @@ export async function solarAktualisieren(env, db, e, jetzt) {
   // 'empfang': Die Werte schickt ein Zusatzgerät im Firmennetz an /api/solar, hier ist nichts zu tun.
   // Eine weitere Quelle (zum Beispiel Fronius Solar.web) kann später hier dazukommen.
   if (e.solarQuelle === 'beispiel') {
-    await speicher.setzeZustand(db, { solar: beispielSolar(jetzt) });
+    await speicher.setzeZustand(db, { solar: { ...beispielSolar(jetzt), beispiel: true } });
   }
 }
 
@@ -188,7 +190,7 @@ export function pruefeAlarme({ jetzt, e, zustand, beispiel = false }) {
     if (typeof bezug === 'number' && jetzt - bezug > ALARM_NACH_MS) {
       stoerungen.kalender = 'Der Kalender konnte seit über einer Stunde nicht geladen werden. '
         + (k.fehler ? `Meldung: ${k.fehler} ` : '')
-        + 'Solange erscheinen am Empfang keine Begrüssungen.';
+        + 'Bis dahin erscheinen am Empfang keine Begrüssungen.';
     }
   }
   const a = zustand.anzeige;
@@ -241,17 +243,35 @@ export async function taktgeber(env, e, jetzt, { abruf = fetch, warte } = {}) {
   }
 
   if (!beispiel) {
-    if (faellig(zustand.news && zustand.news.letzterVersuch, e.newsMinuten, jetzt)) {
-      await sicher(() => newsAbrufen(env, db, e, zustand, jetzt, abruf));
-    } else {
-      // Zwischen den Abrufen der Liste: Bilder nachladen, höchstens drei Abrufe pro Minute
-      await sicher(async () => {
-        for (let i = 0; i < 3; i++) {
-          if (!(await bildSchritt(env, db, abruf))) break;
-          if (i < 2) await pause(ABSTAND_MICHELNEWS_MS);
+    await sicher(async () => {
+      // Abstand zur Quelle einhalten, auch über zwei Takte hinweg: «quelle.zuletzt» ist der
+      // Zeitpunkt des letzten Abrufs bei michelnews.ch.
+      const beginn = Date.now();
+      let zuletzt = zustand.quelle && typeof zustand.quelle.zuletzt === 'number' ? zustand.quelle.zuletzt : 0;
+      let abgerufen = false;
+      const warteAbstand = async () => {
+        const rest = ABSTAND_MICHELNEWS_MS - (Date.now() - zuletzt);
+        if (rest > 0 && rest <= ABSTAND_MICHELNEWS_MS) await pause(rest);
+      };
+      const merke = () => { zuletzt = Date.now(); abgerufen = true; };
+
+      if (faellig(zustand.news && zustand.news.letzterVersuch, e.newsMinuten, jetzt, 0)) {
+        await warteAbstand();
+        await newsAbrufen(env, db, e, zustand, jetzt, abruf);
+        merke();
+      } else {
+        // Zwischen den Abrufen der Liste: Bilder nachladen, höchstens zwei Abrufe pro Minute.
+        // Der zweite entfällt, wenn der Takt schon lange läuft: So überschneiden sich zwei Takte nie.
+        for (let i = 0; i < 2; i++) {
+          if (i > 0 && Date.now() - beginn > 25000) break;
+          await warteAbstand();
+          const gabArbeit = await bildSchritt(env, db, abruf);
+          if (!gabArbeit) break;
+          merke();
         }
-      });
-    }
+      }
+      if (abgerufen) await speicher.setzeZustand(db, { quelle: { zuletzt } });
+    });
   }
 
   await sicher(() => solarAktualisieren(env, db, e, jetzt));
