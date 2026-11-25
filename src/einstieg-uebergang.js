@@ -10,9 +10,10 @@
 
 import app from './worker.js';
 
-// Wird beim Bauen eingesetzt: die Kennung des geprüften Stands auf GitHub
-const STAND = EMPFANG_STAND;
-const QUELLE = 'https://raw.githubusercontent.com/Noruschen/Wallimann-Empfang/' + STAND + '/public';
+// Die Kennung des geprüften Stands auf GitHub steht in der Einstellung STAND (kein Geheimnis).
+// Nur eine vollständige Kennung wird angenommen, damit nie ein beliebiger Zweig ausgeliefert wird.
+const PROJEKT = 'https://raw.githubusercontent.com/Noruschen/Wallimann-Empfang/';
+const STAND_FORM = /^[a-f0-9]{40}$/;
 
 const TYPEN = {
   html: 'text/html; charset=utf-8',
@@ -40,8 +41,10 @@ function text(inhalt, status) {
   return new Response(inhalt, { status, headers: { ...KOPF, 'Content-Type': TYPEN.txt, 'Cache-Control': 'no-store' } });
 }
 
-async function holeDatei(request) {
+async function holeDatei(request, stand) {
   if (request.method !== 'GET' && request.method !== 'HEAD') return text('Nicht erlaubt', 405);
+  if (!STAND_FORM.test(String(stand || ''))) return text('Im Moment nicht erreichbar.', 503);
+  const QUELLE = PROJEKT + stand + '/public';
   const url = new URL(request.url);
   let pfad = url.pathname;
   if (ORDNER.includes(pfad)) {
@@ -69,7 +72,7 @@ async function holeDatei(request) {
 }
 
 function mitDateien(env) {
-  return { ...env, ASSETS: { fetch: holeDatei } };
+  return { ...env, ASSETS: { fetch: (request) => holeDatei(request, env.STAND) } };
 }
 
 export default {
