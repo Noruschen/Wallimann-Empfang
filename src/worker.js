@@ -22,7 +22,7 @@ import {
   erstelleSitzung, pruefeSitzung, leseCookie, SITZUNG_MS,
 } from './schutz.js';
 import {
-  taktgeber, kalenderAbrufen, pruefeSolarWerte, pruefeAlarme, istBeispiel, tagesBeginn,
+  taktgeber, kalenderAbrufen, pruefeSolarWerte, pruefeAlarme, istBeispiel, tagesBeginn, newsPlan,
 } from './aufgaben.js';
 import { mailEingerichtet } from './mail.js';
 import { BEISPIEL_NEWS, BEISPIEL_VORLAUF_MIN, BEISPIEL_NACHLAUF_MIN } from './beispiel.js';
@@ -267,6 +267,7 @@ async function statusDaten(env) {
       quelle: beispiel ? 'Beispieldaten' : (n.quelle || (e.feedUrl ? 'Feed' : 'Startseite')),
       letzterErfolg: alter(n.letzterErfolg, jetzt),
       letzterVersuch: alter(n.letzterVersuch, jetzt),
+      naechsterAbruf: beispiel ? null : alter(newsPlan(n, e, jetzt).naechster, jetzt),
       fehler: n.fehler || null,
       anzahl: beispiel ? BEISPIEL_NEWS.length : (n.anzahl ?? 0),
       bilderOffen,

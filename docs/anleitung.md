@@ -58,7 +58,8 @@ Der Fernseher übernimmt Änderungen innert einer Minute.
 | Nur diese Gemeinden | Filter nach Gemeinde. Leer heisst alle. | Leer (alle) |
 | Nur diese Rubriken | Filter nach Rubrik. Leer heisst alle. | Leer (alle) |
 | Adresse des RSS-Feeds | Sobald eingetragen, nimmt die Website den Feed statt der Startseite von michelnews.ch. | Leer (Startseite auslesen) |
-| News holen alle | Wie oft die News geholt werden, mindestens alle 15 Minuten. | 15 Minuten |
+| News holen um | Zu diesen Uhrzeiten holt die Website jeden Tag die Artikelliste von michelnews.ch. Beim ersten Start holt sie sofort. Scheitert ein Abruf, versucht sie es alle 15 Minuten nochmals. | 08:00 und 13:00 |
+| Nur ohne Uhrzeiten: News holen alle | Gilt nur, wenn das Feld mit den Uhrzeiten leer ist. Dann holt die Website im Abstand, mindestens alle 15 Minuten. | 15 Minuten |
 | Quelle (Solar) | «ausgeschaltet», «Beispieldaten» oder «Werte von einem Zusatzgerät». | Ausgeschaltet |
 | Solar-Ansicht nach jedem wievielten Artikel | Wie oft die Solar-Ansicht dazwischen kommt. | Nach jedem 3. Artikel |
 | Sekunden pro Ansicht | Wie lange jede Ansicht steht (10 bis 15). | 12 Sekunden |

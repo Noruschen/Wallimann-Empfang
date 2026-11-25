@@ -23,7 +23,7 @@ window.EMPFANG_DEMO = function (art) {
   var solar = { zeit: 0, leistungKw: 86.4, tagesertragKwh: 412, gesamtMwh: 1284, beispiel: true };
   var besuche = [
     { von: 0, bis: 9e15, firma: 'Muster Verpackungen AG', name: 'Frau Anna Beispiel', ansprechperson: 'Alexander Fischer' },
-    { von: 0, bis: 9e15, firma: 'Gemeinde Beromünster', name: null, ansprechperson: 'Petra Muster' }
+    { von: 0, bis: 9e15, firma: 'Beispiel Handwerk GmbH', name: null, ansprechperson: 'Petra Muster' }
   ];
 
   // Mittwoch, 25.11.2026, 09:42 Zürcher Zeit (Winterzeit, eine Stunde vor UTC)

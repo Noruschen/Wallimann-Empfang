@@ -34,7 +34,7 @@ export function beispielKalender(jetzt) {
   const block = Math.floor(jetzt / (20 * min)) * 20 * min;
   const termine = [
     termin('beispiel-1@empfang', block + 5 * min, 'Muster Verpackungen AG | Frau Anna Beispiel', fischer),
-    termin('beispiel-2@empfang', block + 5 * min, 'Gemeinde Beromünster', muster),
+    termin('beispiel-2@empfang', block + 5 * min, 'Beispiel Handwerk GmbH', muster),
     termin('beispiel-3@empfang', block + 25 * min, 'Beispiel Treuhand GmbH | Herr Peter Probe', fischer),
     termin('beispiel-fremd@empfang', block + 5 * min, 'Fremde Firma https://example.com', { name: 'Unbekannt', adresse: 'jemand@example.com' }),
     termin('beispiel-privat@empfang', block + 5 * min, 'Zahnarzt', fischer, 'CLASS:PRIVATE'),

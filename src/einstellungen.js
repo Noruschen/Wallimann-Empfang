@@ -15,7 +15,8 @@ export const STANDARD = Object.freeze({
 
   // News
   newsAnzahl: 10,
-  newsMinuten: 15,             // Startseite oder Feed höchstens alle 15 Minuten holen
+  newsZeiten: ['08:00', '13:00'], // News jeden Tag zu diesen Uhrzeiten holen (Zürcher Zeit)
+  newsMinuten: 15,             // nur ohne Uhrzeiten: Abstand in Minuten, mindestens 15
   newsOrte: [],                // leer bedeutet alle Gemeinden
   newsRubriken: [],            // leer bedeutet alle Rubriken
   feedUrl: '',                 // Adresse des RSS-Feeds, sobald es ihn gibt
@@ -45,7 +46,8 @@ function ganzzahl(wert, min, max, ersatz) {
 }
 
 function uhrzeit(wert, ersatz) {
-  const m = /^(\d{1,2}):(\d{2})$/.exec(String(wert ?? '').trim());
+  // Erlaubt sind 08:00 und die Schweizer Schreibweise 08.00
+  const m = /^(\d{1,2})[:.](\d{2})$/.exec(String(wert ?? '').trim());
   if (!m) return ersatz;
   const h = Number(m[1]);
   const min = Number(m[2]);
@@ -62,6 +64,18 @@ function liste(wert, maxEintraege, maxLaenge) {
     if (aus.length >= maxEintraege) break;
   }
   return aus;
+}
+
+// Liste von Uhrzeiten, sortiert und ohne Doppelte. Ungültige Einträge fallen weg.
+function zeitListe(wert) {
+  const roh = Array.isArray(wert) ? wert : String(wert ?? '').split(/[,;\s]+/);
+  const aus = [];
+  for (const eintrag of roh) {
+    const z = uhrzeit(eintrag, null);
+    if (z && z !== '24:00' && !aus.includes(z)) aus.push(z);
+    if (aus.length >= 6) break;
+  }
+  return aus.sort();
 }
 
 function domainListe(wert) {
@@ -104,6 +118,7 @@ export function pruefeEinstellungen(roh) {
     domains: domains.length ? domains : [...s.domains],
     kalenderMinuten: ganzzahl(r.kalenderMinuten, 1, 60, s.kalenderMinuten),
     newsAnzahl: ganzzahl(r.newsAnzahl, 1, 20, s.newsAnzahl),
+    newsZeiten: r.newsZeiten === undefined ? [...s.newsZeiten] : zeitListe(r.newsZeiten),
     newsMinuten: ganzzahl(r.newsMinuten, 15, 240, s.newsMinuten),
     newsOrte: liste(r.newsOrte ?? s.newsOrte, 30, 60),
     newsRubriken: liste(r.newsRubriken ?? s.newsRubriken, 30, 60),

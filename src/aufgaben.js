@@ -28,6 +28,39 @@ function faellig(letzter, minuten, jetzt, toleranzMs = 20000) {
   return typeof letzter !== 'number' || jetzt - letzter >= minuten * 60000 - toleranzMs;
 }
 
+const NEWS_WIEDERHOLEN_MS = 15 * 60 * 1000; // nach einem gescheiterten Abruf frühestens so spät nochmals
+
+// Wann werden die News geholt? Gibt zurück, ob der Abruf jetzt fällig ist und wann der nächste ansteht.
+// Mit festen Uhrzeiten (Standard 08:00 und 13:00, Zürcher Zeit): einmal nach jeder Uhrzeit.
+// Scheitert der Abruf oder wurde noch nie geladen: alle 15 Minuten nochmals versuchen.
+// Ohne Uhrzeiten: im eingestellten Abstand, mindestens 15 Minuten.
+export function newsPlan(news, e, jetzt) {
+  const versuch = news && typeof news.letzterVersuch === 'number' ? news.letzterVersuch : null;
+  const erfolg = news && typeof news.letzterErfolg === 'number' ? news.letzterErfolg : null;
+  const zeiten = Array.isArray(e.newsZeiten) ? e.newsZeiten : [];
+  if (!zeiten.length) {
+    const abstand = e.newsMinuten * 60000;
+    const istFaellig = versuch === null || jetzt - versuch >= abstand;
+    return { faellig: istFaellig, naechster: istFaellig ? jetzt : versuch + abstand };
+  }
+  // Alle Termine von gestern, heute und morgen in Zürcher Zeit
+  const termine = [];
+  for (const tage of [-1, 0, 1]) {
+    const t = zuerichTeile(new Date(jetzt + tage * 24 * 60 * 60 * 1000));
+    for (const z of zeiten) {
+      const [stunde, minute] = z.split(':').map(Number);
+      termine.push(zuerichZuUtc(t.jahr, t.monat, t.tag, stunde, minute).getTime());
+    }
+  }
+  termine.sort((a, b) => a - b);
+  const letzterTermin = Math.max(...termine.filter((t) => t <= jetzt));
+  const naechsterTermin = Math.min(...termine.filter((t) => t > jetzt));
+  const offen = erfolg === null || erfolg < letzterTermin;
+  if (!offen) return { faellig: false, naechster: naechsterTermin };
+  const darfWieder = versuch === null || jetzt - versuch >= NEWS_WIEDERHOLEN_MS;
+  return { faellig: darfWieder, naechster: darfWieder ? jetzt : versuch + NEWS_WIEDERHOLEN_MS };
+}
+
 async function hole(abruf, url, zeitMs = 10000) {
   return abruf(url, {
     headers: { 'User-Agent': KENNUNG, Accept: '*/*' },
@@ -255,11 +288,11 @@ export async function taktgeber(env, e, jetzt, { abruf = fetch, warte } = {}) {
       // Den Zeitpunkt sofort festhalten, nicht erst am Ende des Takts
       const merke = async () => { zuletzt = Date.now(); await speicher.setzeZustand(db, { quelle: { zuletzt } }); };
 
-      if (faellig(zustand.news && zustand.news.letzterVersuch, e.newsMinuten, jetzt, 0)) {
+      if (newsPlan(zustand.news, e, jetzt).faellig) {
         await warteAbstand();
         await merke();
         // Als Zeitpunkt des Versuchs zählt der echte Abruf, nicht der Beginn des Takts:
-        // So liegen zwischen zwei Abrufen der Liste immer volle 15 Minuten.
+        // So liegen zwischen zwei Abrufen der Liste immer mindestens volle 15 Minuten.
         await newsAbrufen(env, db, e, zustand, Math.max(jetzt, zuletzt), abruf);
         await merke();
       } else {

@@ -48,6 +48,7 @@
     f.domains.value = (e.domains || []).join(', ');
     f.newsOrte.value = (e.newsOrte || []).join(', ');
     f.newsRubriken.value = (e.newsRubriken || []).join(', ');
+    f.newsZeiten.value = (e.newsZeiten || []).join(', ');
     f.solarQuelle.value = e.solarQuelle;
     f.design.value = String(e.design);
     // 24:00 kennt das Zeitfeld nicht
@@ -72,6 +73,7 @@
       domains: f.domains.value,
       kalenderMinuten: Number(f.kalenderMinuten.value),
       newsAnzahl: Number(f.newsAnzahl.value),
+      newsZeiten: f.newsZeiten.value,
       newsMinuten: Number(f.newsMinuten.value),
       newsOrte: f.newsOrte.value,
       newsRubriken: f.newsRubriken.value,
@@ -112,6 +114,9 @@
     zeile(t, ['Besuche heute', String(s.besucheHeute)]);
     zeile(t, ['News zuletzt geladen', (s.beispiel ? '' : vor(s.news.letzterErfolg) + ', ') + s.news.anzahl + ' Artikel, Quelle: ' + s.news.quelle],
       [null, s.news.fehler ? 'schlecht' : (s.news.letzterErfolg || s.beispiel ? 'gut' : '')]);
+    if (s.news.naechsterAbruf) {
+      zeile(t, ['News: nächster Abruf', s.news.naechsterAbruf.vorMin >= 0 ? 'in der nächsten Minute' : s.news.naechsterAbruf.text]);
+    }
     zeile(t, ['Bilder noch ausstehend', String(s.news.bilderOffen)]);
     var solarText = { aus: 'ausgeschaltet', beispiel: 'Beispieldaten', empfang: 'Zusatzgerät' }[s.solar.quelle] || s.solar.quelle;
     zeile(t, ['Solar', solarText + (s.solar.quelle !== 'aus' ? ', zuletzt ' + vor(s.solar.letzterEmpfang) : '')],

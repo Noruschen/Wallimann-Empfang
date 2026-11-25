@@ -489,7 +489,8 @@ describe('News', () => {
     assert.ok(pausen.length >= 2 && pausen.slice(1).every((p) => p >= 10000));
   });
 
-  test('die Liste wird frühestens nach vollen 15 Minuten wieder geholt', async () => {
+  test('ohne Uhrzeiten wird die Liste im Abstand geholt, frühestens nach vollen 15 Minuten', async () => {
+    await setzeEinstellungen({ newsZeiten: [] });
     const abruf = news();
     await takt(abruf);
     const listen = () => abruf.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
@@ -499,6 +500,66 @@ describe('News', () => {
     assert.equal(listen(), 1);
     setzeZeit(START + 15 * MIN);
     await takt(abruf);
+    assert.equal(listen(), 2);
+  });
+
+  test('die News werden jeden Tag um 08:00 und 13:00 geholt, beim ersten Start sofort', async () => {
+    const abruf = news();
+    const listen = () => abruf.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
+    const um = async (stunde, minute, tag = 25) => { setzeZeit(Date.UTC(2026, 10, tag, stunde - 1, minute, 0)); await takt(abruf); return listen(); };
+    assert.equal(await um(9, 0), 1);       // erster Start um 09:00: sofort holen
+    assert.equal(await um(9, 15), 1);
+    assert.equal(await um(10, 0), 1);
+    assert.equal(await um(12, 59), 1);
+    assert.equal(await um(13, 0), 2);      // 13:00
+    assert.equal(await um(13, 15), 2);
+    assert.equal(await um(18, 0), 2);
+    assert.equal(await um(7, 59, 26), 2);  // nächster Tag, kurz vor 08:00
+    assert.equal(await um(8, 0, 26), 3);   // 08:00
+    assert.equal(await um(8, 30, 26), 3);
+    assert.equal(await um(13, 0, 28), 4);  // auch am Samstag
+  });
+
+  test('scheitert der Abruf um 13:00, wird alle 15 Minuten nochmals versucht, bis es klappt', async () => {
+    const gut = news();
+    await takt(gut);                                     // 09:00, erster Start
+    const kaputt = attrappe([['kalender.invalid', () => ics([])], ['michelnews.ch', new Response('weg', { status: 503 })]]);
+    const versuche = () => kaputt.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
+    const dreizehn = START + 4 * 60 * MIN;
+    setzeZeit(dreizehn); await takt(kaputt);
+    assert.equal(versuche(), 1);
+    setzeZeit(dreizehn + 5 * MIN); await takt(kaputt);
+    assert.equal(versuche(), 1);                         // noch keine 15 Minuten
+    setzeZeit(dreizehn + 15 * MIN); await takt(kaputt);
+    assert.equal(versuche(), 2);
+    assert.equal((await anzeige()).inhalt.news.length, 10); // die alten Artikel laufen weiter
+    setzeZeit(dreizehn + 30 * MIN); await takt(gut);     // jetzt klappt es
+    const erfolgreich = gut.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
+    setzeZeit(dreizehn + 45 * MIN); await takt(gut);
+    assert.equal(gut.aufrufe.filter((u) => u === 'https://michelnews.ch/').length, erfolgreich); // danach Ruhe bis 08:00
+  });
+
+  test('die Statusseite zeigt den nächsten Abruf der News, Uhrzeiten lassen sich einstellen', async () => {
+    await takt(news());
+    const cookie = await sitzung();
+    let s = (await rufe('/api/status', { kopf: { Cookie: cookie } })).inhalt;
+    assert.equal(s.news.naechsterAbruf.text, '25.11.2026, 13:00');
+    assert.deepEqual(s.einstellungen.newsZeiten, ['08:00', '13:00']);
+    // Schweizer Schreibweise mit Punkt, unsortiert, mit einem ungültigen Eintrag
+    const r = await rufe('/api/status/einstellungen', { methode: 'POST', kopf: { Cookie: cookie, Origin: BASIS }, daten: { newsZeiten: '17.30, 6.15, 25:00, mittag' } });
+    assert.deepEqual(r.inhalt.einstellungen.newsZeiten, ['06:15', '17:30']);
+    s = (await rufe('/api/status', { kopf: { Cookie: cookie } })).inhalt;
+    assert.equal(s.news.naechsterAbruf.text, '25.11.2026, 17:30');
+  });
+
+  test('Zeitumstellung: 08:00 bleibt 08:00 Zürcher Zeit (29.03.2026)', async () => {
+    const abruf = news();
+    const listen = () => abruf.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
+    setzeZeit(Date.UTC(2026, 2, 28, 12, 0, 0)); await takt(abruf);  // Samstag, 13:00 Winterzeit
+    assert.equal(listen(), 1);
+    setzeZeit(Date.UTC(2026, 2, 29, 5, 59, 0)); await takt(abruf);  // Sonntag, 07:59 Sommerzeit
+    assert.equal(listen(), 1);
+    setzeZeit(Date.UTC(2026, 2, 29, 6, 0, 0)); await takt(abruf);   // Sonntag, 08:00 Sommerzeit
     assert.equal(listen(), 2);
   });
 
@@ -516,7 +577,7 @@ describe('News', () => {
 
   test('michelnews.ch nicht erreichbar: die gespeicherten Artikel laufen weiter', async () => {
     await takt(news());
-    setzeZeit(START + 15 * MIN);
+    setzeZeit(START + 4 * 60 * MIN); // 13:00: der nächste feste Abruf
     await takt(attrappe([['kalender.invalid', () => ics([])], ['michelnews.ch', new Response('weg', { status: 503 })]]));
     const r = (await anzeige()).inhalt;
     assert.equal(r.news.length, 10);
@@ -528,7 +589,7 @@ describe('News', () => {
 
   test('Redesign der Startseite (keine Artikel gefunden): Fehler auf der Statusseite, alte Artikel bleiben', async () => {
     await takt(news());
-    setzeZeit(START + 15 * MIN);
+    setzeZeit(START + 4 * 60 * MIN); // 13:00: der nächste feste Abruf
     await takt(attrappe([['kalender.invalid', () => ics([])], ['michelnews.ch', '<html><body><h1>Neues Design</h1></body></html>']]));
     assert.equal((await anzeige()).inhalt.news.length, 10);
     const cookie = await sitzung();
@@ -668,7 +729,7 @@ describe('Testversion mit Beispieldaten', () => {
     const beispiel = { ...env, BEISPIELDATEN: '1', KALENDER_URL: undefined };
     setzeZeit(Math.floor(START / (20 * MIN)) * 20 * MIN + 3 * MIN); // im Begrüssungsfenster des Beispiels
     const r = (await anzeige(beispiel)).inhalt;
-    assert.deepEqual(r.begruessungen.map((b) => b.firma).sort(), ['Gemeinde Beromünster', 'Muster Verpackungen AG']);
+    assert.deepEqual(r.begruessungen.map((b) => b.firma).sort(), ['Beispiel Handwerk GmbH', 'Muster Verpackungen AG']);
     assert.equal(r.news.length, 5);
     assert.equal(r.solar.beispiel, true);
   });

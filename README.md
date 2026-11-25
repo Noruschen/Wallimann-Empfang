@@ -30,7 +30,7 @@ In der Testversion wechseln Begrüssung und News alle 10 Minuten ab, damit man b
 npm test
 ```
 
-177 Tests prüfen Zeitlogik, Kalender, News, Solar, Schutz und Ausfälle. Sie brauchen kein Internet.
+181 Tests prüfen Zeitlogik, Kalender, News, Solar, Schutz und Ausfälle. Sie brauchen kein Internet.
 
 Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neuladen ohne Internet, Wechsel der Ansichten). Sie brauchen das Werkzeug Playwright, das bewusst nicht zum Projekt gehört: zuerst `npm start`, dann in einem zweiten Fenster `node test/browser/anzeige.mjs`.
 
@@ -76,7 +76,7 @@ Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neulade
 
 **Begrüssung nur mit frischen Daten.** Der Server gibt einen Namen erst kurz vor dem Zeitfenster heraus und nur, wenn der Kalender in den letzten 15 Minuten geladen wurde. Die Anzeige zeigt ihn nur, wenn sie in den letzten 2 Minuten Kontakt zum Server hatte, und speichert Namen nie auf dem Gerät.
 
-**News über eine einzige Funktion.** Heute liest sie die Startseite von michelnews.ch aus und holt das grösste Bild von der Artikelseite. Sobald die Adresse eines RSS-Feeds eingetragen ist, nimmt dieselbe Funktion den Feed.
+**News über eine einzige Funktion.** Heute liest sie jeden Tag um 08:00 und um 13:00 die Startseite von michelnews.ch aus und holt das grösste Bild von der Artikelseite. Sobald die Adresse eines RSS-Feeds eingetragen ist, nimmt dieselbe Funktion den Feed.
 
 **Einstellungen auf der Statusseite statt im Code.** So lassen sich Zeiten, Filter und Design am iPhone ändern, ohne etwas zu veröffentlichen. Geheimnisse sind davon getrennt und stehen nur in den geschützten Einstellungen von Cloudflare.
 
