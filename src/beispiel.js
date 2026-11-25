@@ -51,7 +51,7 @@ const BILD = 'https://michelnews.ch/fileadmin/_processed_/';
 
 // Beispielartikel von michelnews.ch vom 25.11.2026. Die Bilder werden direkt von dort geladen.
 export const BEISPIEL_NEWS = [
-  { link: 'https://michelnews.ch/news/zauberhafte-stimmung-am-raebeliechtli-umzug', titel: 'Zauberhafte Stimmung am Räbeliechtli-Umzug', ort: 'Rickenbach', rubrik: 'Vereinsleben', datum: '2026-11-25',
+  { link: 'https://michelnews.ch/news/zauberhafte-stimmung-am-raebeliechtli-umzug', titel: 'Zauberhafte Stimmung am Räbeliechtli-Umzug', ort: 'Beromünster', rubrik: 'Vereinsleben', datum: '2026-11-24',
     bild: BILD + 'a/1/csm_Zauberhafte_Stimmung_am_R%C3%A4beliechtli-Umzug_R%C3%A4beliechtli_26_c4423418e9.jpeg', bild_breite: 1200, bild_hoehe: 900 },
   { link: 'https://michelnews.ch/news/unangemeldete-brandschutzkontrollen', titel: 'Unangemeldete Brandschutzkontrollen', ort: 'Kanton Luzern', rubrik: 'Blaulicht', datum: '2026-11-25',
     bild: BILD + '8/7/csm_Unangemeldete_Brandschutzkontrollen__Rettungszeichen_Feuerl%C3%B6scher_5aff5e55ae.png', bild_breite: 1200, bild_hoehe: 800 },
@@ -59,7 +59,7 @@ export const BEISPIEL_NEWS = [
     bild: BILD + '5/4/csm_01_8a140bf472.jpg', bild_breite: 1200, bild_hoehe: 730 },
   { link: 'https://michelnews.ch/news/messerspitze-safran', titel: '«Eine Messerspitze Safran» mit Michelsämter Note', ort: 'Beromünster', rubrik: 'Kultur', datum: '2026-11-24',
     bild: BILD + 'a/f/csm_Arancini_039_8ccb1cf1a4.jpg', bild_breite: 720, bild_hoehe: 600 },
-  { link: 'https://michelnews.ch/news/erfolgreiches-pilotprojekt-geht-zu-ende', titel: 'Erfolgreiches Pilotprojekt geht zu Ende', ort: 'Beromünster', rubrik: 'Aus der Gemeinde', datum: '2026-11-24',
+  { link: 'https://michelnews.ch/news/erfolgreiches-pilotprojekt-geht-zu-ende', titel: 'Erfolgreiches Pilotprojekt geht zu Ende', ort: 'Eich', rubrik: 'Aus der Gemeinde', datum: '2026-11-24',
     bild: BILD + '1/8/csm_20250527_095538_c2ac6fd049.jpg', bild_breite: 1200, bild_hoehe: 555 },
 ];
 

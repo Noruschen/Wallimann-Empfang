@@ -342,7 +342,7 @@ export default {
       if (pfad.startsWith('/api/')) return json({ ok: false, fehler: 'Nicht gefunden' }, 404);
       // Kurze Adressen zum Eintippen am Fernseher. Beide Ziele enthalten keine Besuchsdaten.
       if (pfad === '/') return new Response(null, { status: 302, headers: { Location: '/test/', ...KOPF } });
-      if (pfad === '/vorschau') return new Response(null, { status: 302, headers: { Location: '/anzeige/?demo=alles', ...KOPF } });
+      if (pfad === '/vorschau') return new Response(null, { status: 302, headers: { Location: '/anzeige/?demo=news', ...KOPF } });
     } catch (fehler) {
       // Nie Einzelheiten nach aussen geben
       console.log('Fehler bei', pfad, fehler && fehler.name);

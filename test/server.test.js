@@ -184,7 +184,7 @@ describe('Schutz der Anzeige', () => {
     assert.equal(start.antwort.headers.get('location'), '/test/');
     const vorschau = await rufe('/vorschau');
     assert.equal(vorschau.status, 302);
-    assert.equal(vorschau.antwort.headers.get('location'), '/anzeige/?demo=alles');
+    assert.equal(vorschau.antwort.headers.get('location'), '/anzeige/?demo=news');
   });
 
   test('unbekannte Adressen unter /api/ geben nichts heraus', async () => {

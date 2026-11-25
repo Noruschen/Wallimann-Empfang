@@ -28,6 +28,7 @@ export const STANDARD = Object.freeze({
   // Anzeige
   dauerAnsichtSek: 12,         // Sekunden pro News- oder Solar-Ansicht
   design: 1,                   // 1 Papier, 2 Rot, 3 Dunkel, 4 Sprechblase
+  drehung: 0,                  // 0 quer, 90 oder 270: Fernseher hängt hochkant, die Seite dreht ihren Inhalt
   betriebTage: [1, 2, 3, 4, 5],// 1 = Montag bis 7 = Sonntag
   betriebVon: '06:30',
   betriebBis: '18:00',
@@ -127,6 +128,7 @@ export function pruefeEinstellungen(roh) {
     solarNachArtikeln: ganzzahl(r.solarNachArtikeln, 1, 10, s.solarNachArtikeln),
     dauerAnsichtSek: ganzzahl(r.dauerAnsichtSek, 10, 15, s.dauerAnsichtSek),
     design: ganzzahl(r.design, 1, 4, s.design),
+    drehung: [90, 270].includes(Number(r.drehung)) ? Number(r.drehung) : 0,
     betriebTage: tage,
     betriebVon: uhrzeit(r.betriebVon, s.betriebVon),
     betriebBis: uhrzeit(r.betriebBis, s.betriebBis),

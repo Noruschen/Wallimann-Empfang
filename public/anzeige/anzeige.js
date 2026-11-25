@@ -30,6 +30,7 @@
     dauerBesuchSek: 10,
     solarNachArtikeln: 3,
     design: 1,
+    drehung: 0,
     betrieb: { tage: [1, 2, 3, 4, 5], von: '06:30', bis: '18:00' }
   };
 
@@ -82,6 +83,8 @@
   var demo = parameter('demo');
   var halt = parameter('halt') === '1';
   var designWunsch = parseInt(parameter('design'), 10) || 0;
+  var drehungWunsch = parameter('drehung') === null ? null : (parseInt(parameter('drehung'), 10) || 0);
+  var hochkant = false;        // true: Bühne 1'080 x 1'920
 
   var daten = null;            // letzte Antwort des Servers (ohne Begrüssungen aus dem Speicher)
   var begruessungen = [];      // nur im Arbeitsspeicher, nie auf dem Gerät gespeichert
@@ -150,22 +153,41 @@
 
   // ---------- Grösse und Design ----------
 
+  // Ausrichtung: Die Bühne ist quer 1'920 x 1'080 oder hochkant 1'080 x 1'920.
+  // Hochkant gilt in zwei Fällen:
+  //   1. Das Fenster selbst ist höher als breit (das Gerät dreht das Bild schon selbst).
+  //   2. Auf der Statusseite ist eine Drehung eingestellt. Ein gewöhnlicher Fernseher, der hochkant
+  //      an der Wand hängt, zeigt sein Bild weiter quer. Dann dreht die Seite ihren Inhalt um 90 Grad.
+  function drehung() {
+    var d = drehungWunsch !== null ? drehungWunsch : (+einstellungen().drehung || 0);
+    return d === 90 || d === 270 ? d : 0;
+  }
+
   function passeGroesseAn() {
     var b = window.innerWidth || document.documentElement.clientWidth || 1920;
     var h = window.innerHeight || document.documentElement.clientHeight || 1080;
-    var f = Math.min(b / 1920, h / 1080);
-    var x = Math.round((b - 1920 * f) / 2);
-    var y = Math.round((h - 1080 * f) / 2);
-    var t = 'translate(' + x + 'px,' + y + 'px) scale(' + f + ')';
+    var dreh = drehung();
+    var hoch = dreh ? true : h > b;
+    var bb = hoch ? 1080 : 1920;   // Breite der Bühne
+    var bh = hoch ? 1920 : 1080;   // Höhe der Bühne
+    // Nach einer Drehung liegt die Breite der Bühne entlang der Höhe des Fensters
+    var f = dreh ? Math.min(h / bb, b / bh) : Math.min(b / bb, h / bh);
+    // Von rechts nach links gelesen: Bühne auf ihre Mitte setzen, skalieren, drehen, in die Fenstermitte schieben
+    var t = 'translate(' + Math.round(b / 2) + 'px,' + Math.round(h / 2) + 'px) rotate(' + dreh + 'deg) scale(' + f + ') translate(' + (-bb / 2) + 'px,' + (-bh / 2) + 'px)';
     var s = el('buehne').style;
-    s.webkitTransform = t;
-    s.transform = t;
+    if (s.transform !== t) { s.webkitTransform = t; s.transform = t; }
+    if (hoch !== hochkant) {
+      hochkant = hoch;
+      setzeDesign();
+      // Die laufende Ansicht für die neue Ausrichtung neu aufbauen
+      if (modus && modus !== 'schwarz' && folien[position]) { zeigeFolie(); }
+    }
   }
 
   function setzeDesign() {
     var d = designWunsch || einstellungen().design || 1;
     if (d < 1 || d > 4) { d = 1; }
-    var k = 'd' + d;
+    var k = 'd' + d + (hochkant ? ' hoch' : '');
     if (document.body.className !== k) { document.body.className = k; }
   }
 
@@ -242,10 +264,21 @@
         var rubrik = feld.querySelector('.rubrik');
         maxHoehe = feld.clientHeight - 150 - (rubrik ? rubrik.offsetHeight + 34 : 0);
       } else {
-        maxHoehe = 380;
+        maxHoehe = hochkant ? 660 : 380;
       }
       var groesse = parseInt(window.getComputedStyle(t).fontSize, 10) || 100;
       var runden = 0;
+      // Zuerst: Das längste Wort soll auf eine Zeile passen, damit kein Wort mitten drin umbricht.
+      // Dafür kurz das Umbrechen im Wort ausschalten und messen, ob der Text über das Feld hinausragt.
+      t.style.wordWrap = 'normal';
+      t.style.overflowWrap = 'normal';
+      while (t.scrollWidth > t.clientWidth + 1 && groesse > min && runden < 40) {
+        groesse -= 4;
+        t.style.fontSize = groesse + 'px';
+        runden++;
+      }
+      t.style.wordWrap = '';
+      t.style.overflowWrap = '';
       while (t.offsetHeight > maxHoehe && groesse > min && runden < 60) {
         groesse -= 4;
         t.style.fontSize = groesse + 'px';
@@ -255,7 +288,7 @@
       if (t.className.indexOf('firma') >= 0) {
         var block = t.parentNode;
         var ansicht = block.parentNode;
-        var platz = ansicht.clientHeight - 250;
+        var platz = hochkant ? 1150 : ansicht.clientHeight - 250;
         while (block.offsetHeight > platz && groesse > min && runden < 80) {
           groesse -= 4;
           t.style.fontSize = groesse + 'px';
@@ -440,6 +473,7 @@
     var jetzt = serverJetzt();
     zeigeUhr();
     setzeDesign();
+    passeGroesseAn();
 
     var plan = baueFolien(jetzt);
     var neu = kennung(plan.liste);

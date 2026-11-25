@@ -51,6 +51,7 @@
     f.newsZeiten.value = (e.newsZeiten || []).join(', ');
     f.solarQuelle.value = e.solarQuelle;
     f.design.value = String(e.design);
+    f.drehung.value = String(e.drehung || 0);
     // 24:00 kennt das Zeitfeld nicht
     if (f.betriebBis.value === '24:00') { f.betriebBis.value = '23:59'; }
     Array.prototype.forEach.call(formular.querySelectorAll('input[name="tag"]'), function (feld) {
@@ -82,6 +83,7 @@
       solarNachArtikeln: Number(f.solarNachArtikeln.value),
       dauerAnsichtSek: Number(f.dauerAnsichtSek.value),
       design: Number(f.design.value),
+      drehung: Number(f.drehung.value),
       betriebTage: tage,
       betriebVon: f.betriebVon.value,
       betriebBis: f.betriebBis.value,

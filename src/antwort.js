@@ -100,6 +100,7 @@ export function baueAnzeigeAntwort({ jetzt, einstellungen: e, besuche, news, sol
       dauerBesuchSek: e.dauerBesuchSek,
       solarNachArtikeln: e.solarNachArtikeln,
       design: e.design,
+      drehung: e.drehung,
       betrieb: { tage: e.betriebTage, von: e.betriebVon, bis: e.betriebBis },
     },
     version: version || 'lokal',

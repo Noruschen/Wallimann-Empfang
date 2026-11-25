@@ -484,3 +484,87 @@ body {
 .d4 .solar .zahl { font-size: 180px; }
 .d4 .solar .zusatz { left: 90px; top: 716px; width: 1600px; }
 .d4 .solar .beispiel { right: 80px; top: 708px; }
+
+/* ================= Hochkant (Bühne 1'080 x 1'920) =================
+   Gilt, wenn das Fenster höher als breit ist oder auf der Statusseite eine Drehung eingestellt ist.
+   Die Farben der vier Designs bleiben, hier ändern sich nur Lage und Grösse. */
+.hoch .buehne, .hoch .rahmen { width: 1080px; height: 1920px; }
+.hoch .kopf { width: 1080px; height: 190px; }
+.hoch .logo { left: 60px; top: 50px; height: 88px; }
+.hoch .uhr { right: 60px; top: 34px; height: auto; line-height: 1.12; }
+.hoch .datum { display: block; margin: 0 0 4px; font-size: 32px; }
+.hoch .zeit { font-size: 80px; }
+.hoch .flaeche { top: 192px; width: 1080px; height: 1728px; }
+.hoch .ebene, .hoch .ansicht { width: 1080px; height: 1728px; }
+.hoch .punkte { width: 1080px; bottom: 44px; }
+
+/* Begrüssung */
+.hoch .begruessung .mitte { left: 70px; width: 940px; top: 40%; }
+.hoch .begruessung .gruss { font-size: 80px; margin-bottom: 34px; }
+.hoch .begruessung .firma { font-size: 136px; line-height: 1.06; }
+.hoch .begruessung .besuch { font-size: 80px; margin-top: 36px; }
+.hoch .begruessung .kontakt { left: 70px; bottom: 170px; font-size: 44px; width: 940px; }
+.hoch .begruessung .stoerer { right: 70px; bottom: 300px; width: 300px; height: 300px; border-radius: 150px; font-size: 46px; }
+.hoch .begruessung .stoerer span { width: 300px; }
+
+/* News: Bild oben, Text darunter */
+.hoch .news .bildfeld { left: 60px; top: 50px; width: 956px; height: 720px; }
+.hoch .news .bild { width: 956px; height: 720px; }
+.hoch .news .text { left: 70px; top: 840px; width: 940px; height: 760px; }
+.hoch .news .rubrik { font-size: 38px; margin-bottom: 36px; }
+.hoch .news .titel { font-size: 88px; }
+.hoch .news .meta { width: 940px; font-size: 42px; bottom: 66px; }
+.hoch .news .quelle { width: 940px; font-size: 38px; }
+.hoch .news.ohnebild .text { left: 70px; top: 120px; width: 940px; height: 1480px; }
+.hoch .news.ohnebild .titel { font-size: 116px; }
+.hoch .news.ohnebild .meta, .hoch .news.ohnebild .quelle { width: 940px; }
+
+/* Solarstrom: die zwei Werte untereinander */
+.hoch .solar .sonne { left: 80px; top: 90px; width: 140px; height: 140px; border-radius: 70px; }
+.hoch .solar .stitel { left: 300px; top: 92px; font-size: 76px; }
+.hoch .solar .suntertitel { left: 304px; top: 190px; font-size: 32px; width: 740px; white-space: nowrap; }
+.hoch .solar .wert { left: 70px; width: 936px; height: 430px; }
+.hoch .solar .wert.eins { left: 70px; top: 380px; }
+.hoch .solar .wert.zwei { left: 70px; top: 860px; }
+.hoch .solar .zahl { font-size: 216px; top: 60px; }
+.hoch .solar .zusatz { left: 70px; top: 1350px; width: 940px; font-size: 42px; line-height: 1.5; }
+.hoch .solar .beispiel { right: 70px; top: 1520px; }
+
+/* Standardfolie */
+.hoch .standard .gross { left: 140px; top: 700px; width: 800px; }
+
+/* Design 2 «Rot» hochkant */
+.d2.hoch .news .bildfeld { left: -30px; top: 0; width: 1140px; height: 800px; }
+.d2.hoch .news .bild { width: 1140px; height: 800px; }
+.d2.hoch .news .text { top: 880px; height: 720px; }
+.d2.hoch .punkte { left: 0; width: 1080px; }
+.d2.hoch .solar .wert { left: 70px; }
+
+/* Design 3 «Dunkel» hochkant */
+.d3.hoch .logo { top: 40px; }
+.d3.hoch .standard .gross { left: 110px; top: 660px; width: 720px; }
+
+/* Design 4 «Sprechblase» hochkant */
+.d4.hoch .ansicht.begruessung,
+.d4.hoch .ansicht.news,
+.d4.hoch .ansicht.solar { left: 40px; top: 10px; width: 980px; height: 1610px; }
+.d4.hoch .begruessung .mitte { left: 60px; width: 860px; top: 40%; }
+.d4.hoch .begruessung .gruss { font-size: 84px; }
+.d4.hoch .begruessung .firma { font-size: 124px; }
+.d4.hoch .begruessung .kontakt { left: 60px; bottom: 90px; width: 860px; }
+.d4.hoch .begruessung .stoerer { right: 50px; bottom: 210px; width: 260px; height: 260px; border-radius: 130px; font-size: 40px; }
+.d4.hoch .begruessung .stoerer span { width: 260px; }
+.d4.hoch .news .bildfeld { left: 40px; top: 40px; width: 900px; height: 660px; }
+.d4.hoch .news .bild { width: 900px; height: 660px; }
+.d4.hoch .news .text { left: 50px; top: 750px; width: 880px; height: 800px; }
+.d4.hoch .news .titel { font-size: 82px; }
+.d4.hoch .news .meta, .d4.hoch .news .quelle { width: 880px; }
+.d4.hoch .solar .sonne { left: 60px; top: 60px; }
+.d4.hoch .solar .stitel { left: 270px; top: 66px; font-size: 68px; }
+.d4.hoch .solar .suntertitel { left: 274px; top: 154px; font-size: 32px; width: 660px; }
+.d4.hoch .solar .wert { width: 860px; height: 400px; }
+.d4.hoch .solar .wert.eins { left: 50px; top: 320px; }
+.d4.hoch .solar .wert.zwei { left: 50px; top: 760px; }
+.d4.hoch .solar .zahl { font-size: 196px; }
+.d4.hoch .solar .zusatz { left: 50px; top: 1200px; width: 860px; }
+.d4.hoch .solar .beispiel { right: 50px; top: 1400px; }
