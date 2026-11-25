@@ -1,0 +1,46 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Empfang Wallimann//Test der echten Seite//DE
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:live-a@test
+DTSTAMP:20261125T194400Z
+DTSTART;TZID=W. Europe Standard Time:20261125T212000
+DTEND;TZID=W. Europe Standard Time:20261125T222000
+SUMMARY:Muster Verpackungen AG | Frau Anna Beispiel
+ORGANIZER;CN=Alexander Fischer:mailto:alexander.fischer@wallimann.ch
+END:VEVENT
+BEGIN:VEVENT
+UID:live-b@test
+DTSTAMP:20261125T194400Z
+DTSTART:20261125T193300Z
+DTEND:20261125T203300Z
+SUMMARY:Beispiel Handwerk GmbH
+ORGANIZER;CN=Petra Muster:mailto:petra.muster@wallimann.ch
+END:VEVENT
+BEGIN:VEVENT
+UID:live-fremd@test
+DTSTAMP:20261125T194400Z
+DTSTART:20261125T202000Z
+DTEND:20261125T212000Z
+SUMMARY:Fremde Werbung https://example.com
+ORGANIZER;CN=Unbekannt:mailto:jemand@example.com
+END:VEVENT
+BEGIN:VEVENT
+UID:live-privat@test
+DTSTAMP:20261125T194400Z
+DTSTART:20261125T202000Z
+DTEND:20261125T212000Z
+SUMMARY:Vertraulicher Termin
+ORGANIZER;CN=Alexander Fischer:mailto:alexander.fischer@wallimann.ch
+CLASS:PRIVATE
+END:VEVENT
+BEGIN:VEVENT
+UID:live-abgesagt@test
+DTSTAMP:20261125T194400Z
+DTSTART:20261125T202000Z
+DTEND:20261125T212000Z
+SUMMARY:Abgesagt: Muster Druck AG
+ORGANIZER;CN=Alexander Fischer:mailto:alexander.fischer@wallimann.ch
+END:VEVENT
+END:VCALENDAR
