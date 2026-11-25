@@ -178,6 +178,15 @@ describe('Schutz der Anzeige', () => {
     assert.match(datei.antwort.headers.get('strict-transport-security'), /max-age=31536000/);
   });
 
+  test('kurze Adressen führen zur Testseite und zur Vorschau', async () => {
+    const start = await rufe('/');
+    assert.equal(start.status, 302);
+    assert.equal(start.antwort.headers.get('location'), '/test/');
+    const vorschau = await rufe('/vorschau');
+    assert.equal(vorschau.status, 302);
+    assert.equal(vorschau.antwort.headers.get('location'), '/anzeige/?demo=alles');
+  });
+
   test('unbekannte Adressen unter /api/ geben nichts heraus', async () => {
     assert.equal((await rufe('/api/besuche')).status, 404);
     assert.equal((await rufe('/api/status/besuche')).status, 401);

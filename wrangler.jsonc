@@ -15,15 +15,15 @@
     "run_worker_first": true
   },
 
-  // Datenbank für Besuche, News und Zustand. Beim Einrichten wird sie mit Speicherort EU
-  // angelegt und ihre Kennung hier eingetragen (die Kennung ist kein Geheimnis).
+  // Datenbank für Besuche, News und Zustand. Sie ist mit Speicherort EU angelegt
+  // (Jurisdiction «eu», angelegt am 25.11.2026). Die Kennung ist kein Geheimnis.
   "d1_databases": [
-    { "binding": "DB", "database_name": "empfang", "database_id": "00000000-0000-0000-0000-000000000000" }
+    { "binding": "DB", "database_name": "empfang", "database_id": "fee06803-67e2-4b04-a762-6d2fdc1b907c" }
   ],
 
   // Speicher für die Bilder der News
   "kv_namespaces": [
-    { "binding": "BILDER", "id": "00000000000000000000000000000000" }
+    { "binding": "BILDER", "id": "79bedc8b25894d24b2eb3caaa28d04e4" }
   ],
 
   // Cloudflare ruft den Taktgeber jede Minute auf (Kalender, News, Warnungen)

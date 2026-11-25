@@ -340,6 +340,9 @@ export default {
       if (pfad === '/api/solar' && request.method === 'POST') return await solarEmpfang(request, env);
       if (pfad === '/api/status' || pfad.startsWith('/api/status/')) return await status(request, env, pfad);
       if (pfad.startsWith('/api/')) return json({ ok: false, fehler: 'Nicht gefunden' }, 404);
+      // Kurze Adressen zum Eintippen am Fernseher. Beide Ziele enthalten keine Besuchsdaten.
+      if (pfad === '/') return new Response(null, { status: 302, headers: { Location: '/test/', ...KOPF } });
+      if (pfad === '/vorschau') return new Response(null, { status: 302, headers: { Location: '/anzeige/?demo=alles', ...KOPF } });
     } catch (fehler) {
       // Nie Einzelheiten nach aussen geben
       console.log('Fehler bei', pfad, fehler && fehler.name);
