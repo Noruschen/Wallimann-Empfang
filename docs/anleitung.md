@@ -84,7 +84,8 @@ Wichtig: Der Kalender-Link ist noch nicht getestet. Ob alles so funktioniert, wi
 
 Was du beim Test genau beobachten sollst:
 
-- Landet die Einladung von selbst im Kalender? Oder im Junk-Ordner?
+- Landet die Einladung von selbst im Kalender? Erledigt: Ja, eine Testeinladung aus dem Firmen-Outlook stand am 25.11.2026 von selbst im Kalender des Empfangskontos.
+- Landet eine Einladung einmal im Junk-Ordner statt im Kalender?
 - Wie schnell erscheinen neue, geänderte und abgesagte Termine? Dauert es länger als 10 Minuten, taugt dieser Weg nicht und Claude schlägt einen anderen vor.
 - Erscheint der Organisator mit E-Mail-Adresse? Fehlt er, zeigt die Website den Termin aus Sicherheitsgründen nicht an.
 - Funktioniert die Markierung «privat»?
