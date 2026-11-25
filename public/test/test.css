@@ -10,6 +10,9 @@ html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden;
 h1 { font-size: 3vw; margin: 0 0 0.6vw; }
 h2 { font-size: 1.7vw; margin: 1.2vw 0 0.5vw; color: #d10a11; }
 .hinweis { font-size: 1.5vw; margin: 0 0 0.6vw; }
+.vorschau { font-size: 1.4vw; margin: 0 0 0.4vw; }
+.vorschau a { display: inline-block; margin-left: 1vw; padding: 0.35vw 1.2vw; background: #d10a11; color: #ffffff; text-decoration: none; font-weight: bold; }
+.vorschau a:focus { outline: 0.3vw solid #1d1d1b; }
 .spalten { width: 100%; }
 .spalte { float: left; width: 48%; margin-right: 2%; }
 table { border-collapse: collapse; width: 100%; font-size: 1.35vw; }

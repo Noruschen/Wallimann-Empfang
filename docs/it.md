@@ -6,7 +6,7 @@ Stand: 25.11.2026
 
 Am Empfang der Wallimann Druck AG in Beromünster hängt ein Fernseher im Querformat (Full HD). Er zeigt im Vollbild eine Website. Sie wechselt zwischen der Begrüssung von Besuch, den neusten Artikeln von michelnews.ch und dem Solarstrom der eigenen Anlage (Fronius). Alexander Fischer, Stv. Leiter Druck, betreut das Ganze. Er ist kein Programmierer.
 
-Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt), der Code liegt auf GitHub. Der Fernseher braucht nur einen Browser und eine Internetverbindung. Im Internet steht bisher nur die Testseite für den Fernseher, sie enthält keine Besuchsdaten. Die eigentliche Website läuft erst als Testversion lokal mit Beispieldaten.
+Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt), der Code liegt auf GitHub. Der Fernseher braucht nur einen Browser und eine Internetverbindung. Im Internet stehen bisher nur die Testseite für den Fernseher und eine Vorschau der Anzeige mit Beispieldaten. Beide enthalten keine Besuchsdaten. Die eigentliche Website läuft erst als Testversion lokal mit Beispieldaten.
 
 Von euch brauchen wir den Fernseher richtig eingerichtet, Auskünfte zum Netzwerk und Hilfe bei den Konten.
 

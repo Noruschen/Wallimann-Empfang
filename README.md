@@ -2,7 +2,7 @@
 
 Eine kleine Website für den Fernseher am Empfang der Wallimann Druck AG. Sie läuft im Vollbild und wechselt zwischen drei Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch und der Solarstrom der eigenen Anlage.
 
-**Stand 25.11.2026:** Testversion mit Beispieldaten. Im Internet steht nur die Testseite für den Fernseher (`https://empfang.wallimann.workers.dev/test/`), sie enthält keine Besuchsdaten. Die eigentliche Website ist noch nicht veröffentlicht. Die Begrüssung und die Solar-Ansicht sind ausgeschaltet, bis ihre Zugänge getestet sind.
+**Stand 25.11.2026:** Testversion mit Beispieldaten. Im Internet stehen nur die Testseite für den Fernseher (`https://empfang.wallimann.workers.dev/test/`) und eine Vorschau der Anzeige mit Beispieldaten (`https://empfang.wallimann.workers.dev/vorschau`). Beide enthalten keine Besuchsdaten. Die eigentliche Website ist noch nicht veröffentlicht. Die Begrüssung und die Solar-Ansicht sind ausgeschaltet, bis ihre Zugänge getestet sind.
 
 Dieses Projekt ist öffentlich einsehbar. Es enthält darum keine Geheimnisse und keine echten Kundennamen. Alle Firmen und Personen in Beispielen und Tests sind erfunden.
 
