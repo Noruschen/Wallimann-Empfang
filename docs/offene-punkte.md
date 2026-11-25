@@ -17,7 +17,7 @@ Stand: 25.11.2026
 | Vorläufige Testwerte für Schlüssel und Passwort | erledigt | Alexander hat am 25.11.2026 eigene Werte eingetragen. |
 | Automatische Veröffentlichung von GitHub aus | Alexander mit Claude | GitHub und Cloudflare verbinden (am grossen Bildschirm). Bis dahin spielt Claude Änderungen über den Cloudflare-Konnektor ein, und die Website holt ihre Dateien für den Browser aus dem öffentlichen GitHub-Projekt. |
 | Abspielgerät am Fernseher | Alexander | Marke und Modell des Fernsehers klären, die Testseite am Fernseher öffnen und den Code an Claude melden. Entscheid: Smart-TV oder Zusatzgerät. |
-| Einstellungen am Fernseher | IT | Energiesparen, Abschalten bei Inaktivität und Bildschirmschoner ausschalten. Ein- und Aus-Timer passend zu 06:30 und 18:00 stellen. Verhalten nach Stromausfall prüfen. |
+| Einstellungen am Fernseher | IT | Energiesparen, Abschalten bei Inaktivität und Bildschirmschoner ausschalten. Ein- und Aus-Timer passend zu 07:00 und 19:00 stellen. Verhalten nach Stromausfall prüfen. |
 | Warn-E-Mails | GL | Entscheiden: Domain zu Cloudflare nehmen (grob CHF 10 bis 20 pro Jahr) oder darauf verzichten. Bis dahin stehen Störungen nur auf der Statusseite. |
 | Logo | Alexander | Prüfen, ob das Logo «wallimann medien und kommunikation» passt, sonst das Logo der Wallimann Druck AG liefern. |
 | Erstes Veröffentlichen im Internet | erledigt | Veröffentlicht am 25.11.2026, mit Erlaubnis von Alexander. |

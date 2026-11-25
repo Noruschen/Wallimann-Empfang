@@ -10,7 +10,7 @@ Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt e
 - **News:** die 10 neusten Artikel von michelnews.ch mit Bild, Überschrift, Rubrik, Ort und Datum, ohne Artikeltext und ohne Werbung.
 - **Solarstrom:** aktuelle Leistung und Tagesertrag der Fronius-Anlage.
 
-Immer sichtbar sind Logo, Datum und Uhrzeit. Ausserhalb der Betriebszeiten (Montag bis Freitag, 06:30 bis 18:00) bleibt der Bildschirm schwarz, ausser bei einer Begrüssung. Der Bildschirm zeigt nie eine Fehlermeldung. Fällt eine Quelle aus, laufen die zuletzt gespeicherten News weiter.
+Immer sichtbar sind Logo, Datum und Uhrzeit. Ausserhalb der Betriebszeiten (Montag bis Freitag, 07:00 bis 19:00) bleibt der Bildschirm schwarz, ausser bei einer Begrüssung. Der Bildschirm zeigt nie eine Fehlermeldung. Fällt eine Quelle aus, laufen die zuletzt gespeicherten News weiter.
 
 ## Wo die Daten liegen
 

@@ -66,7 +66,7 @@ Der Fernseher übernimmt Änderungen innert einer Minute.
 | Sekunden pro Ansicht | Wie lange jede Ansicht steht (10 bis 15). | 12 Sekunden |
 | Design | 1 Papier, 2 Rot, 3 Dunkel, 4 Sprechblase. | 1 Papier |
 | Ausrichtung des Fernsehers | «quer» oder «hochkant» mit gedrehtem Inhalt. Hängt der Fernseher hochkant, dreht er sein Bild meist nicht selbst. Dann dreht die Seite ihren Inhalt um 90 Grad, im oder gegen den Uhrzeigersinn. Dreht das Gerät sein Bild selbst, stellt sich die Seite von allein auf hochkant um. | quer |
-| Betriebstage und Betriebszeiten | Wann der Bildschirm etwas zeigt. Sonst bleibt er schwarz. | Montag bis Freitag, 06:30 bis 18:00 |
+| Betriebstage und Betriebszeiten | Wann der Bildschirm etwas zeigt. Sonst bleibt er schwarz. | Montag bis Freitag, 07:00 bis 19:00 |
 | Empfänger und Absender der Warn-E-Mails | Adressen für Warnungen per E-Mail. | Noch nicht eingerichtet, siehe «Was noch nicht getestet ist» |
 
 ### Die Bremse bei falschem Passwort
@@ -143,7 +143,7 @@ Einstellungen auf der Statusseite brauchen das nicht. Sie gelten innert einer Mi
 
 | Zeichen | Wahrscheinliche Ursache | Was tun |
 |---|---|---|
-| Bildschirm schwarz | Ausserhalb der Betriebszeiten (Montag bis Freitag, 06:30 bis 18:00) oder Fernseher ausgeschaltet oder nach Stromausfall nicht wieder eingeschaltet. | Betriebszeiten auf der Statusseite prüfen. Fernseher einschalten. Bei wiederholtem Problem die IT fragen (Timer, Verhalten nach Stromausfall). |
+| Bildschirm schwarz | Ausserhalb der Betriebszeiten (Montag bis Freitag, 07:00 bis 19:00) oder Fernseher ausgeschaltet oder nach Stromausfall nicht wieder eingeschaltet. | Betriebszeiten auf der Statusseite prüfen. Fernseher einschalten. Bei wiederholtem Problem die IT fragen (Timer, Verhalten nach Stromausfall). |
 | Nur Logo | Der geheime Schlüssel in der Adresse fehlt oder ist falsch, zum Beispiel nach einem Wechsel. Oder es gibt noch gar keine Daten. | Adresse am Fernseher prüfen: `https://empfang.wallimann.workers.dev/anzeige/#k=GEHEIMER-SCHLUESSEL`. Danach auf der Statusseite schauen, ob die Anzeige Daten abholt. |
 | Keine Begrüssung | Begrüssung ausgeschaltet. Oder Termin nicht im Kalender oder nicht erlaubt (privat, ganztägig, abgesagt, kein Firmenname im Betreff). Oder der letzte Kalenderabruf ist älter als 15 Minuten. Oder der Kalender-Link wurde zurückgesetzt. | Auf der Statusseite «Kalender jetzt abrufen» drücken und die Besuche und die Gründe für nicht angezeigte Termine ansehen. Einstellung «Begrüssung» prüfen. Ist der Link ungültig, meldet das die Statusseite: neuen Link veröffentlichen und eintragen. |
 | Alte News | michelnews.ch war nicht erreichbar, dann laufen die zuletzt gespeicherten Artikel weiter. Oder der Fernseher hat kein Internet. | Auf der Statusseite ansehen, wann News zuletzt geladen wurden. Internet am Empfang prüfen. Meist erledigt sich das von selbst. |

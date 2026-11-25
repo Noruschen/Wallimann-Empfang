@@ -32,8 +32,8 @@ export const STANDARD = Object.freeze({
   design: 1,                   // 1 Papier, 2 Rot, 3 Dunkel, 4 Sprechblase
   drehung: 0,                  // 0 quer, 90 oder 270: Fernseher hängt hochkant, die Seite dreht ihren Inhalt
   betriebTage: [1, 2, 3, 4, 5],// 1 = Montag bis 7 = Sonntag
-  betriebVon: '06:30',
-  betriebBis: '18:00',
+  betriebVon: '07:00',
+  betriebBis: '19:00',
 
   // Warnungen per E-Mail
   alarmEmail: '',              // Empfänger

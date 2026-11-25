@@ -31,7 +31,7 @@
     solarNachArtikeln: 3,
     design: 1,
     drehung: 0,
-    betrieb: { tage: [1, 2, 3, 4, 5], von: '06:30', bis: '18:00' }
+    betrieb: { tage: [1, 2, 3, 4, 5], von: '07:00', bis: '19:00' }
   };
 
   var WOCHENTAGE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];

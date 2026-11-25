@@ -300,7 +300,7 @@ describe('Schutz der Statusseite', () => {
     assert.equal(e.design, 4);
     assert.equal(e.vorlaufMin, 45);
     assert.equal(e.newsMinuten, 15);
-    assert.equal(e.betriebVon, '06:30');
+    assert.equal(e.betriebVon, '07:00');
     assert.deepEqual(e.domains, ['wallimann.ch']);
     assert.equal(e.solarQuelle, 'aus');
     assert.equal(e.feedUrl, '');
@@ -746,8 +746,8 @@ describe('Lebenszeichen der Anzeige und Warnung', () => {
     const e = await wirksam();
     const zustand = await speicher.ladeZustand(env.DB);
     const mittwochAbend = Date.UTC(2026, 10, 25, 19, 0, 0); // 20:00 Zürcher Zeit
-    const donnerstagFrueh = Date.UTC(2026, 10, 26, 5, 45, 0); // 06:45: Betrieb läuft erst seit 15 Minuten
-    const donnerstagSpaeter = Date.UTC(2026, 10, 26, 6, 45, 0); // 07:45
+    const donnerstagFrueh = Date.UTC(2026, 10, 26, 6, 15, 0); // 07:15: Betrieb läuft erst seit 15 Minuten
+    const donnerstagSpaeter = Date.UTC(2026, 10, 26, 7, 15, 0); // 08:15
     assert.deepEqual(pruefeAlarme({ jetzt: mittwochAbend, e, zustand }), {});
     assert.deepEqual(pruefeAlarme({ jetzt: donnerstagFrueh, e, zustand }), {});
     assert.ok(pruefeAlarme({ jetzt: donnerstagSpaeter, e, zustand }).anzeige);
