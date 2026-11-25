@@ -1,0 +1,95 @@
+/* Statusseite des Empfangsbildschirms: am iPhone und am PC bedienbar */
+
+@font-face { font-family: "Nunito"; font-weight: 800; src: url("/schrift/nunito-800.woff") format("woff"); }
+@font-face { font-family: "Figtree"; font-weight: 400; src: url("/schrift/figtree-400.woff") format("woff"); }
+@font-face { font-family: "Figtree"; font-weight: 600; src: url("/schrift/figtree-600.woff") format("woff"); }
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: #faf8f3;
+  color: #1d1d1b;
+  font-family: "Figtree", system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.45;
+}
+body.leer { padding: 40px 20px; color: #5f5d58; }
+
+.kopf {
+  background: #ffffff;
+  border-bottom: 2px solid #d9d5cc;
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.logo { height: 42px; width: auto; }
+h1, h2, h3, legend { font-family: "Nunito", "Arial Rounded MT Bold", Arial, sans-serif; font-weight: 800; }
+h1 { font-size: 24px; margin: 0; }
+h2 { font-size: 22px; margin: 0 0 12px; }
+h3 { font-size: 18px; margin: 20px 0 8px; }
+
+main { max-width: 860px; margin: 0 auto; padding: 16px; }
+.karte {
+  background: #ffffff;
+  border: 2px solid #1d1d1b;
+  border-radius: 22px 22px 22px 6px;
+  padding: 18px;
+  margin-bottom: 16px;
+}
+.versteckt { display: none; }
+.klein { font-size: 15px; color: #5f5d58; margin: 0 0 10px; }
+.fehler { color: #d10a11; font-weight: 600; min-height: 1.4em; margin: 10px 0 0; }
+
+.hinweise { margin: 0; padding-left: 20px; }
+.hinweise li { margin-bottom: 6px; }
+.hinweise li.stoerung { color: #d10a11; font-weight: 600; }
+
+.tabelle { width: 100%; border-collapse: collapse; }
+.tabelle th, .tabelle td { text-align: left; vertical-align: top; padding: 8px 10px 8px 0; border-bottom: 1px solid #d9d5cc; }
+.tabelle th { font-weight: 600; color: #5f5d58; font-size: 15px; }
+.tabelle td.gut { color: #1a7a3a; font-weight: 600; }
+.tabelle td.schlecht { color: #d10a11; font-weight: 600; }
+
+label { display: block; margin: 12px 0; font-weight: 600; }
+label.schalter, .tage label { font-weight: 400; display: flex; align-items: center; gap: 8px; }
+.tage { display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; margin: 12px 0; }
+.tage span { font-weight: 600; width: 100%; }
+.tage label { margin: 0; }
+input[type="text"], input[type="number"], input[type="password"], input[type="email"], input[type="url"], input[type="time"], select {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  font: inherit;
+  font-weight: 400;
+  color: #1d1d1b;
+  background: #ffffff;
+  border: 2px solid #5f5d58;
+  border-radius: 10px;
+}
+input[type="checkbox"] { width: 22px; height: 22px; }
+fieldset { border: 0; border-top: 2px solid #d9d5cc; margin: 18px 0 0; padding: 12px 0 0; }
+legend { font-size: 18px; padding: 0 10px 0 0; }
+
+.knopfzeile { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 16px; }
+.knopf {
+  font: inherit;
+  font-weight: 600;
+  padding: 11px 22px;
+  border-radius: 40px;
+  border: 2px solid #1d1d1b;
+  background: #ffffff;
+  color: #1d1d1b;
+  cursor: pointer;
+}
+.knopf.rot { background: #d10a11; border-color: #d10a11; color: #ffffff; }
+.knopf:disabled { opacity: 0.5; cursor: default; }
+
+@media (max-width: 600px) {
+  .tabelle thead { display: none; }
+  .tabelle.besuchstabelle td { display: block; border: 0; padding: 2px 0; }
+  .tabelle.besuchstabelle tr { display: block; border-bottom: 1px solid #d9d5cc; padding: 8px 0; }
+}

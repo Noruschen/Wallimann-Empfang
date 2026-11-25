@@ -1,0 +1,486 @@
+/*
+  Empfangsbildschirm Wallimann, Gestaltung.
+  Bewusst einfaches CSS ohne Variablen, Grid oder Flexbox, damit auch
+  ältere Browser von Fernsehern die Seite richtig zeigen.
+  Farben und Schriften stammen von der Vorschau der neuen Wallimann-Website.
+
+  Vier Designs, wählbar in den Einstellungen:
+    d1 «Papier»       hell, ruhig, wie die Website (Standard)
+    d2 «Rot»          Begrüssung auf rotem Grund
+    d3 «Dunkel»       dunkler Grund, schont den Bildschirm
+    d4 «Sprechblase»  Inhalt in einer grossen Sprechblase mit rotem Rand
+*/
+
+@font-face { font-family: "Nunito"; font-weight: 700; font-style: normal; src: url("/schrift/nunito-700.woff") format("woff"); }
+@font-face { font-family: "Nunito"; font-weight: 800; font-style: normal; src: url("/schrift/nunito-800.woff") format("woff"); }
+@font-face { font-family: "Nunito"; font-weight: 900; font-style: normal; src: url("/schrift/nunito-900.woff") format("woff"); }
+@font-face { font-family: "Figtree"; font-weight: 400; font-style: normal; src: url("/schrift/figtree-400.woff") format("woff"); }
+@font-face { font-family: "Figtree"; font-weight: 500; font-style: normal; src: url("/schrift/figtree-500.woff") format("woff"); }
+@font-face { font-family: "Figtree"; font-weight: 600; font-style: normal; src: url("/schrift/figtree-600.woff") format("woff"); }
+@font-face { font-family: "Figtree"; font-weight: 700; font-style: normal; src: url("/schrift/figtree-700.woff") format("woff"); }
+@font-face { font-family: "Architects Daughter"; font-weight: 400; font-style: normal; src: url("/schrift/architects-daughter-400.woff") format("woff"); }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: #faf8f3;
+  cursor: none;
+}
+body {
+  font-family: "Figtree", "Segoe UI", Arial, Helvetica, sans-serif;
+  color: #1d1d1b;
+  -webkit-font-smoothing: antialiased;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Die Bühne: immer 1'920 x 1'080, wird per Skript skaliert */
+.buehne {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: #faf8f3;
+  -webkit-transform-origin: 0 0;
+  transform-origin: 0 0;
+}
+.rahmen {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 1080px;
+  -webkit-transition: -webkit-transform 2s ease;
+  transition: transform 2s ease;
+}
+
+/* Kopfzeile mit Logo, Datum und Uhrzeit */
+.kopf {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 150px;
+  background: #ffffff;
+  border-bottom: 2px solid #d9d5cc;
+}
+.logo {
+  position: absolute;
+  left: 80px;
+  top: 33px;
+  height: 84px;
+  width: auto;
+}
+.uhr {
+  position: absolute;
+  right: 80px;
+  top: 0;
+  height: 150px;
+  line-height: 150px;
+  white-space: nowrap;
+  text-align: right;
+}
+.datum {
+  font-size: 40px;
+  font-weight: 500;
+  color: #5f5d58;
+  margin-right: 36px;
+  vertical-align: middle;
+}
+.zeit {
+  font-family: "Nunito", "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+  font-size: 76px;
+  font-weight: 800;
+  color: #1d1d1b;
+  vertical-align: middle;
+}
+
+/* Fläche für die Ansichten */
+.flaeche {
+  position: absolute;
+  left: 0;
+  top: 152px;
+  width: 1920px;
+  height: 928px;
+}
+.ebene {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 928px;
+  opacity: 0;
+  -webkit-transition: opacity 0.9s ease;
+  transition: opacity 0.9s ease;
+}
+.ebene.sichtbar { opacity: 1; }
+.ansicht {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1920px;
+  height: 928px;
+  overflow: hidden;
+}
+
+/* Fortschrittspunkte unten */
+.punkte {
+  position: absolute;
+  left: 0;
+  bottom: 30px;
+  width: 1920px;
+  height: 16px;
+  text-align: center;
+  font-size: 0;
+}
+.punkt {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  margin: 0 9px;
+  border-radius: 8px;
+  background: #d9d5cc;
+}
+.punkt.aktiv { background: #d10a11; }
+.punkt.solar { border-radius: 4px; }
+
+/* ---------- Begrüssung ---------- */
+.begruessung .mitte {
+  position: absolute;
+  left: 110px;
+  width: 1700px;
+  top: 46%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+.begruessung .gruss {
+  font-family: "Architects Daughter", "Bradley Hand", "Segoe Print", cursive;
+  font-size: 84px;
+  line-height: 1.1;
+  color: #d10a11;
+  margin-bottom: 26px;
+}
+.begruessung .firma {
+  font-family: "Nunito", "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 168px;
+  line-height: 1.04;
+  letter-spacing: -2px;
+  color: #1d1d1b;
+  word-wrap: break-word;
+}
+.begruessung .besuch {
+  font-family: "Nunito", "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+  font-weight: 700;
+  font-size: 92px;
+  line-height: 1.15;
+  color: #1d1d1b;
+  margin-top: 26px;
+}
+.begruessung .kontakt {
+  position: absolute;
+  left: 110px;
+  bottom: 84px;
+  font-size: 46px;
+  font-weight: 500;
+  color: #5f5d58;
+}
+.begruessung .kontakt b {
+  font-weight: 700;
+  color: #1d1d1b;
+}
+.begruessung .stoerer {
+  position: absolute;
+  right: 110px;
+  bottom: 70px;
+  width: 290px;
+  height: 290px;
+  border-radius: 145px;
+  background: #d10a11;
+  color: #ffffff;
+  text-align: center;
+  font-family: "Nunito", "Arial Rounded MT Bold", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 44px;
+  line-height: 1.15;
+  -webkit-transform: rotate(-8deg);
+  transform: rotate(-8deg);
+}
+.begruessung .stoerer span {
+  position: absolute;
+  left: 0;
+  width: 290px;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+  transform: translateY(-50%);
+}
+
+/* ---------- News ---------- */
+.news .bildfeld {
+  position: absolute;
+  left: 80px;
+  top: 44px;
+  width: 1010px;
+  height: 760px;
+  background: #efebe2;
+  border: 2px solid #1d1d1b;
+  border-radius: 34px 34px 34px 8px;
+  overflow: hidden;
+}
+.news .bild {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1010px;
+  height: 760px;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+}
+.news .bild.klein { background-size: auto; }
+.news .text {
+  position: absolute;
+  left: 1160px;
+  top: 44px;
+  width: 680px;
+  height: 760px;
+}
+.news .rubrik {
+  display: inline-block;
+  font-size: 34px;
+  font-weight: 700;
+  color: #d10a11;
+  border: 3px solid #d10a11;
+  border-radius: 40px;
+  padding: 8px 28px 9px;
+  margin-bottom: 34px;
+  background: #ffffff;
+}
+.news .titel {
+  font-family: "Nunito", "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 82px;
+  line-height: 1.1;
+  letter-spacing: -1px;
+  color: #1d1d1b;
+  word-wrap: break-word;
+}
+.news .meta {
+  position: absolute;
+  left: 0;
+  bottom: 62px;
+  width: 680px;
+  font-size: 40px;
+  font-weight: 500;
+  color: #5f5d58;
+}
+.news .quelle {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 680px;
+  font-size: 36px;
+  font-weight: 700;
+  color: #d10a11;
+}
+/* Artikel ohne Bild: Text über die ganze Breite */
+.news.ohnebild .bildfeld { display: none; }
+.news.ohnebild .text { left: 110px; width: 1700px; }
+.news.ohnebild .titel { font-size: 110px; }
+.news.ohnebild .meta, .news.ohnebild .quelle { width: 1700px; }
+
+/* ---------- Solarstrom ---------- */
+.solar .sonne {
+  position: absolute;
+  left: 110px;
+  top: 70px;
+  width: 150px;
+  height: 150px;
+  border-radius: 75px;
+  background: #f6b100;
+  box-shadow: 0 0 0 26px rgba(246, 177, 0, 0.22), 0 0 0 56px rgba(246, 177, 0, 0.10);
+}
+.solar .stitel {
+  position: absolute;
+  left: 340px;
+  top: 76px;
+  font-family: "Nunito", "Arial Rounded MT Bold", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 84px;
+  line-height: 1.1;
+  color: #1d1d1b;
+}
+.solar .suntertitel {
+  position: absolute;
+  left: 344px;
+  top: 178px;
+  font-family: "Architects Daughter", "Bradley Hand", "Segoe Print", cursive;
+  font-size: 46px;
+  color: #d10a11;
+}
+.solar .wert {
+  position: absolute;
+  top: 330px;
+  width: 820px;
+  height: 400px;
+  background: #ffffff;
+  border: 2px solid #1d1d1b;
+  border-radius: 34px 34px 34px 8px;
+}
+.solar .wert.eins { left: 110px; }
+.solar .wert.zwei { left: 990px; }
+.solar .zahl {
+  position: absolute;
+  left: 56px;
+  top: 52px;
+  font-family: "Nunito", "Arial Rounded MT Bold", Arial, sans-serif;
+  font-weight: 900;
+  font-size: 196px;
+  line-height: 1;
+  letter-spacing: -3px;
+  color: #1d1d1b;
+  white-space: nowrap;
+}
+.solar .zahl span {
+  font-size: 84px;
+  font-weight: 800;
+  letter-spacing: 0;
+  color: #d10a11;
+  margin-left: 20px;
+}
+.solar .label {
+  position: absolute;
+  left: 60px;
+  bottom: 48px;
+  font-size: 46px;
+  font-weight: 500;
+  color: #5f5d58;
+}
+.solar .zusatz {
+  position: absolute;
+  left: 110px;
+  top: 770px;
+  width: 1700px;
+  font-size: 40px;
+  font-weight: 500;
+  color: #5f5d58;
+}
+.solar .zusatz b { color: #1d1d1b; font-weight: 700; }
+.solar .beispiel {
+  position: absolute;
+  right: 110px;
+  top: 764px;
+  font-size: 34px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #1d1d1b;
+  border-radius: 40px;
+  padding: 10px 30px 11px;
+}
+
+/* ---------- Standardfolie ---------- */
+.standard .gross {
+  position: absolute;
+  left: 460px;
+  top: 300px;
+  width: 1000px;
+  height: auto;
+}
+
+/* ---------- Schwarz ausserhalb der Betriebszeiten ---------- */
+.schwarz {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  display: none;
+}
+.schwarz.an { display: block; }
+
+/* ================= Design 2 «Rot» ================= */
+.d2 .kopf { border-bottom: 0; }
+.d2 .begruessung { background: #d10a11; }
+.d2 .begruessung .gruss { color: #ffffff; }
+.d2 .begruessung .firma { color: #ffffff; }
+.d2 .begruessung .besuch { color: #ffffff; }
+.d2 .begruessung .kontakt { color: #ffd9db; }
+.d2 .begruessung .kontakt b { color: #ffffff; }
+.d2 .begruessung .stoerer { background: #ffffff; color: #d10a11; }
+.d2 .news .bildfeld { border: 0; border-radius: 0; left: 0; top: 0; width: 1090px; height: 928px; }
+.d2 .news .bild { width: 1090px; height: 928px; }
+.d2 .news .text { top: 70px; height: 734px; }
+.d2 .news .rubrik { background: #d10a11; color: #ffffff; }
+.d2 .punkte { left: 1090px; width: 830px; }
+.d2 .solar .wert { border: 0; background: #d10a11; border-radius: 20px; }
+.d2 .solar .zahl, .d2 .solar .zahl span { color: #ffffff; }
+.d2 .solar .label { color: #ffd9db; }
+
+/* ================= Design 3 «Dunkel» ================= */
+.d3, .d3 .buehne { background: #151514; }
+.d3 { color: #f5f3ee; }
+.d3 .kopf { background: #1d1d1b; border-bottom: 2px solid #3a3937; }
+.d3 .logo { background: #ffffff; border-radius: 14px; padding: 12px 20px; top: 21px; }
+.d3 .datum { color: #b9b5ac; }
+.d3 .zeit { color: #ffffff; }
+.d3 .punkt { background: #3a3937; }
+.d3 .punkt.aktiv { background: #ff3b42; }
+.d3 .begruessung .gruss { color: #ff3b42; }
+.d3 .begruessung .firma, .d3 .begruessung .besuch { color: #ffffff; }
+.d3 .begruessung .kontakt { color: #b9b5ac; }
+.d3 .begruessung .kontakt b { color: #ffffff; }
+.d3 .news .bildfeld { background: #23221f; border-color: #3a3937; }
+.d3 .news .rubrik { background: transparent; color: #ff3b42; border-color: #ff3b42; }
+.d3 .news .titel { color: #ffffff; }
+.d3 .news .meta { color: #b9b5ac; }
+.d3 .news .quelle { color: #ff3b42; }
+.d3 .solar .stitel { color: #ffffff; }
+.d3 .solar .suntertitel { color: #ff3b42; }
+.d3 .solar .wert { background: #23221f; border-color: #3a3937; }
+.d3 .solar .zahl { color: #ffffff; }
+.d3 .solar .zahl span { color: #ff3b42; }
+.d3 .solar .label, .d3 .solar .zusatz { color: #b9b5ac; }
+.d3 .solar .zusatz b { color: #ffffff; }
+.d3 .solar .beispiel { background: #f5f3ee; color: #1d1d1b; }
+.d3 .standard .gross { background: #ffffff; border-radius: 30px; padding: 50px 70px; left: 390px; top: 250px; }
+
+/* ================= Design 4 «Sprechblase» ================= */
+.d4, .d4 .buehne { background: #ffffff; }
+.d4 .kopf { border-bottom: 0; }
+.d4 .ansicht.begruessung,
+.d4 .ansicht.news,
+.d4 .ansicht.solar {
+  left: 60px;
+  top: 10px;
+  width: 1790px;
+  height: 838px;
+  border: 10px solid #d10a11;
+  border-radius: 90px 90px 90px 14px;
+  background: #faf8f3;
+}
+.d4 .begruessung .mitte { left: 90px; width: 1600px; top: 44%; }
+.d4 .begruessung .gruss { font-size: 96px; }
+.d4 .begruessung .firma { font-size: 156px; }
+.d4 .begruessung .kontakt { left: 90px; bottom: 60px; }
+.d4 .begruessung .stoerer { right: 70px; bottom: 50px; width: 260px; height: 260px; border-radius: 130px; font-size: 40px; }
+.d4 .begruessung .stoerer span { width: 260px; }
+.d4 .news .bildfeld { left: 50px; top: 50px; width: 930px; height: 738px; border: 0; border-radius: 50px 50px 50px 10px; }
+.d4 .news .bild { width: 930px; height: 738px; }
+.d4 .news .text { left: 1050px; top: 50px; width: 680px; height: 738px; }
+.d4 .news .rubrik { font-family: "Architects Daughter", "Bradley Hand", "Segoe Print", cursive; border: 0; padding: 0; font-size: 50px; background: transparent; margin-bottom: 18px; }
+.d4 .news .titel { font-size: 78px; }
+.d4 .solar .sonne { left: 90px; top: 60px; }
+.d4 .solar .stitel { left: 320px; top: 64px; }
+.d4 .solar .suntertitel { left: 324px; top: 166px; }
+.d4 .solar .wert { top: 300px; width: 780px; height: 380px; border: 0; background: #ffffff; }
+.d4 .solar .wert.eins { left: 90px; }
+.d4 .solar .wert.zwei { left: 920px; }
+.d4 .solar .zahl { font-size: 180px; }
+.d4 .solar .zusatz { left: 90px; top: 716px; width: 1600px; }
+.d4 .solar .beispiel { right: 80px; top: 708px; }

@@ -1,0 +1,35 @@
+// Einstellungen für Cloudflare. Hier stehen keine Geheimnisse.
+// Passwort, geheimer Link und Kalender-Link werden im Cloudflare-Konto
+// als «Secrets» eingetragen (siehe docs/anleitung.md).
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "wallimann-empfang",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-11-01",
+
+  // Dateien für den Browser (Anzeige, Statusseite, Testseite, Schriften, Logo)
+  "assets": {
+    "directory": "./public",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*", "/newsbild/*"]
+  },
+
+  // Datenbank für Besuche, News und Zustand. Beim Einrichten wird sie mit Speicherort EU
+  // angelegt und ihre Kennung hier eingetragen (die Kennung ist kein Geheimnis).
+  "d1_databases": [
+    { "binding": "DB", "database_name": "empfang", "database_id": "00000000-0000-0000-0000-000000000000" }
+  ],
+
+  // Speicher für die Bilder der News
+  "kv_namespaces": [
+    { "binding": "BILDER", "id": "00000000000000000000000000000000" }
+  ],
+
+  // Cloudflare ruft den Taktgeber jede Minute auf (Kalender, News, Warnungen)
+  "triggers": { "crons": ["* * * * *"] },
+
+  // Kennung der veröffentlichten Fassung: Die Anzeige lädt sich nach einer Änderung selbst neu
+  "version_metadata": { "binding": "VERSION" },
+
+  "observability": { "enabled": true }
+}

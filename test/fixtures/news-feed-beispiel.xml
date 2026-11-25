@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>Beispiel-Feed Regionalnews</title>
+    <link>https://beispiel.example/</link>
+    <description>Erfundene Beispieldaten für den Test</description>
+    <item>
+      <title><![CDATA[Neuer Dorfladen eröffnet in Musterwil]]></title>
+      <link>https://beispiel.example/news/dorfladen-musterwil</link>
+      <pubDate>Tue, 24 Nov 2026 09:30:00 +0100</pubDate>
+      <category>Wirtschaft</category>
+      <category domain="ort">Musterwil</category>
+      <enclosure url="https://beispiel.example/bilder/dorfladen.jpg" length="123456" type="image/jpeg" />
+    </item>
+    <item>
+      <title>Turnverein Beispielhausen gewinnt &amp; feiert</title>
+      <link>https://beispiel.example/news/turnverein-beispielhausen</link>
+      <pubDate>Wed, 25 Nov 2026 18:05:00 +0100</pubDate>
+      <category>Sport</category>
+      <category domain="ort">Beispielhausen</category>
+      <media:content url="https://beispiel.example/bilder/turnverein.jpg" medium="image" width="1600" height="900" />
+    </item>
+    <item>
+      <title>Chorkonzert in der Kirche Testingen</title>
+      <link>https://beispiel.example/news/chorkonzert-testingen</link>
+      <pubDate>Wed, 25 Nov 2026 07:00:00 +0100</pubDate>
+      <category><![CDATA[Kultur]]></category>
+      <category domain="ort"><![CDATA[Testingen]]></category>
+      <category domain="stichwort">Konzert</category>
+    </item>
+  </channel>
+</rss>

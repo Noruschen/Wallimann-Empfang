@@ -1,0 +1,14 @@
+{
+  "name": "wallimann-empfang",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Empfangsbildschirm der Wallimann Druck AG: Begrüssung, News und Solarstrom",
+  "scripts": {
+    "start": "wrangler dev --port 8787 --var BEISPIELDATEN:1 --var ANZEIGE_SCHLUESSEL:beispiel-schluessel-nur-lokal --var STATUS_PASSWORT:beispiel",
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "wrangler": "^4.168.0"
+  }
+}

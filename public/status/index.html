@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<title>Empfangsbildschirm: Status</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/status/status.css">
+</head>
+<body>
+<header class="kopf">
+  <img src="/bild/logo-wallimann.png" alt="Wallimann" class="logo">
+  <h1>Empfangsbildschirm</h1>
+</header>
+
+<main>
+  <!-- Anmeldung -->
+  <section id="anmeldung" class="karte versteckt">
+    <h2>Anmelden</h2>
+    <form id="anmeldeformular">
+      <label for="passwort">Passwort</label>
+      <input id="passwort" type="password" autocomplete="current-password" required>
+      <button type="submit" class="knopf rot">Anmelden</button>
+      <p id="anmeldefehler" class="fehler" role="alert"></p>
+    </form>
+  </section>
+
+  <!-- Status -->
+  <div id="inhalt" class="versteckt">
+    <section class="karte" id="hinweiskarte">
+      <h2>Hinweise</h2>
+      <ul id="hinweise" class="hinweise"></ul>
+    </section>
+
+    <section class="karte">
+      <h2>Übersicht</h2>
+      <p class="klein">Stand: <span id="stand"></span> · Fassung: <span id="fassung"></span></p>
+      <table class="tabelle">
+        <tbody id="uebersicht"></tbody>
+      </table>
+      <div class="knopfzeile">
+        <button type="button" class="knopf" id="neuLaden">Aktualisieren</button>
+        <button type="button" class="knopf" id="kalenderJetzt">Kalender jetzt abrufen</button>
+      </div>
+    </section>
+
+    <section class="karte">
+      <h2>Besuche heute und morgen</h2>
+      <p class="klein">So liest die Website die Einladungen. Auf dem Fernseher erscheint ein Besuch erst kurz vor dem Termin.</p>
+      <table class="tabelle">
+        <thead><tr><th>Wann</th><th>Firma</th><th>Name</th><th>Ansprechperson</th></tr></thead>
+        <tbody id="besuche"></tbody>
+      </table>
+      <div id="verworfenBlock" class="versteckt">
+        <h3>Nicht angezeigte Termine</h3>
+        <ul id="verworfen" class="hinweise"></ul>
+      </div>
+    </section>
+
+    <section class="karte">
+      <h2>Einstellungen</h2>
+      <form id="einstellungen">
+        <fieldset>
+          <legend>Begrüssung</legend>
+          <label class="schalter"><input type="checkbox" name="begruessungAn"> Begrüssung am Fernseher eingeschaltet</label>
+          <label>Beginn vor dem Termin (Minuten) <input type="number" name="vorlaufMin" min="0" max="240"></label>
+          <label>Ende nach Terminbeginn (Minuten) <input type="number" name="nachlaufMin" min="0" max="240"></label>
+          <label>Wechsel bei mehreren Besuchen (Sekunden) <input type="number" name="dauerBesuchSek" min="5" max="30"></label>
+          <label>Erlaubte Adressen der Organisatoren (Domain, mehrere mit Komma) <input type="text" name="domains"></label>
+          <label>Kalender holen alle (Minuten) <input type="number" name="kalenderMinuten" min="1" max="60"></label>
+        </fieldset>
+        <fieldset>
+          <legend>News</legend>
+          <label>Anzahl Artikel <input type="number" name="newsAnzahl" min="1" max="20"></label>
+          <label>Nur diese Gemeinden (leer bedeutet alle, mehrere mit Komma) <input type="text" name="newsOrte"></label>
+          <label>Nur diese Rubriken (leer bedeutet alle, mehrere mit Komma) <input type="text" name="newsRubriken"></label>
+          <label>Adresse des RSS-Feeds (leer bedeutet: Startseite auslesen) <input type="url" name="feedUrl" placeholder="https://"></label>
+          <label>News holen alle (Minuten, mindestens 15) <input type="number" name="newsMinuten" min="15" max="240"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Solarstrom</legend>
+          <label>Quelle
+            <select name="solarQuelle">
+              <option value="aus">ausgeschaltet</option>
+              <option value="beispiel">Beispieldaten (als Beispiel markiert)</option>
+              <option value="empfang">Werte von einem Zusatzgerät</option>
+            </select>
+          </label>
+          <label>Solar-Ansicht nach jedem wievielten Artikel <input type="number" name="solarNachArtikeln" min="1" max="10"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Anzeige</legend>
+          <label>Sekunden pro Ansicht (10 bis 15) <input type="number" name="dauerAnsichtSek" min="10" max="15"></label>
+          <label>Design
+            <select name="design">
+              <option value="1">1 Papier (hell, wie die Website)</option>
+              <option value="2">2 Rot (Begrüssung auf rotem Grund)</option>
+              <option value="3">3 Dunkel</option>
+              <option value="4">4 Sprechblase</option>
+            </select>
+          </label>
+          <div class="tage">
+            <span>Betriebstage</span>
+            <label><input type="checkbox" name="tag" value="1"> Mo</label>
+            <label><input type="checkbox" name="tag" value="2"> Di</label>
+            <label><input type="checkbox" name="tag" value="3"> Mi</label>
+            <label><input type="checkbox" name="tag" value="4"> Do</label>
+            <label><input type="checkbox" name="tag" value="5"> Fr</label>
+            <label><input type="checkbox" name="tag" value="6"> Sa</label>
+            <label><input type="checkbox" name="tag" value="7"> So</label>
+          </div>
+          <label>Betrieb von <input type="time" name="betriebVon"></label>
+          <label>Betrieb bis <input type="time" name="betriebBis"></label>
+        </fieldset>
+        <fieldset>
+          <legend>Warnungen per E-Mail</legend>
+          <label>Empfänger <input type="email" name="alarmEmail"></label>
+          <label>Absender (Adresse einer Domain im Cloudflare-Konto) <input type="email" name="alarmAbsender"></label>
+        </fieldset>
+        <div class="knopfzeile">
+          <button type="submit" class="knopf rot">Einstellungen speichern</button>
+          <span id="gespeichert" class="klein"></span>
+        </div>
+      </form>
+    </section>
+
+    <section class="karte">
+      <button type="button" class="knopf" id="abmelden">Abmelden</button>
+    </section>
+  </div>
+</main>
+<script src="/status/status.js"></script>
+</body>
+</html>

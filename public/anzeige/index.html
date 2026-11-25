@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<title>Empfang</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<link rel="stylesheet" href="/anzeige/anzeige.css">
+</head>
+<body class="d1">
+<!--
+  Empfangsbildschirm Wallimann.
+  Die Bühne ist fest 1'920 x 1'080 Pixel gross und wird von anzeige.js
+  auf die Grösse des Bildschirms skaliert. So sieht sie überall gleich aus,
+  auch in älteren Browsern von Fernsehern.
+-->
+<div id="buehne" class="buehne">
+  <div id="rahmen" class="rahmen">
+
+    <div class="kopf">
+      <img class="logo" src="/bild/logo-wallimann.png" alt="Wallimann">
+      <div class="uhr">
+        <span id="datum" class="datum"></span>
+        <span id="zeit" class="zeit"></span>
+      </div>
+    </div>
+
+    <div class="flaeche">
+      <!-- Zwei Ebenen für den weichen Übergang -->
+      <div id="ebeneA" class="ebene"></div>
+      <div id="ebeneB" class="ebene"></div>
+    </div>
+
+    <div id="punkte" class="punkte"></div>
+  </div>
+</div>
+<div id="schwarz" class="schwarz"></div>
+<script src="/anzeige/demo.js"></script>
+<script src="/anzeige/anzeige.js"></script>
+</body>
+</html>

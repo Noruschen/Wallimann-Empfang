@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<title>Testseite Fernseher</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/test/test.css">
+</head>
+<body>
+<!--
+  Testseite für den Browser des Fernsehers. Sie enthält keine Besuchsdaten.
+  Sie zeigt, was der Browser kann. Am Schluss steht ein kurzer Code:
+  Diesen Code und die Angaben darunter bitte an Claude melden.
+-->
+<div class="ecke lo">oben links</div>
+<div class="ecke ro">oben rechts</div>
+<div class="ecke lu">unten links</div>
+<div class="ecke ru">unten rechts</div>
+
+<div class="inhalt">
+  <h1>Testseite für den Fernseher</h1>
+  <p class="hinweis">Sind alle vier Ecken mit ihrer Beschriftung ganz sichtbar? Läuft der rote Balken ruhig hin und her? Zählt die Uhr weiter?</p>
+
+  <div class="spalten">
+    <div class="spalte">
+      <h2>Bildschirm</h2>
+      <table id="bildschirm"></table>
+      <h2>Schriften</h2>
+      <p class="probe nunito">Herzlich willkommen 1'920 ÄÖÜ äöü é «Muster AG»</p>
+      <p class="probe figtree">Rickenbach · 25.11.2026 · michelnews.ch</p>
+      <p class="probe hand">Wir freuen uns auf Sie!</p>
+      <div class="bahn"><div class="balken"></div></div>
+      <p class="uhr">Läuft seit <span id="sekunden">0</span> Sekunden</p>
+    </div>
+    <div class="spalte">
+      <h2>Was der Browser kann</h2>
+      <table id="pruefungen"></table>
+      <p class="code">Code: <span id="code">wird berechnet</span></p>
+      <p class="klein" id="agent"></p>
+    </div>
+  </div>
+</div>
+<script src="/test/test.js"></script>
+</body>
+</html>

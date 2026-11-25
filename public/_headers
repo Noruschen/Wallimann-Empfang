@@ -1,0 +1,21 @@
+/*
+  X-Robots-Tag: noindex, nofollow, noarchive
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: no-referrer
+  Content-Security-Policy: default-src 'self'; img-src 'self' https://michelnews.ch data:; style-src 'self'; script-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'
+
+/anzeige/*
+  Cache-Control: no-cache
+
+/status/*
+  Cache-Control: no-cache
+
+/test/*
+  Cache-Control: no-cache
+
+/sw.js
+  Cache-Control: no-cache
+
+/schrift/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -1,0 +1,27 @@
+/* Testseite für den Browser des Fernsehers. Einfaches CSS, damit sie überall läuft. */
+@font-face { font-family: "Nunito"; font-weight: 900; src: url("/schrift/nunito-900.woff") format("woff"); }
+@font-face { font-family: "Figtree"; font-weight: 500; src: url("/schrift/figtree-500.woff") format("woff"); }
+@font-face { font-family: "Architects Daughter"; font-weight: 400; src: url("/schrift/architects-daughter-400.woff") format("woff"); }
+
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #faf8f3; color: #1d1d1b; font-family: Arial, Helvetica, sans-serif; font-size: 2vw; }
+.ecke { position: absolute; background: #d10a11; color: #ffffff; font-size: 1.3vw; padding: 0.5vw 0.9vw; }
+.lo { left: 0; top: 0; } .ro { right: 0; top: 0; } .lu { left: 0; bottom: 0; } .ru { right: 0; bottom: 0; }
+.inhalt { position: absolute; left: 4vw; right: 4vw; top: 4vw; bottom: 4vw; }
+h1 { font-size: 3vw; margin: 0 0 0.6vw; }
+h2 { font-size: 1.7vw; margin: 1.2vw 0 0.5vw; color: #d10a11; }
+.hinweis { font-size: 1.5vw; margin: 0 0 0.6vw; }
+.spalten { width: 100%; }
+.spalte { float: left; width: 48%; margin-right: 2%; }
+table { border-collapse: collapse; width: 100%; font-size: 1.35vw; }
+td { padding: 0.25vw 0.6vw 0.25vw 0; border-bottom: 1px solid #d9d5cc; vertical-align: top; }
+td.ja { color: #1a7a3a; font-weight: bold; }
+td.nein { color: #d10a11; font-weight: bold; }
+.probe { margin: 0.3vw 0; }
+.nunito { font-family: "Nunito", Arial, sans-serif; font-weight: 900; font-size: 2.3vw; }
+.figtree { font-family: "Figtree", Arial, sans-serif; font-weight: 500; font-size: 1.7vw; }
+.hand { font-family: "Architects Daughter", cursive; font-size: 2.2vw; color: #d10a11; }
+.bahn { position: relative; height: 1.2vw; background: #e9e7e2; margin-top: 1vw; overflow: hidden; }
+.balken { position: absolute; left: 0; top: 0; width: 12%; height: 100%; background: #d10a11; }
+.uhr { font-size: 1.4vw; margin: 0.6vw 0 0; }
+.code { font-size: 2.4vw; font-weight: bold; margin: 1vw 0 0.3vw; }
+.klein { font-size: 1vw; color: #5f5d58; word-wrap: break-word; margin: 0; }
