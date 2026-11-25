@@ -4,7 +4,7 @@ Stand: 25.11.2026
 
 ## Kurz erklärt
 
-Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt im Vollbild eine Website. Die Website wechselt zwischen drei Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch und Solarstrom der eigenen Anlage. Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt) und ihr Code liegt auf GitHub (eine Plattform für Programmdateien). Den Besuch holt die Website aus einem eigenen Outlook.com-Kalender: Mitarbeitende laden die Adresse `empfang.wallimann@outlook.com` zum Termin ein. Heute läuft die Testversion nur bei dir lokal, mit Beispieldaten. Im Internet stehen bisher nur die Testseite für den Fernseher und eine Vorschau der Anzeige mit Beispieldaten. Beide enthalten keine Besuchsdaten. Die Begrüssung und die Solar-Ansicht sind in den Einstellungen noch ausgeschaltet. Du betreust das Ganze. Programmieren musst du nichts: Claude führt dich durch alle Schritte.
+Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt im Vollbild eine Website. Die Website wechselt zwischen drei Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch und Solarstrom der eigenen Anlage. Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt) und ihr Code liegt auf GitHub (eine Plattform für Programmdateien). Den Besuch holt die Website aus einem eigenen Outlook.com-Kalender: Mitarbeitende laden die Adresse `empfang.wallimann@outlook.com` zum Termin ein. Heute läuft die Testversion nur bei dir lokal, mit Beispieldaten. Die Website ist seit dem 25.11.2026 unter `https://empfang.wallimann.workers.dev` veröffentlicht. Ohne geheimen Schlüssel und ohne Passwort gibt sie nichts heraus. Die Begrüssung und die Solar-Ansicht sind in den Einstellungen noch ausgeschaltet. Du betreust das Ganze. Programmieren musst du nichts: Claude führt dich durch alle Schritte.
 
 ## Lokal ansehen am Mac
 
@@ -64,6 +64,7 @@ Der Fernseher übernimmt Änderungen innert einer Minute.
 | Solar-Ansicht nach jedem wievielten Artikel | Wie oft die Solar-Ansicht dazwischen kommt. | Nach jedem 3. Artikel |
 | Sekunden pro Ansicht | Wie lange jede Ansicht steht (10 bis 15). | 12 Sekunden |
 | Design | 1 Papier, 2 Rot, 3 Dunkel, 4 Sprechblase. | 1 Papier |
+| Ausrichtung des Fernsehers | «quer» oder «hochkant» mit gedrehtem Inhalt. Hängt der Fernseher hochkant, dreht er sein Bild meist nicht selbst. Dann dreht die Seite ihren Inhalt um 90 Grad, im oder gegen den Uhrzeigersinn. Dreht das Gerät sein Bild selbst, stellt sich die Seite von allein auf hochkant um. | quer |
 | Betriebstage und Betriebszeiten | Wann der Bildschirm etwas zeigt. Sonst bleibt er schwarz. | Montag bis Freitag, 06:30 bis 18:00 |
 | Empfänger und Absender der Warn-E-Mails | Adressen für Warnungen per E-Mail. | Noch nicht eingerichtet, siehe «Was noch nicht getestet ist» |
 
@@ -112,9 +113,9 @@ Der geheime Kalender-Link (`KALENDER_URL`) steht an derselben Stelle in Cloudfla
 
 ## Eine Änderung veröffentlichen
 
-Das Einrichten selbst ist noch nicht gemacht. Claude führt dich Schritt für Schritt hindurch und fragt dich vor dem ersten Veröffentlichen ausdrücklich um Erlaubnis.
+Heute, im Übergang: Du sagst Claude, was sich ändern soll. Claude macht die Änderung, prüft sie, zeigt sie dir und spielt sie über den verbundenen Cloudflare-Konnektor auf die Website. Die Dateien für den Browser holt die Website dabei aus dem öffentlichen GitHub-Projekt, fest auf den geprüften Stand.
 
-So läuft es, wenn alles eingerichtet ist:
+Später, sobald GitHub und Cloudflare verbunden sind:
 
 1. Du sagst Claude, was sich ändern soll. Claude macht die Änderung, zeigt sie dir und legt sie nach deinem Einverständnis auf GitHub in den Hauptzweig («main»). Das ist die Hauptversion des Projekts.
 2. Cloudflare bemerkt die Änderung und veröffentlicht sie automatisch. Du musst nichts tun. Die Funktion heisst «Workers Builds».
@@ -122,20 +123,20 @@ So läuft es, wenn alles eingerichtet ist:
 
 Einstellungen auf der Statusseite brauchen das nicht. Sie gelten innert einer Minute.
 
-## Erstes Veröffentlichen, Überblick
+## Stand der Einrichtung
 
-Das sind die Schritte, die dann anstehen. Claude begleitet dich bei jedem und zeigt dir, wo du klicken musst.
-
-1. Die Datenbank bei Cloudflare anlegen, mit Speicherort EU. Das geht nur beim Anlegen und lässt sich später nicht ändern.
-2. Den Bildspeicher für die News-Bilder anlegen.
-3. Die Geheimnisse eintragen: `ANZEIGE_SCHLUESSEL` und `STATUS_PASSWORT`. Der Kalender-Link kommt später.
-4. GitHub mit Cloudflare verbinden, damit Änderungen automatisch veröffentlicht werden.
-5. Die Testseite `https://empfang.wallimann.workers.dev/test/` am Fernseher öffnen und den angezeigten Code (zum Beispiel `1920x1080-11111111111`) an Claude melden. Die Testseite ist seit dem 25.11.2026 online, diesen Schritt kannst du jederzeit machen.
-6. Den Kalender in Outlook.com als ICS-Link veröffentlichen (Berechtigung «Alle Details anzeigen») und den Link als `KALENDER_URL` bei Cloudflare eintragen. Die genauen Bezeichnungen in Outlook können abweichen.
-7. Mit echten Einladungen testen, siehe «Besuch testen».
-8. Die Begrüssung auf der Statusseite einschalten.
-
-Bevor es losgeht, fragt Claude dich um Erlaubnis.
+| Schritt | Stand |
+|---|---|
+| Datenbank bei Cloudflare, Speicherort EU | erledigt am 25.11.2026 |
+| Bildspeicher für die News-Bilder | erledigt am 25.11.2026 |
+| Website veröffentlicht | erledigt am 25.11.2026, mit deiner Erlaubnis |
+| News von michelnews.ch von Cloudflare aus holen | erledigt, getestet am 25.11.2026 |
+| Geheimnisse `ANZEIGE_SCHLUESSEL` und `STATUS_PASSWORT` | vorläufige Testwerte gesetzt. Du ersetzt sie durch eigene, siehe «Passwort und geheimen Link wechseln» |
+| Testseite am Fernseher des Empfangs öffnen und Code melden | offen. Adresse: `https://empfang.wallimann.workers.dev` |
+| Kalender in Outlook.com als ICS-Link veröffentlichen (Berechtigung «Alle Details anzeigen») und als `KALENDER_URL` bei Cloudflare eintragen | offen. Die genauen Bezeichnungen in Outlook können abweichen |
+| Mit echten Einladungen testen, siehe «Besuch testen» | zum Teil erledigt, siehe dort |
+| Begrüssung auf der Statusseite einschalten | offen, erst nach dem Test |
+| GitHub mit Cloudflare verbinden, damit Änderungen automatisch veröffentlicht werden | offen, am grossen Bildschirm |
 
 ## Was tun bei Störungen
 

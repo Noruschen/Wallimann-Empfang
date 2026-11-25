@@ -85,6 +85,7 @@
   var designWunsch = parseInt(parameter('design'), 10) || 0;
   var drehungWunsch = parameter('drehung') === null ? null : (parseInt(parameter('drehung'), 10) || 0);
   var hochkant = false;        // true: Bühne 1'080 x 1'920
+  var letzteLage = '';         // zuletzt gesetzte Lage der Bühne, damit sie nicht jede Sekunde neu gesetzt wird
 
   var daten = null;            // letzte Antwort des Servers (ohne Begrüssungen aus dem Speicher)
   var begruessungen = [];      // nur im Arbeitsspeicher, nie auf dem Gerät gespeichert
@@ -174,8 +175,12 @@
     var f = dreh ? Math.min(h / bb, b / bh) : Math.min(b / bb, h / bh);
     // Von rechts nach links gelesen: Bühne auf ihre Mitte setzen, skalieren, drehen, in die Fenstermitte schieben
     var t = 'translate(' + Math.round(b / 2) + 'px,' + Math.round(h / 2) + 'px) rotate(' + dreh + 'deg) scale(' + f + ') translate(' + (-bb / 2) + 'px,' + (-bh / 2) + 'px)';
-    var s = el('buehne').style;
-    if (s.transform !== t) { s.webkitTransform = t; s.transform = t; }
+    if (t !== letzteLage) {
+      var s = el('buehne').style;
+      s.webkitTransform = t;
+      s.transform = t;
+      letzteLage = t;
+    }
     if (hoch !== hochkant) {
       hochkant = hoch;
       setzeDesign();

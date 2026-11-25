@@ -13,6 +13,8 @@ Stand: 25.11.2026
 | RSS-Feed von michelnews.ch | Wallimann Medien | Feed bereitstellen und die Adresse mitteilen. Alexander schickt dafür den Text aus «rss-bestellung.md». |
 | Solar-Zugang und Modell des Wechselrichters | Installateur | Fragen unten beantworten. |
 | Weg zu den Solardaten | GL | Entscheiden, sobald die Antworten und Preise vorliegen. |
+| Vorläufige Testwerte für Schlüssel und Passwort | Alexander | Durch eigene Werte ersetzen, bevor der echte Kalender-Link eingetragen wird. Anleitung: «Passwort und geheimen Link wechseln». |
+| Automatische Veröffentlichung von GitHub aus | Alexander mit Claude | GitHub und Cloudflare verbinden (am grossen Bildschirm). Bis dahin spielt Claude Änderungen über den Cloudflare-Konnektor ein, und die Website holt ihre Dateien für den Browser aus dem öffentlichen GitHub-Projekt. |
 | Abspielgerät am Fernseher | Alexander | Marke und Modell des Fernsehers klären, die Testseite am Fernseher öffnen und den Code an Claude melden. Entscheid: Smart-TV oder Zusatzgerät. |
 | Einstellungen am Fernseher | IT | Energiesparen, Abschalten bei Inaktivität und Bildschirmschoner ausschalten. Ein- und Aus-Timer passend zu 06:30 und 18:00 stellen. Verhalten nach Stromausfall prüfen. |
 | Warn-E-Mails | GL | Entscheiden: Domain zu Cloudflare nehmen (grob CHF 10 bis 20 pro Jahr) oder darauf verzichten. Bis dahin stehen Störungen nur auf der Statusseite. |
