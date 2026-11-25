@@ -3,28 +3,31 @@
 @font-face { font-family: "Figtree"; font-weight: 500; src: url("/schrift/figtree-500.woff") format("woff"); }
 @font-face { font-family: "Architects Daughter"; font-weight: 400; src: url("/schrift/architects-daughter-400.woff") format("woff"); }
 
-html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #faf8f3; color: #1d1d1b; font-family: Arial, Helvetica, sans-serif; font-size: 2vw; }
-.ecke { position: absolute; background: #d10a11; color: #ffffff; font-size: 1.3vw; padding: 0.5vw 0.9vw; }
+/* Alle Masse hängen an der Grundgrösse. Das Skript setzt sie so, dass die Seite in Breite UND Höhe
+   ins Fenster passt, auch wenn Leisten des Browsers Platz wegnehmen. Ohne Skript gilt die Breite. */
+html { font-size: 1vw; }
+html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background: #faf8f3; color: #1d1d1b; font-family: Arial, Helvetica, sans-serif; font-size: 2rem; }
+.ecke { position: absolute; background: #d10a11; color: #ffffff; font-size: 1.3rem; padding: 0.5rem 0.9rem; }
 .lo { left: 0; top: 0; } .ro { right: 0; top: 0; } .lu { left: 0; bottom: 0; } .ru { right: 0; bottom: 0; }
-.inhalt { position: absolute; left: 4vw; right: 4vw; top: 4vw; bottom: 4vw; }
-h1 { font-size: 3vw; margin: 0 0 0.6vw; }
-h2 { font-size: 1.7vw; margin: 1.2vw 0 0.5vw; color: #d10a11; }
-.hinweis { font-size: 1.5vw; margin: 0 0 0.6vw; }
-.vorschau { font-size: 1.4vw; margin: 0 0 0.4vw; }
-.vorschau a { display: inline-block; margin-left: 1vw; padding: 0.35vw 1.2vw; background: #d10a11; color: #ffffff; text-decoration: none; font-weight: bold; }
-.vorschau a:focus { outline: 0.3vw solid #1d1d1b; }
+.inhalt { position: absolute; left: 4rem; right: 4rem; top: 4rem; bottom: 4rem; }
+h1 { font-size: 3rem; margin: 0 0 0.6rem; }
+h2 { font-size: 1.7rem; margin: 1.2rem 0 0.5rem; color: #d10a11; }
+.hinweis { font-size: 1.5rem; margin: 0 0 0.6rem; }
+.vorschau { font-size: 1.4rem; margin: 0 0 0.4rem; }
+.vorschau a { display: inline-block; margin-left: 1rem; padding: 0.35rem 1.2rem; background: #d10a11; color: #ffffff; text-decoration: none; font-weight: bold; }
+.vorschau a:focus { outline: 0.3rem solid #1d1d1b; }
 .spalten { width: 100%; }
 .spalte { float: left; width: 48%; margin-right: 2%; }
-table { border-collapse: collapse; width: 100%; font-size: 1.35vw; }
-td { padding: 0.25vw 0.6vw 0.25vw 0; border-bottom: 1px solid #d9d5cc; vertical-align: top; }
+table { border-collapse: collapse; width: 100%; font-size: 1.35rem; }
+td { padding: 0.25rem 0.6rem 0.25rem 0; border-bottom: 1px solid #d9d5cc; vertical-align: top; }
 td.ja { color: #1a7a3a; font-weight: bold; }
 td.nein { color: #d10a11; font-weight: bold; }
-.probe { margin: 0.3vw 0; }
-.nunito { font-family: "Nunito", Arial, sans-serif; font-weight: 900; font-size: 2.3vw; }
-.figtree { font-family: "Figtree", Arial, sans-serif; font-weight: 500; font-size: 1.7vw; }
-.hand { font-family: "Architects Daughter", cursive; font-size: 2.2vw; color: #d10a11; }
-.bahn { position: relative; height: 1.2vw; background: #e9e7e2; margin-top: 1vw; overflow: hidden; }
+.probe { margin: 0.3rem 0; }
+.nunito { font-family: "Nunito", Arial, sans-serif; font-weight: 900; font-size: 2.3rem; }
+.figtree { font-family: "Figtree", Arial, sans-serif; font-weight: 500; font-size: 1.7rem; }
+.hand { font-family: "Architects Daughter", cursive; font-size: 2.2rem; color: #d10a11; }
+.bahn { position: relative; height: 1.2rem; background: #e9e7e2; margin-top: 1rem; overflow: hidden; }
 .balken { position: absolute; left: 0; top: 0; width: 12%; height: 100%; background: #d10a11; }
-.uhr { font-size: 1.4vw; margin: 0.6vw 0 0; }
-.code { font-size: 2.4vw; font-weight: bold; margin: 1vw 0 0.3vw; }
-.klein { font-size: 1vw; color: #5f5d58; word-wrap: break-word; margin: 0; }
+.uhr { font-size: 1.4rem; margin: 0.6rem 0 0; }
+.code { font-size: 2.4rem; font-weight: bold; margin: 1rem 0 0.3rem; }
+.klein { font-size: 1rem; color: #5f5d58; word-wrap: break-word; margin: 0; }

@@ -7,6 +7,15 @@
 
   function el(id) { return document.getElementById(id); }
 
+  // Grundgrösse so wählen, dass die Seite in Breite und Höhe ins Fenster passt (gedacht für 16:9)
+  function passeAn() {
+    var b = window.innerWidth || document.documentElement.clientWidth || 1920;
+    var h = window.innerHeight || document.documentElement.clientHeight || 1080;
+    document.documentElement.style.fontSize = Math.min(b / 100, h / 56.25) + 'px';
+  }
+  passeAn();
+  window.onresize = passeAn;
+
   function zeile(tabelle, name, wert, klasse) {
     var tr = document.createElement('tr');
     var a = document.createElement('td');

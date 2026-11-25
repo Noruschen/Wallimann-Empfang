@@ -602,6 +602,21 @@
     return true; // keine Fehlermeldung auf dem Bildschirm
   };
 
+  // ---------- Vollbild ----------
+
+  // Ein Druck auf OK an der Fernbedienung (oder ein Klick) schaltet auf Vollbild, falls der Browser das kann.
+  // Von selbst darf eine Seite das nicht, der Browser verlangt dafür eine Eingabe.
+  function vollbild() {
+    try {
+      var d = document.documentElement;
+      if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement) { return; }
+      var f = d.requestFullscreen || d.webkitRequestFullscreen || d.webkitRequestFullScreen || d.mozRequestFullScreen;
+      if (!f) { return; }
+      var zusage = f.call(d);
+      if (zusage && zusage['catch']) { zusage['catch'](function () { /* abgelehnt: egal */ }); }
+    } catch (e) { /* alter Browser */ }
+  }
+
   // ---------- Start ----------
 
   function leseSchluessel() {
@@ -631,6 +646,11 @@
       schluessel = leseSchluessel();
       var alt = lies('daten');
       if (alt) { uebernimm(alt, true); }
+    }
+
+    if (document.addEventListener) {
+      document.addEventListener('click', vollbild, false);
+      document.addEventListener('keydown', vollbild, false);
     }
 
     takt();
