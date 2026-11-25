@@ -350,6 +350,14 @@ describe('Nicht anzeigen', () => {
     verworfenAls(kalender(termin({ zusatz: ['CLASS:CONFIDENTIAL'], ohne: ['CLASS'] })), GRUENDE.PRIVAT);
   });
 
+  test('Platzhalter für private Termine kommen nie auf den Bildschirm', () => {
+    for (const betreff of ['Privater Termin', 'Private Appointment', 'PRIVAT']) {
+      verworfenAls(kalender(termin({ betreff })), GRUENDE.PRIVAT);
+    }
+    // Eine Firma, die das Wort nur enthält, bleibt ein Besuch
+    assert.equal(einzig(kalender(termin({ betreff: 'Privatbank Muster AG' }))).firma, 'Privatbank Muster AG');
+  });
+
   test('ganztägig über VALUE=DATE', () => {
     verworfenAls(
       kalender(termin({ start: 'DTSTART;VALUE=DATE:20261126', ende: 'DTEND;VALUE=DATE:20261127' })),

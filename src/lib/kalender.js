@@ -461,6 +461,7 @@ function kompakt(utc) {
 // ---------------------------------------------------------------------------
 
 const PRAEFIX = /^[\s\p{Cc}\p{Cf}]*(?:WG|AW|FWD?|RE|TR)\s*:/iu;
+const PRIVAT_PLATZHALTER = /^(?:privater termin|private appointment|privat|private|rendez-vous privé|appuntamento privato)$/iu;
 // Outlook lässt abgesagte Termine im Kalender stehen und setzt ein Wort davor (bei Wallimann getestet: «Abgesagt:»).
 // Je nach Sprache des Kontos heisst es anders, darum mehrere Schreibweisen.
 const ABSAGE = /^(?:abgesagt|storniert|annulliert|canceled|cancelled|annulé|annule|annullato|cancelado)\s*:/iu;
@@ -550,6 +551,10 @@ function pruefe(props, opt) {
   const klasse = erste(props, 'CLASS');
   const k = klasse ? klasse.wert.trim().toUpperCase() : '';
   if (k === 'PRIVATE' || k === 'CONFIDENTIAL') return { grund: GRUENDE.PRIVAT };
+  // Veröffentlichte Kalender ersetzen den Betreff privater Termine oft durch einen Platzhalter.
+  // Ein solcher Platzhalter ist nie ein Firmenname und kommt darum nie auf den Bildschirm.
+  const betreffRoh = erste(props, 'SUMMARY');
+  if (betreffRoh && PRIVAT_PLATZHALTER.test(betreffRoh.wert.trim())) return { grund: GRUENDE.PRIVAT };
   const org = erste(props, 'ORGANIZER');
   let ansprechperson = null;
   if (!org || !org.wert.trim()) {

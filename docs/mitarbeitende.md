@@ -34,12 +34,13 @@ Outlook kann beim Einladen warnen, dass die Adresse extern ist. Das ist richtig 
 ## Was nicht erscheint
 
 - abgesagte Termine
+- Termine, die du als «privat» markierst
 - ganztägige Termine
 - Termine ohne Wallimann-Adresse beim Organisator
 
 ## Besuch soll nicht erscheinen
 
-Lade «empfang.wallimann@outlook.com» nicht ein. Das gilt zum Beispiel bei vertraulichem Besuch. Verlass dich dafür nicht auf die Markierung «privat» in Outlook: Ob sie beim Empfang ankommt, ist noch nicht bestätigt.
+Am sichersten: Lade «empfang.wallimann@outlook.com» nicht ein. Das gilt zum Beispiel bei vertraulichem Besuch. Markierst du einen Termin in Outlook als «privat», erscheint er ebenfalls nicht.
 
 ## Fragen
 
