@@ -332,9 +332,17 @@ describe('Nicht anzeigen', () => {
       'Annulé : Muster Bau AG',
       'ANNULÉ: Muster Bau AG',
       'WG: Abgesagt: Muster Bau AG',
+      'Storniert: Muster Bau AG',
+      'Annulliert: Muster Bau AG',
+      'Annullato: Muster Bau AG',
     ]) {
       verworfenAls(kalender(termin({ betreff })), GRUENDE.ABGESAGT);
     }
+  });
+
+  test('ein Firmenname, der wie eine Absage beginnt, bleibt ein Besuch', () => {
+    const b = einzig(kalender(termin({ betreff: 'Abgesagt GmbH | Anna Beispiel' })));
+    assert.equal(b.firma, 'Abgesagt GmbH');
   });
 
   test('privat und vertraulich', () => {

@@ -461,7 +461,9 @@ function kompakt(utc) {
 // ---------------------------------------------------------------------------
 
 const PRAEFIX = /^[\s\p{Cc}\p{Cf}]*(?:WG|AW|FWD?|RE|TR)\s*:/iu;
-const ABSAGE = /^(?:abgesagt|canceled|cancelled|annulé|annule)\s*:/iu;
+// Outlook lässt abgesagte Termine im Kalender stehen und setzt ein Wort davor (bei Wallimann getestet: «Abgesagt:»).
+// Je nach Sprache des Kontos heisst es anders, darum mehrere Schreibweisen.
+const ABSAGE = /^(?:abgesagt|storniert|annulliert|canceled|cancelled|annulé|annule|annullato|cancelado)\s*:/iu;
 
 function entfernePraefixe(text) {
   let s = text;
