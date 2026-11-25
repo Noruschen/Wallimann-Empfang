@@ -55,7 +55,7 @@ Bitte helft sicherzustellen:
 3. Eine Wallimann-Adresse zur Wiederherstellung hinterlegt.
 4. Zugangsdaten bei der Geschäftsleitung hinterlegt.
 5. Mindestens einmal pro Jahr anmelden. Microsoft kann unbenutzte Konten nach längerer Zeit schliessen.
-6. Zusätzlich möglich und noch zu testen: in Outlook.com unter «Junk-E-Mail» nur sichere Absender zulassen. Der Organisator einer Einladung lässt sich nämlich fälschen, die Regel «nur Wallimann-Adressen» schützt darum nicht vollständig.
+6. Zusätzlich möglich und noch zu testen: in Outlook.com unter «Junk-E-Mail» nur sichere Absender zulassen. Der Kalender-Link von Outlook.com liefert nämlich nicht mit, wer einen Termin angelegt hat (getestet am 25.11.2026). Die Website kann darum nicht prüfen, ob eine Einladung von einer Wallimann-Adresse stammt. Auf den Bildschirm kommt jeder Termin im Kalender des Kontos, ausser er ist privat, abgesagt oder ganztägig.
 
 Bekannt und offen: Die Konten bei Outlook.com, Cloudflare und GitHub laufen auf Alexander als Privatperson, nicht auf die Firma. Die Geschäftsleitung muss das bestätigen, oder die Konten ziehen später um.
 

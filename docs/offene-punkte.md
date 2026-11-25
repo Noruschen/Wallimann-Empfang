@@ -6,20 +6,21 @@ Stand: 25.11.2026
 |---|---|---|
 | Speicherung bei Cloudflare und Outlook.com | GL | Zustimmen und den Vertrag zur Auftragsbearbeitung (DPA) von Cloudflare prüfen. Er gilt für den Kontoinhaber, das Konto läuft privat auf Alexander. |
 | Private Konten (Cloudflare, GitHub, Outlook.com) | GL | Bestätigen, dass die Konten vorerst privat laufen, oder später auf die Firma umziehen. Zugangsdaten bei der GL hinterlegen. |
-| Erlaubte Domain der Organisatoren | erledigt | Alexander hat am 25.11.2026 bestätigt: wallimann.ch. |
-| Test des Kalender-Links mit echten Einladungen | Alexander | Erster Teil erledigt am 25.11.2026: Eine Einladung aus dem Firmen-Outlook steht von selbst im Kalender des Empfangskontos, ein verschobener Termin zieht von selbst nach, ein abgesagter Termin bleibt als «Abgesagt: …» stehen (die Website lässt ihn weg), ein als «privat» versendeter Termin kommt als privat an. Die Termine erscheinen nach etwa 30 Sekunden bis 1 Minute. Noch offen: Kalender in Outlook.com veröffentlichen, Link eintragen, echte Einladungen schicken. Prüfen, wie schnell neue, geänderte und abgesagte Termine erscheinen, ob Organisator und «privat» im Link stehen und ob Einladungen im Junk-Ordner landen. Dauert es länger als 10 Minuten, taugt der Kalender-Link nicht. Dann entscheiden wir über den anderen Weg: Die Website liest den Kalender über eine Anmeldung bei Microsoft (mehr Aufwand, noch nicht gebaut). |
+| Schutz vor fremden Einladungen | Alexander mit Claude, danach GL | Der Kalender-Link von Outlook.com liefert nicht mit, wer einen Termin angelegt hat (getestet am 25.11.2026). Die Regel «nur Adressen mit wallimann.ch» wirkt darum nicht: Jeder Termin im Kalender des Empfangskontos erscheint, ausser er ist privat, abgesagt oder ganztägig. Zu testen: ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt, und ob die Einstellung «nur sichere Absender» in Outlook.com das verhindert. |
+| Ansprechperson auf dem Bildschirm | erledigt | Alexander hat am 25.11.2026 entschieden: Sie entfällt. Der Bildschirm zeigt die Firma und, falls im Betreff, den Namen des Besuchs. |
+| Test des Kalender-Links mit echten Einladungen | Alexander | Erster Teil erledigt am 25.11.2026: Eine Einladung aus dem Firmen-Outlook steht von selbst im Kalender des Empfangskontos, ein verschobener Termin zieht von selbst nach, ein abgesagter Termin bleibt als «Abgesagt: …» stehen (die Website lässt ihn weg), ein als «privat» versendeter Termin kommt als privat an. Die Termine erscheinen nach etwa 30 Sekunden bis 1 Minute. Zweiter Teil erledigt am 25.11.2026: Der Kalender ist veröffentlicht und der Link eingetragen. Neue Termine standen innert 5 Minuten im Link, «privat» steht im Link und wird erkannt, der Organisator steht nicht im Link. Eine Testeinladung ist bis in die Liste der Besuche gekommen. Noch offen: wie schnell gelöschte Termine aus dem Link verschwinden (nach 5 Minuten stand ein gelöschter Termin noch darin), ob Einladungen im Junk-Ordner landen, und die Begrüssung am Fernseher am Empfang. Dauert es länger als 10 Minuten, taugt der Kalender-Link nicht. Dann entscheiden wir über den anderen Weg: Die Website liest den Kalender über eine Anmeldung bei Microsoft (mehr Aufwand, noch nicht gebaut). |
 | Begrüssung einschalten | Alexander | Erst nach dem erfolgreichen Test, in den Einstellungen der Statusseite. |
 | Umstieg auf ein Firmenpostfach | IT | Später allenfalls ein Raumpostfach oder geteiltes Postfach im Firmen-Outlook anlegen. |
 | RSS-Feed von michelnews.ch | Wallimann Medien | Feed bereitstellen und die Adresse mitteilen. Alexander schickt dafür den Text aus «rss-bestellung.md». |
 | Solar-Zugang und Modell des Wechselrichters | Installateur | Fragen unten beantworten. |
 | Weg zu den Solardaten | GL | Entscheiden, sobald die Antworten und Preise vorliegen. |
-| Vorläufige Testwerte für Schlüssel und Passwort | Alexander | Durch eigene Werte ersetzen, bevor der echte Kalender-Link eingetragen wird. Anleitung: «Passwort und geheimen Link wechseln». |
+| Vorläufige Testwerte für Schlüssel und Passwort | erledigt | Alexander hat am 25.11.2026 eigene Werte eingetragen. |
 | Automatische Veröffentlichung von GitHub aus | Alexander mit Claude | GitHub und Cloudflare verbinden (am grossen Bildschirm). Bis dahin spielt Claude Änderungen über den Cloudflare-Konnektor ein, und die Website holt ihre Dateien für den Browser aus dem öffentlichen GitHub-Projekt. |
 | Abspielgerät am Fernseher | Alexander | Marke und Modell des Fernsehers klären, die Testseite am Fernseher öffnen und den Code an Claude melden. Entscheid: Smart-TV oder Zusatzgerät. |
 | Einstellungen am Fernseher | IT | Energiesparen, Abschalten bei Inaktivität und Bildschirmschoner ausschalten. Ein- und Aus-Timer passend zu 06:30 und 18:00 stellen. Verhalten nach Stromausfall prüfen. |
 | Warn-E-Mails | GL | Entscheiden: Domain zu Cloudflare nehmen (grob CHF 10 bis 20 pro Jahr) oder darauf verzichten. Bis dahin stehen Störungen nur auf der Statusseite. |
 | Logo | Alexander | Prüfen, ob das Logo «wallimann medien und kommunikation» passt, sonst das Logo der Wallimann Druck AG liefern. |
-| Erstes Veröffentlichen im Internet | Claude | Vorher Alexander ausdrücklich um Erlaubnis fragen. |
+| Erstes Veröffentlichen im Internet | erledigt | Veröffentlicht am 25.11.2026, mit Erlaubnis von Alexander. |
 
 ## Fragen an den Installateur der Solaranlage
 
@@ -32,9 +33,9 @@ Stand: 25.11.2026
 
 ## Was nicht getestet werden konnte
 
-- Der echte Kalender-Link von Outlook.com.
-- Ob michelnews.ch den Abruf von einem Cloudflare-Server aus zulässt (von der Testumgebung aus ging es).
-- Der Browser des Fernsehers.
-- Die Rechenzeit bei Cloudflare.
+- Wie schnell gelöschte Termine aus dem Kalender-Link von Outlook.com verschwinden.
+- Ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt.
+- Die Begrüssung auf dem Fernseher am Empfang.
+- Der Browser des Fernsehers am Empfang.
 - Der E-Mail-Versand.
 - Echte Solardaten.

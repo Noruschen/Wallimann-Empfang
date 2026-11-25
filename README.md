@@ -72,7 +72,7 @@ Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neulade
 
 **Geheimer Schlüssel hinter dem Zeichen # im Link.** Dieser Teil der Adresse wird vom Browser nicht an den Server geschickt und steht darum in keinem Protokoll. Die Anzeige schickt den Schlüssel bei jeder Abfrage in einer Kopfzeile mit, ohne ihn gibt der Server nichts heraus.
 
-**Besuche über einen veröffentlichten Kalender-Link (ICS).** Dafür braucht es keine Anmeldung, die ablaufen kann, und die Website kann nur lesen. Ob Outlook.com neue und abgesagte Termine schnell genug in den Link schreibt, zeigt erst der Test mit echten Einladungen.
+**Besuche über einen veröffentlichten Kalender-Link (ICS).** Dafür braucht es keine Anmeldung, die ablaufen kann, und die Website kann nur lesen. Der Link von Outlook.com liefert nicht mit, wer einen Termin angelegt hat. Die Website kann darum nicht prüfen, wer eingeladen hat, und zeigt jeden Termin im Kalender, ausser er ist privat, abgesagt oder ganztägig. Neue Termine standen im Test innert 5 Minuten im Link.
 
 **Begrüssung nur mit frischen Daten.** Der Server gibt einen Namen erst kurz vor dem Zeitfenster heraus und nur, wenn der Kalender in den letzten 15 Minuten geladen wurde. Die Anzeige zeigt ihn nur, wenn sie in den letzten 2 Minuten Kontakt zum Server hatte, und speichert Namen nie auf dem Gerät.
 
@@ -94,7 +94,6 @@ Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neulade
 
 ## Was noch nicht getestet werden konnte
 
-- Der echte Kalender-Link von Outlook.com mit echten Einladungen.
-- Der Browser des Fernsehers.
-- Ob michelnews.ch Abrufe von Cloudflare aus zulässt.
-- Die Rechenzeit bei Cloudflare, der E-Mail-Versand und echte Solardaten.
+- Wie schnell gelöschte Termine aus dem Kalender-Link von Outlook.com verschwinden, und ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt.
+- Der Browser des Fernsehers am Empfang und die Begrüssung auf diesem Fernseher.
+- Der E-Mail-Versand und echte Solardaten.

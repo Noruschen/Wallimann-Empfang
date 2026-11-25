@@ -52,7 +52,8 @@ Der Fernseher übernimmt Änderungen innert einer Minute.
 | Beginn vor dem Termin | Wie viele Minuten vor Terminbeginn die Begrüssung startet. | 30 Minuten |
 | Ende nach Terminbeginn | Wie viele Minuten nach Terminbeginn sie endet. | 15 Minuten |
 | Wechsel bei mehreren Besuchen | Sekunden pro Besuch, wenn mehrere gleichzeitig da sind. | 10 Sekunden |
-| Erlaubte Adressen der Organisatoren | Nur Termine von Personen mit dieser Domain (Teil der E-Mail-Adresse nach dem @) erscheinen. | `wallimann.ch` (von dir bestätigt am 25.11.2026) |
+| Erlaubte Adressen der Organisatoren | Wirkt nur, wenn der Kalender mitliefert, wer den Termin angelegt hat. Der Kalender-Link von Outlook.com tut das nicht (getestet am 25.11.2026). Die Einstellung hat darum im Moment keine Wirkung. | `wallimann.ch` (von dir bestätigt am 25.11.2026) |
+| Termine ohne Organisator weglassen | Eingeschaltet erscheint mit dem Kalender-Link von Outlook.com kein einziger Besuch. | Aus |
 | Kalender holen alle | Wie oft die Website den Kalender holt. | 5 Minuten |
 | Anzahl Artikel | Wie viele News-Artikel gezeigt werden. | 10 |
 | Nur diese Gemeinden | Filter nach Gemeinde. Leer heisst alle. | Leer (alle) |
@@ -74,27 +75,27 @@ Nach 5 falschen Versuchen innert 15 Minuten ist der betreffende Absender (der In
 
 ## Besuch testen
 
-Wichtig: Der Kalender-Link ist noch nicht getestet. Ob alles so funktioniert, wie es gebaut ist, zeigt erst dieser Test mit echten Einladungen. Darum ist die Begrüssung bis dahin ausgeschaltet.
+Stand 25.11.2026: Der Kalender-Link ist eingetragen, und eine erste Testeinladung ist bis in die Liste der Besuche gekommen. Noch nicht fertig getestet ist, wie schnell gelöschte Termine verschwinden und ob fremde Einladungen im Kalender landen. Am Fernseher am Empfang ist die Begrüssung noch nicht geprüft.
 
 1. Lege in Outlook einen Termin an und lade zusätzlich `empfang.wallimann@outlook.com` ein.
-2. Schreibe den Betreff so: `Firmenname` oder `Firmenname | Name des Besuchs`. Das Zeichen `|` ist der senkrechte Strich. Beispiel: `Muster Verpackungen AG | Frau Anna Beispiel`. Der Name erscheint nur, wenn er im Betreff steht.
+2. Schreibe den Betreff so: `Firmenname` oder `Firmenname | Name des Besuchs`. Das Zeichen `|` ist der senkrechte Strich. Beispiel: `Muster Verpackungen AG | Frau Anna Beispiel`. Steht nur die Firma im Betreff, zeigt der Bildschirm nur die Firma. Steht beides da, zeigt er beides.
 3. Outlook zeigt beim Einladen vielleicht einen Hinweis auf eine externe Adresse. Das ist richtig so.
 4. Öffne die Statusseite und drücke «Kalender jetzt abrufen».
-5. Prüfe in der Liste der Besuche, ob dein Termin mit der richtigen Firma, dem Namen und der Ansprechperson erscheint. Ansprechperson ist die Person, die den Termin angelegt hat.
+5. Prüfe in der Liste der Besuche, ob dein Termin mit der richtigen Firma und dem Namen erscheint. Wer den Termin angelegt hat, steht nicht auf dem Bildschirm (dein Entscheid vom 25.11.2026).
 6. Schalte erst «Begrüssung am Fernseher eingeschaltet» ein, wenn alles stimmt.
 
 Was du beim Test genau beobachten sollst:
 
 - Landet die Einladung von selbst im Kalender? Erledigt: Ja, eine Testeinladung aus dem Firmen-Outlook stand am 25.11.2026 von selbst im Kalender des Empfangskontos, nach etwa 30 Sekunden bis 1 Minute.
 - Landet eine Einladung einmal im Junk-Ordner statt im Kalender?
-- Wie schnell erscheinen neue, geänderte und abgesagte Termine? Dauert es länger als 10 Minuten, taugt dieser Weg nicht und Claude schlägt einen anderen vor.
-- Erscheint der Organisator mit E-Mail-Adresse? Fehlt er, zeigt die Website den Termin aus Sicherheitsgründen nicht an.
-- Funktioniert die Markierung «privat»? Zum Teil erledigt: Ein als «privat» versendeter Termin stand am 25.11.2026 nach etwa 30 Sekunden als privat im Kalender des Empfangskontos. Noch offen: ob die Markierung auch im veröffentlichten Kalender-Link steht. Das zeigt erst der Test mit der Website.
+- Wie schnell erscheinen neue, geänderte und abgesagte Termine? Zum Teil erledigt: Neue Termine standen am 25.11.2026 innert 5 Minuten im Kalender-Link. Noch offen: wie schnell gelöschte Termine aus dem Link verschwinden. Ein gelöschter Termin stand nach 5 Minuten noch im Link, länger wurde nicht gemessen. Dauert es länger als 10 Minuten, taugt dieser Weg nicht und Claude schlägt einen anderen vor.
+- Erscheint der Organisator mit E-Mail-Adresse? Erledigt: Nein, der Kalender-Link von Outlook.com liefert keinen Organisator (getestet am 25.11.2026). Die Website zeigt solche Termine trotzdem an, kann aber nicht prüfen, wer eingeladen hat.
+- Funktioniert die Markierung «privat»? Zum Teil erledigt: Ein als «privat» versendeter Termin stand am 25.11.2026 nach etwa 30 Sekunden als privat im Kalender des Empfangskontos. Die Markierung steht auch im veröffentlichten Kalender-Link, die Website lässt den Termin weg (getestet am 25.11.2026).
 - Bleiben abgesagte Termine als «Abgesagt: …» stehen? Erledigt: Ja, getestet am 25.11.2026. Die Website erkennt das und zeigt solche Termine nicht an.
 - Zieht der Kalender nach, wenn ein Termin verschoben wird? Erledigt: Ja, getestet am 25.11.2026.
 - Wie schnell klappt ein Spontanbesuch? Die Begrüssung beginnt frühestens beim nächsten Abruf des Kalenders (alle 5 Minuten).
 
-Nicht angezeigt werden: abgesagte Termine, als «privat» markierte Termine, ganztägige Termine, Termine von Organisatoren ohne Adresse der erlaubten Domain und Termine ohne Organisator. Soll ein Termin nicht erscheinen (zum Beispiel ein vertraulicher Besuch), lade `empfang.wallimann@outlook.com` am sichersten gar nicht ein. Ein als «privat» markierter Termin erscheint ebenfalls nicht.
+Nicht angezeigt werden: abgesagte Termine, als «privat» markierte Termine, ganztägige Termine und Termine ohne Firmenname im Betreff. Alle anderen Termine im Kalender des Empfangskontos erscheinen, egal wer eingeladen hat. Soll ein Termin nicht erscheinen (zum Beispiel ein vertraulicher Besuch), lade `empfang.wallimann@outlook.com` am sichersten gar nicht ein. Ein als «privat» markierter Termin erscheint ebenfalls nicht.
 
 ## Passwort und geheimen Link wechseln
 
@@ -131,11 +132,11 @@ Einstellungen auf der Statusseite brauchen das nicht. Sie gelten innert einer Mi
 | Bildspeicher für die News-Bilder | erledigt am 25.11.2026 |
 | Website veröffentlicht | erledigt am 25.11.2026, mit deiner Erlaubnis |
 | News von michelnews.ch von Cloudflare aus holen | erledigt, getestet am 25.11.2026 |
-| Geheimnisse `ANZEIGE_SCHLUESSEL` und `STATUS_PASSWORT` | vorläufige Testwerte gesetzt. Du ersetzt sie durch eigene, siehe «Passwort und geheimen Link wechseln» |
+| Geheimnisse `ANZEIGE_SCHLUESSEL` und `STATUS_PASSWORT` | erledigt am 25.11.2026, du hast eigene Werte eingetragen |
 | Testseite am Fernseher des Empfangs öffnen und Code melden | offen. Adresse: `https://empfang.wallimann.workers.dev` |
-| Kalender in Outlook.com als ICS-Link veröffentlichen (Berechtigung «Alle Details anzeigen») und als `KALENDER_URL` bei Cloudflare eintragen | offen. Die genauen Bezeichnungen in Outlook können abweichen |
+| Kalender in Outlook.com als ICS-Link veröffentlichen (Berechtigung «Alle Details anzeigen») und als `KALENDER_URL` bei Cloudflare eintragen | erledigt am 25.11.2026 |
 | Mit echten Einladungen testen, siehe «Besuch testen» | zum Teil erledigt, siehe dort |
-| Begrüssung auf der Statusseite einschalten | offen, erst nach dem Test |
+| Begrüssung auf der Statusseite einschalten | zum Testen eingeschaltet am 25.11.2026. Für den Betrieb am Empfang entscheidest du nach dem Test am Fernseher |
 | GitHub mit Cloudflare verbinden, damit Änderungen automatisch veröffentlicht werden | offen, am grossen Bildschirm |
 
 ## Was tun bei Störungen
@@ -144,7 +145,7 @@ Einstellungen auf der Statusseite brauchen das nicht. Sie gelten innert einer Mi
 |---|---|---|
 | Bildschirm schwarz | Ausserhalb der Betriebszeiten (Montag bis Freitag, 06:30 bis 18:00) oder Fernseher ausgeschaltet oder nach Stromausfall nicht wieder eingeschaltet. | Betriebszeiten auf der Statusseite prüfen. Fernseher einschalten. Bei wiederholtem Problem die IT fragen (Timer, Verhalten nach Stromausfall). |
 | Nur Logo | Der geheime Schlüssel in der Adresse fehlt oder ist falsch, zum Beispiel nach einem Wechsel. Oder es gibt noch gar keine Daten. | Adresse am Fernseher prüfen: `https://empfang.wallimann.workers.dev/anzeige/#k=GEHEIMER-SCHLUESSEL`. Danach auf der Statusseite schauen, ob die Anzeige Daten abholt. |
-| Keine Begrüssung | Begrüssung ausgeschaltet. Oder Termin nicht im Kalender oder nicht erlaubt (privat, ganztägig, abgesagt, fremde Domain, kein Organisator). Oder der letzte Kalenderabruf ist älter als 15 Minuten. Oder der Kalender-Link wurde zurückgesetzt. | Auf der Statusseite «Kalender jetzt abrufen» drücken und die Besuche und die Gründe für nicht angezeigte Termine ansehen. Einstellung «Begrüssung» prüfen. Ist der Link ungültig, meldet das die Statusseite: neuen Link veröffentlichen und eintragen. |
+| Keine Begrüssung | Begrüssung ausgeschaltet. Oder Termin nicht im Kalender oder nicht erlaubt (privat, ganztägig, abgesagt, kein Firmenname im Betreff). Oder der letzte Kalenderabruf ist älter als 15 Minuten. Oder der Kalender-Link wurde zurückgesetzt. | Auf der Statusseite «Kalender jetzt abrufen» drücken und die Besuche und die Gründe für nicht angezeigte Termine ansehen. Einstellung «Begrüssung» prüfen. Ist der Link ungültig, meldet das die Statusseite: neuen Link veröffentlichen und eintragen. |
 | Alte News | michelnews.ch war nicht erreichbar, dann laufen die zuletzt gespeicherten Artikel weiter. Oder der Fernseher hat kein Internet. | Auf der Statusseite ansehen, wann News zuletzt geladen wurden. Internet am Empfang prüfen. Meist erledigt sich das von selbst. |
 | Keine Solar-Ansicht | Die Quelle ist ausgeschaltet, oder die Solarwerte sind älter als 10 Minuten. | Einstellung «Quelle» bei Solar prüfen. Echte Solardaten gibt es erst, wenn der Zugang geklärt ist. |
 | Statusseite gesperrt | 5 falsche Passwörter innert 15 Minuten. | 15 Minuten warten, dann mit dem richtigen Passwort anmelden. |
@@ -154,10 +155,9 @@ Der Bildschirm zeigt nie eine Fehlermeldung. Fällt das Internet am Empfang aus,
 
 ## Was noch nicht getestet ist
 
-- Der echte Kalender-Link von Outlook.com (siehe «Besuch testen»).
-- Ob michelnews.ch den Abruf von einem Cloudflare-Server aus zulässt. Von hier aus ging es.
-- Der Browser des Fernsehers. Marke und Modell sind noch nicht bekannt.
-- Die Rechenzeit bei Cloudflare. Die Gratis-Stufe erlaubt 10 Millisekunden pro Aufruf, das Umrechnen des Kalenders lag im Test bei 3 bis 10 Millisekunden. Das ist knapp. Reicht es nicht, kostet die nächste Stufe USD 5 pro Monat.
+- Wie schnell gelöschte Termine aus dem Kalender-Link von Outlook.com verschwinden, und ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt (siehe «Besuch testen»).
+- Der Browser des Fernsehers am Empfang und die Begrüssung auf diesem Fernseher. Marke und Modell sind noch nicht bekannt.
+- Die Rechenzeit bei Cloudflare über längere Zeit. Die Gratis-Stufe erlaubt 10 Millisekunden pro Aufruf. Reicht es nicht, kostet die nächste Stufe USD 5 pro Monat.
 - Der E-Mail-Versand für Warnungen. Dafür braucht es eine eigene Domain im Cloudflare-Konto, die es noch nicht gibt. Ob eine neue Domain (grob CHF 10 bis 20 pro Jahr) angeschafft wird, ist offen.
 - Echte Solardaten. Der Zugang ist noch nicht geklärt.
 

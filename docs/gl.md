@@ -6,7 +6,7 @@ Stand: 25.11.2026
 
 Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt eine Website im Vollbild. Sie wechselt zwischen drei Ansichten:
 
-- **Begrüssung von Besuch:** Firma, Name und Ansprechperson, ab 30 Minuten vor bis 15 Minuten nach Terminbeginn. Die Termine kommen aus einem Outlook-Kalender.
+- **Begrüssung von Besuch:** Firma und, falls angegeben, Name des Besuchs, ab 30 Minuten vor bis 15 Minuten nach Terminbeginn. Die Termine kommen aus einem Outlook-Kalender.
 - **News:** die 10 neusten Artikel von michelnews.ch mit Bild, Überschrift, Rubrik, Ort und Datum, ohne Artikeltext und ohne Werbung.
 - **Solarstrom:** aktuelle Leistung und Tagesertrag der Fronius-Anlage.
 
@@ -16,7 +16,7 @@ Immer sichtbar sind Logo, Datum und Uhrzeit. Ausserhalb der Betriebszeiten (Mont
 
 - **Cloudflare:** Die Website läuft bei Cloudflare. Die Datenbank wird beim Einrichten auf den Speicherort EU festgelegt. Das Serverprogramm läuft im weltweiten Netz von Cloudflare und verarbeitet die Daten dort kurzzeitig.
 - **Outlook.com:** Die Termine liegen in einem eigenen Outlook.com-Konto bei Microsoft, ausserhalb des Firmen-Outlooks. Dort bleiben sie, solange sie im Kalender stehen.
-- **Was gespeichert wird:** Firma, Name des Besuchs, Ansprechperson und Zeit der Besuche von heute und morgen. Dazu News-Titel und Bilder, Zeitpunkte der letzten Abrufe und Einstellungen. Besuchsdaten werden am Tag nach dem Termin gelöscht. Auf dem Fernseher selbst werden keine Namen gespeichert. Zu beachten: Cloudflare hält von der Datenbank automatisch Sicherungen, in der Gratis-Stufe für 7 Tage (Funktion «Time Travel», Quelle: https://developers.cloudflare.com/d1/reference/time-travel/). Gelöschte Besuche sind darin so lange noch enthalten.
+- **Was gespeichert wird:** Firma, Name des Besuchs und Zeit der Besuche von heute und morgen. Dazu News-Titel und Bilder, Zeitpunkte der letzten Abrufe und Einstellungen. Besuchsdaten werden am Tag nach dem Termin gelöscht. Auf dem Fernseher selbst werden keine Namen gespeichert. Zu beachten: Cloudflare hält von der Datenbank automatisch Sicherungen, in der Gratis-Stufe für 7 Tage (Funktion «Time Travel», Quelle: https://developers.cloudflare.com/d1/reference/time-travel/). Gelöschte Besuche sind darin so lange noch enthalten.
 - **Vertrag zur Auftragsbearbeitung:** Cloudflare stellt einen Standardvertrag bereit (Data Processing Addendum, «DPA»). Er ist Teil der Nutzungsbedingungen: https://www.cloudflare.com/cloudflare-customer-dpa/. Die GL kann ihn prüfen. Zu klären: Er gilt für den Kontoinhaber, und das Konto läuft privat auf Alexander Fischer.
 - Die Verbindung ist immer verschlüsselt. Alle Seiten sind für Suchmaschinen gesperrt.
 
@@ -46,8 +46,8 @@ Offen ist, wie bei Abwesenheit oder Austritt der Zugang gesichert wird. Für das
 
 - **Geheimer Link:** Die Anzeige am Fernseher öffnet sich nur mit einem geheimen Schlüssel im Link. Ohne gültigen Schlüssel zeigt sie nur das Logo und bekommt keine Daten.
 - **Statusseite mit Passwort:** Nach 5 falschen Versuchen innert 15 Minuten wird der Absender 15 Minuten gesperrt. Die Anmeldung gilt 12 Stunden.
-- **Nur Wallimann-Organisatoren:** Besuche erscheinen nur, wenn der Termin von einer Adresse der erlaubten Domain angelegt wurde (wallimann.ch, von Alexander Fischer am 25.11.2026 bestätigt).
-- **Grenzen:** Der Organisator einer Einladung lässt sich fälschen. Die Regel schützt darum nicht vollständig. Zusätzlich möglich und noch zu testen: in Outlook.com nur sichere Absender zulassen. Wer den geheimen Link kennt, kann die Anzeige sehen.
+- **Was auf den Bildschirm kommt:** Jeder Termin im Kalender des Empfangskontos, ausser er ist privat, abgesagt oder ganztägig. Vom Betreff kommt nur bereinigter Text auf den Bildschirm: Firma und Name, keine Links, keine Bilder, je höchstens 60 Zeichen, und nur im Zeitfenster des Termins.
+- **Grenzen:** Der Kalender-Link von Outlook.com liefert nicht mit, wer einen Termin angelegt hat (getestet am 25.11.2026). Die Website kann darum nicht prüfen, ob eine Einladung von einer Wallimann-Adresse stammt. Wer die Adresse des Empfangskontos kennt, kann eine Einladung schicken. Ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt, ist noch nicht getestet. Zusätzlich möglich und noch zu testen: in Outlook.com nur sichere Absender zulassen. Wer den geheimen Link kennt, kann die Anzeige sehen.
 
 ## Stand
 
@@ -58,7 +58,7 @@ Die Website ist seit dem 25.11.2026 unter `https://empfang.wallimann.workers.dev
 1. Ist die GL mit der Speicherung bei Cloudflare und Outlook.com einverstanden, nach Prüfung des Vertrags zur Auftragsbearbeitung?
 2. Dürfen die Konten vorerst privat auf Alexander Fischer laufen, oder sollen sie auf die Firma umziehen?
 3. Wo werden die Zugangsdaten hinterlegt?
-4. Ist die GL einverstanden, dass nur Termine von Adressen mit wallimann.ch erscheinen (von Alexander Fischer so bestätigt)?
+4. Ist die GL einverstanden, dass jeder Termin im Kalender des Empfangskontos erscheint, ohne Prüfung, wer eingeladen hat? Der Kalender-Link von Outlook.com lässt diese Prüfung nicht zu. Die Alternative ist ein Zugang über eine Anmeldung bei Microsoft (mehr Aufwand, noch nicht gebaut).
 5. Soll später auf ein Postfach im Firmen-Outlook umgestiegen werden?
 6. Soll für Warn-E-Mails eine Domain zu Cloudflare genommen werden (grob CHF 10 bis 20 pro Jahr), oder reicht die Statusseite?
 7. Passt das Logo «wallimann medien und kommunikation» am Empfang, oder soll das Logo der Wallimann Druck AG geliefert werden?

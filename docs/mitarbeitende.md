@@ -17,11 +17,11 @@ Der Betreff ist entweder der Firmenname oder der Firmenname, ein senkrechter Str
 - «Muster Verpackungen AG»
 - «Muster Verpackungen AG | Frau Anna Beispiel»
 
-Der Name erscheint nur, wenn er im Betreff steht. Als Ansprechperson zeigt der Bildschirm dich, weil du den Termin angelegt hast. Erlaubt sind Buchstaben, Zahlen, Leerzeichen, Punkt, Komma, Bindestrich, «&» und «|». Links, E-Mail-Adressen, Klammern und Emojis werden entfernt.
+Steht nur die Firma im Betreff, zeigt der Bildschirm nur die Firma. Steht «Firma | Name» im Betreff, zeigt er beides. Wer den Termin angelegt hat, steht nicht auf dem Bildschirm. Erlaubt sind Buchstaben, Zahlen, Leerzeichen, Punkt, Komma, Bindestrich, «&» und «|». Links, E-Mail-Adressen, Klammern und Emojis werden entfernt.
 
 ## Was der Bildschirm wann zeigt
 
-Die Begrüssung erscheint 30 Minuten vor Beginn des Termins und verschwindet 15 Minuten nach Beginn. Sie zeigt «Herzlich willkommen», die Firma, den Namen des Besuchs und dich als Ansprechperson. Hat es mehrere Besuche gleichzeitig, wechseln sie alle 10 Sekunden.
+Die Begrüssung erscheint 30 Minuten vor Beginn des Termins und verschwindet 15 Minuten nach Beginn. Sie zeigt «Herzlich willkommen», die Firma und, falls er im Betreff steht, den Namen des Besuchs. Hat es mehrere Besuche gleichzeitig, wechseln sie alle 10 Sekunden.
 
 ## Spontanbesuch
 
@@ -36,7 +36,7 @@ Outlook kann beim Einladen warnen, dass die Adresse extern ist. Das ist richtig 
 - abgesagte Termine
 - Termine, die du als «privat» markierst
 - ganztägige Termine
-- Termine ohne Wallimann-Adresse beim Organisator
+- Termine ohne Firmenname im Betreff
 
 ## Besuch soll nicht erscheinen
 
