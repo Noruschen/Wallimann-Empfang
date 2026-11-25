@@ -22,11 +22,14 @@ export function zoneInfo(jetzt) {
   if (spaeterVersatz === jetztVersatz) return { versatzMin: jetztVersatz, wechsel: null };
   let unten = jetzt;
   let oben = spaeter;
-  while (oben - unten > 1000) {
+  // Auf die Sekunde genau eingrenzen: «unten» liegt vor der Umstellung, «oben» danach
+  unten = Math.floor(unten / 1000);
+  oben = Math.ceil(oben / 1000);
+  while (oben - unten > 1) {
     const mitte = Math.floor((unten + oben) / 2);
-    if (versatzMin(mitte) === jetztVersatz) unten = mitte; else oben = mitte;
+    if (versatzMin(mitte * 1000) === jetztVersatz) unten = mitte; else oben = mitte;
   }
-  return { versatzMin: jetztVersatz, wechsel: { zeit: Math.ceil(oben / 1000) * 1000, versatzMin: spaeterVersatz } };
+  return { versatzMin: jetztVersatz, wechsel: { zeit: oben * 1000, versatzMin: spaeterVersatz } };
 }
 
 function datumSchweiz(iso) {

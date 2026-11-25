@@ -416,6 +416,15 @@
       return;
     }
 
+    if (folien.length === 1 && folien[0].art === 'standard' && neu !== folienSchluessel) {
+      // Bisher gab es nichts zu zeigen, jetzt sind Inhalte da: sofort wechseln
+      folien = plan.liste;
+      folienSchluessel = neu;
+      position = 0;
+      zeigeFolie();
+      return;
+    }
+
     if (halt) { return; }
     if (laufzeit() < naechsterWechsel) { return; }
 

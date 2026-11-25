@@ -478,6 +478,8 @@ function istAbsageBetreff(betreff) {
 function saeubere(text) {
   return text
     .normalize('NFC')
+    // Bekannte HTML-Tags ganz entfernen, nicht nur ihre spitzen Klammern
+    .replace(/<\/?(?:a|b|i|u|em|strong|span|div|p|br|font|h[1-6]|img|script|style|table|tr|td|ul|ol|li)\b[^<>]{0,200}>/gi, ' ')
     .replace(/(?:https?:\/\/|www\.)\S*/giu, ' ')
     .replace(/\S*@\S*/gu, ' ') // E-Mail-Adressen nie weitergeben
     .replace(/\s+/gu, ' ')

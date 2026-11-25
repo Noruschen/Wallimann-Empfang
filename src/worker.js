@@ -160,9 +160,16 @@ function gleicheHerkunft(request) {
   try { return new URL(herkunft).host === new URL(request.url).host; } catch { return false; }
 }
 
+// Das Passwort der Statusseite muss mindestens 12 Zeichen haben (Ausnahme: lokale Testversion).
+const MIN_LAENGE_PASSWORT = 12;
+function passwortBrauchbar(env) {
+  const p = env.STATUS_PASSWORT;
+  if (typeof p !== 'string' || !p) return false;
+  return p.length >= MIN_LAENGE_PASSWORT || istBeispiel(env);
+}
+
 async function angemeldet(request, env) {
-  if (!schluesselBrauchbar(env.STATUS_PASSWORT) && !istBeispiel(env)) return false;
-  if (!env.STATUS_PASSWORT) return false;
+  if (!passwortBrauchbar(env)) return false;
   return pruefeSitzung(leseCookie(request.headers.get('Cookie'), COOKIE), env.STATUS_PASSWORT, Date.now());
 }
 
@@ -176,7 +183,7 @@ async function anmelden(request, env) {
   const jetzt = Date.now();
   const passwort = env.STATUS_PASSWORT;
   // Ein zu kurzes Passwort wird nie angenommen (Ausnahme: lokale Testversion).
-  if (!passwort || (!schluesselBrauchbar(passwort) && !istBeispiel(env))) {
+  if (!passwortBrauchbar(env)) {
     return json({ ok: false, fehler: 'Die Statusseite ist noch nicht eingerichtet (Passwort fehlt oder ist zu kurz).' }, 503);
   }
   await speicher.stelleTabellenSicher(env.DB);

@@ -188,8 +188,8 @@ describe('Betreff bereinigen', () => {
 
   test('HTML-Tags: spitze Klammern und Schrägstrich verschwinden, kein Markup bleibt', () => {
     const [firma, name] = firmaName('<b>Alpha AG</b> | <script>alert(1)</script>Eva');
-    assert.equal(firma, 'bAlpha AGb');
-    assert.equal(name, 'scriptalert1scriptEva');
+    assert.equal(firma, 'Alpha AG');
+    assert.equal(name, 'alert1 Eva');
     assert.doesNotMatch(firma + name, /[<>/()"']/);
   });
 

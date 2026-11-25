@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="utf-8">
+<title>Empfangsbildschirm: Schlüssel erzeugen</title>
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/status/status.css">
+</head>
+<body>
+<header class="kopf">
+  <img src="/bild/logo-wallimann.png" alt="Wallimann" class="logo">
+  <h1>Schlüssel erzeugen</h1>
+</header>
+<main>
+  <section class="karte">
+    <h2>Zufällige Geheimnisse</h2>
+    <p>Diese Seite würfelt die Werte in deinem Browser. Sie werden nirgends gespeichert und nicht übers Internet geschickt. Kopiere sie direkt in die geschützten Einstellungen von Cloudflare und bewahre sie an einem sicheren Ort auf.</p>
+    <label>Geheimer Schlüssel für den Link am Fernseher (ANZEIGE_SCHLUESSEL)
+      <input type="text" id="schluessel" readonly>
+    </label>
+    <label>Passwort der Statusseite (STATUS_PASSWORT)
+      <input type="text" id="passwort" readonly>
+    </label>
+    <label>Schlüssel für ein Zusatzgerät mit Solarwerten (SOLAR_SCHLUESSEL, nur falls gebraucht)
+      <input type="text" id="solar" readonly>
+    </label>
+    <div class="knopfzeile">
+      <button type="button" class="knopf rot" id="neu">Neu würfeln</button>
+    </div>
+    <p class="klein">Der Link für den Fernseher lautet danach: Adresse der Website, dann <code>/anzeige/#k=</code> und der geheime Schlüssel.</p>
+  </section>
+</main>
+<script src="/status/schluessel/schluessel.js"></script>
+</body>
+</html>

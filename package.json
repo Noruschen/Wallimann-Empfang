@@ -6,7 +6,7 @@
   "description": "Empfangsbildschirm der Wallimann Druck AG: Begrüssung, News und Solarstrom",
   "scripts": {
     "start": "wrangler dev --port 8787 --var BEISPIELDATEN:1 --var ANZEIGE_SCHLUESSEL:beispiel-schluessel-nur-lokal --var STATUS_PASSWORT:beispiel",
-    "test": "node --test"
+    "test": "node --test \"test/*.test.js\""
   },
   "devDependencies": {
     "wrangler": "^4.168.0"
