@@ -88,12 +88,12 @@ Was du beim Test genau beobachten sollst:
 - Landet eine Einladung einmal im Junk-Ordner statt im Kalender?
 - Wie schnell erscheinen neue, geänderte und abgesagte Termine? Dauert es länger als 10 Minuten, taugt dieser Weg nicht und Claude schlägt einen anderen vor.
 - Erscheint der Organisator mit E-Mail-Adresse? Fehlt er, zeigt die Website den Termin aus Sicherheitsgründen nicht an.
-- Funktioniert die Markierung «privat»?
+- Funktioniert die Markierung «privat»? Noch offen: Im Kalender des Empfangskontos war sie am 25.11.2026 nicht zu sehen. Ob sie im veröffentlichten Kalender-Link steht, zeigt erst der Test mit der Website. Bis dahin gilt: Vertraulicher Besuch wird nicht eingeladen.
 - Bleiben abgesagte Termine als «Abgesagt: …» stehen? Erledigt: Ja, getestet am 25.11.2026. Die Website erkennt das und zeigt solche Termine nicht an.
 - Zieht der Kalender nach, wenn ein Termin verschoben wird? Erledigt: Ja, getestet am 25.11.2026.
 - Wie schnell klappt ein Spontanbesuch? Die Begrüssung beginnt frühestens beim nächsten Abruf des Kalenders (alle 5 Minuten).
 
-Nicht angezeigt werden: abgesagte Termine, als «privat» markierte Termine, ganztägige Termine, Termine von Organisatoren ohne Adresse der erlaubten Domain und Termine ohne Organisator. Soll ein Termin nicht erscheinen (zum Beispiel ein vertraulicher Besuch), lade `empfang.wallimann@outlook.com` nicht ein oder markiere den Termin als «privat».
+Nicht angezeigt werden: abgesagte Termine, als «privat» markierte Termine, ganztägige Termine, Termine von Organisatoren ohne Adresse der erlaubten Domain und Termine ohne Organisator. Soll ein Termin nicht erscheinen (zum Beispiel ein vertraulicher Besuch), lade `empfang.wallimann@outlook.com` nicht ein. Auf die Markierung «privat» ist dafür kein Verlass, solange nicht bestätigt ist, dass sie beim Empfangskonto ankommt.
 
 ## Passwort und geheimen Link wechseln
 
