@@ -750,6 +750,18 @@ describe('Agenda von michelnews.ch', () => {
     assert.equal((await speicher.naechsterBildSchritt(env.DB)).agenda, true);
   });
 
+  test('ein Bild, das sich nicht holen lässt, wird nach drei Fehlversuchen nicht bei jedem Abruf neu versucht', async () => {
+    const ohneBilder = attrappe([['kalender.invalid', () => ics([])], ['/fileadmin/', new Response('weg', { status: 404 })], ['/news/', ARTIKEL], ['michelnews.ch', STARTSEITE]]);
+    await takt(ohneBilder);
+    let schritte = 0;
+    while (schritte < 200 && await bildSchritt(env, env.DB, ohneBilder)) schritte++;
+    assert.equal(await bildSchritt(env, env.DB, ohneBilder), false);
+    setzeZeit(START + 4 * 60 * MIN); // 13:00: die Liste wird neu geholt
+    await takt(ohneBilder);
+    const offen = await env.DB.prepare('SELECT COUNT(*) AS n FROM agenda WHERE bild IS NULL AND fehlversuche < 3').first();
+    assert.equal(offen.n, 0);
+  });
+
   test('fehlt die Agenda auf der Startseite, bleiben die gespeicherten Einträge und die Statusseite meldet es', async () => {
     await takt(quelle());
     setzeZeit(START + 4 * 60 * MIN);

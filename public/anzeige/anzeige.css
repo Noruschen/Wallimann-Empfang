@@ -245,6 +245,7 @@ body {
 }
 /* Hintergrund: dasselbe Bild, unscharf und abgedunkelt. Sichtbar, wo das Bild den Schirm nicht füllt. */
 .news .hinten {
+  display: none;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
@@ -253,6 +254,7 @@ body {
   -webkit-transform: scale(1.12);
   transform: scale(1.12);
 }
+.news.mitrand .hinten { display: block; }
 .news .dunkel { background: #000000; opacity: 0.4; }
 .news .bildfeld { overflow: hidden; }
 .news .bild {
@@ -685,7 +687,7 @@ body {
 .hoch .agenda .t1 { left: 550px; top: 300px; height: 1500px; }
 .hoch .agenda .t2 { left: 82px; top: 1058px; width: 940px; height: 3px; }
 .hoch .agenda .t3 { display: none; }
-.hoch .agenda.n2 .t1 { height: 730px; }
+.hoch .agenda.n2 .t1, .hoch .agenda.n3 .t1 { height: 730px; }
 .hoch .agenda .aquelle { right: 82px; bottom: 44px; }
 .hoch .rahmen.voll .datum { font-size: 30px; }
 .hoch .rahmen.voll .zeit { font-size: 64px; }

@@ -414,12 +414,16 @@
     if (!feld || !div || !ansicht) { return; }
     var adresse = 'url("' + folie.daten.bild + '")';
     div.style.backgroundImage = adresse;
-    if (hinten) { hinten.style.backgroundImage = adresse; }
+    // Der unscharfe Hintergrund kostet Rechenzeit. Es gibt ihn nur, wenn er zu sehen ist.
+    var mitRand = function () {
+      if (ansicht.className.indexOf('mitrand') < 0) { ansicht.className += ' mitrand'; }
+      if (hinten) { hinten.style.backgroundImage = adresse; }
+    };
     var b = bild.naturalWidth || bild.width || folie.daten.bildBreite || 0;
     var h = bild.naturalHeight || bild.height || folie.daten.bildHoehe || 0;
     var fb = feld.clientWidth;
     var hoehen = hochkant ? [ansicht.clientHeight, feld.clientHeight] : [feld.clientHeight];
-    if (!b || !h || !fb || !hoehen[0]) { return; }
+    if (!b || !h || !fb || !hoehen[0]) { if (hochkant) { mitRand(); } return; }
     var fh, decken, ganz;
     for (var i = 0; i < hoehen.length; i++) {
       fh = hoehen[i];
@@ -427,10 +431,12 @@
       ganz = Math.min(fb / b, fh / h);     // Faktor, mit dem das Bild ganz ins Feld passt
       if (decken <= BILD_MAX_VERGROESSERN && ganz / decken >= BILD_MIN_SICHTBAR) {
         feld.style.height = fh + 'px';      // Feld füllen
-        if (hochkant && i === 0) { ansicht.className += ' ganzschirm'; }
+        if (hochkant && i === 0 && ansicht.className.indexOf('ganzschirm') < 0) { ansicht.className += ' ganzschirm'; }
+        if (hochkant && i > 0) { mitRand(); } // unter dem Bild bleibt ein Drittel frei
         return;
       }
     }
+    mitRand();
     var f = Math.min(ganz, BILD_MAX_VERGROESSERN);
     div.className = 'bild ganz';
     div.style.backgroundSize = Math.round(b * f) + 'px ' + Math.round(h * f) + 'px';
@@ -444,13 +450,18 @@
     if (el('rahmen').className !== k) { el('rahmen').className = k; }
   }
 
+  var ebenenLauf = 0;
+
   function zeigeEbene(html, folie) {
     var neu = obenA ? el('ebeneB') : el('ebeneA');
     var alt = obenA ? el('ebeneA') : el('ebeneB');
+    // Wird eine Ansicht neu aufgebaut, bevor die Bilder der vorherigen geladen sind, zählt nur die neuste
+    var lauf = ++ebenenLauf;
     neu.innerHTML = html;
     try { passeTextAn(neu); pruefeStoerer(neu); } catch (e) { /* alter Browser: Text bleibt in Standardgrösse */ }
 
     function einblenden() {
+      if (lauf !== ebenenLauf) { return; }
       neu.className = 'ebene sichtbar';
       alt.className = 'ebene';
       obenA = !obenA;
@@ -462,7 +473,7 @@
       var fertig = false;
       var bild = new Image();
       var weiter = function (ok) {
-        if (fertig) { return; }
+        if (fertig || lauf !== ebenenLauf) { return; }
         fertig = true;
         if (ok) {
           try { setzeBild(neu, folie, bild); } catch (e) { /* egal */ }
@@ -571,7 +582,8 @@
         if (agenda.length && (i + 1) % nachAgenda === 0) { liste.push({ art: 'agenda', id: kennungAgenda, daten: agenda, heute: heute }); }
         if (solar && (i + 1) % nach === 0) { liste.push({ art: 'solar', id: 's' + i, daten: solar }); }
       }
-      if (agenda.length && (news.length === 0 || news.length % nachAgenda !== 0)) { liste.push({ art: 'agenda', id: kennungAgenda, daten: agenda, heute: heute }); }
+      // Gibt es weniger News als der Abstand verlangt, kommt die Agenda einmal am Schluss
+      if (agenda.length && news.length < nachAgenda) { liste.push({ art: 'agenda', id: kennungAgenda, daten: agenda, heute: heute }); }
       if (solar && news.length < nach) { liste.push({ art: 'solar', id: 's', daten: solar }); }
       if (!liste.length) { liste.push({ art: 'standard', id: 'standard', daten: null }); }
     } else {

@@ -185,19 +185,45 @@ function textNach(chunk, marke, endTag) {
   return bereinigen(chunk.slice(von, bis));
 }
 
+// Entfernt HTML-Kommentare. Mit indexOf statt mit einem regulären Ausdruck, damit auch ein
+// Text mit vielen offenen Kommentaren keine Rechenzeit kostet. Ein Kommentar ohne Ende
+// schneidet den Rest ab.
+function ohneKommentare(text) {
+  let aus = '';
+  let pos = 0;
+  for (;;) {
+    const auf = text.indexOf('<!--', pos);
+    if (auf === -1) return aus + text.slice(pos);
+    aus += text.slice(pos, auf);
+    const zu = text.indexOf('-->', auf + 4);
+    if (zu === -1) return aus;
+    pos = zu + 3;
+  }
+}
+
+// Nur Adressen mit https auf demselben Server wie die Seite selbst, sonst null
+function gleicherServer(adresse, basis) {
+  try {
+    const u = new URL(adresse);
+    return u.protocol === 'https:' && u.hostname === new URL(basis).hostname ? u.href : null;
+  } catch {
+    return null;
+  }
+}
+
 function leseAgendaEintrag(roh, basis) {
   // Die Seite enthält auskommentierte Varianten einzelner Felder. Sie zählen nicht.
-  const chunk = roh.replace(/<!--[\s\S]*?-->/g, '');
+  const chunk = ohneKommentare(roh);
   const kopf = chunk.indexOf('class="event-title"');
   if (kopf === -1) return null;
   const aStart = chunk.indexOf('<a', kopf);
   const aEnde = chunk.indexOf('</a>', aStart);
   if (aStart === -1 || aEnde === -1) return null;
   const aTag = startTag(chunk, aStart);
-  const link = absolut(attribut(aTag, 'href'), basis);
+  const link = gleicherServer(absolut(attribut(aTag, 'href'), basis), basis);
   const titel = bereinigen(chunk.slice(aStart + aTag.length, aEnde));
   const datum = agendaDatum(textNach(chunk, 'event-startdate', '</div>'));
-  if (!link || !/^https:\/\//.test(link) || !titel || !datum) return null;
+  if (!link || !titel || !datum) return null;
 
   let bildUrl = null;
   let bildBreite = null;
@@ -206,9 +232,10 @@ function leseAgendaEintrag(roh, basis) {
   const img = bildfeld === -1 || bildfeld > kopf ? -1 : chunk.indexOf('<img', bildfeld);
   if (img !== -1 && img < kopf) {
     const tag = startTag(chunk, img);
-    bildUrl = absolut(attribut(tag, 'src'), basis);
-    bildBreite = zahlOderNull(attribut(tag, 'width'));
-    bildHoehe = zahlOderNull(attribut(tag, 'height'));
+    // Bilder nur vom Server der Seite selbst: Der Worker holt sie später ab.
+    bildUrl = gleicherServer(absolut(attribut(tag, 'src'), basis), basis);
+    bildBreite = bildUrl ? zahlOderNull(attribut(tag, 'width')) : null;
+    bildHoehe = bildUrl ? zahlOderNull(attribut(tag, 'height')) : null;
   }
   return {
     titel,

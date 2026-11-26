@@ -246,3 +246,29 @@ test('Datum der News mit vierstelligem Jahr wird nicht als 2020 gelesen', () => 
   assert.equal(leseStartseite(html)[0].datum, '2026-11-25');
 });
 
+test('Agenda: Bilder und Links von fremden Servern oder ohne https werden nicht übernommen', () => {
+  const eintrag = (link, bild) => '<div class="event-list-item"><div class="event-image"><img src="' + bild + '" width="360" height="272"></div>'
+    + '<div class="event-startdate">03.12.2026</div><h3 class="event-title"><a href="' + link + '">Titel</a></h3></div>';
+  const html = '<div class="event-slider">'
+    + eintrag('/agenda/event/a', 'https://fremd.example/bild.jpg')
+    + eintrag('/agenda/event/b', 'http://michelnews.ch/fileadmin/b.jpg')
+    + eintrag('/agenda/event/c', 'data:image/png;base64,AAAA')
+    + eintrag('/agenda/event/d', '/fileadmin/d.jpg')
+    + eintrag('https://fremd.example/agenda/e', '/fileadmin/e.jpg') + '</div>';
+  const a = leseAgenda(html, 'https://michelnews.ch/');
+  assert.deepEqual(a.map((x) => [x.link.replace('https://michelnews.ch', ''), x.bildUrl, x.bildBreite]), [
+    ['/agenda/event/a', null, null],
+    ['/agenda/event/b', null, null],
+    ['/agenda/event/c', null, null],
+    ['/agenda/event/d', 'https://michelnews.ch/fileadmin/d.jpg', 360],
+  ]);
+});
+
+test('Agenda: viele offene Kommentare bremsen den Leser nicht und liefern nichts Falsches', () => {
+  const html = '<div class="event-slider"><div class="event-list-item">' + '<!--'.repeat(20000)
+    + '<div class="event-startdate">03.12.2026</div><h3 class="event-title"><a href="/agenda/event/a">Versteckt</a></h3></div></div>';
+  const start = Date.now();
+  assert.deepEqual(leseAgenda(html), []);
+  assert.ok(Date.now() - start < 500);
+});
+

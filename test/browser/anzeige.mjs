@@ -315,7 +315,7 @@ const kopf = (seite) => seite.evaluate(() => ({
     };
   });
   pruefe('News mit Bild: Bild über den ganzen Bildschirm, Titel im Bild, Rubrik, Ort und Datum, Zeichen von michelnews',
-    m.klasse === 'ansicht news' && m.bild.startsWith('url("data:') && m.feld.l <= 0 && m.feld.t <= 0 && m.feld.r >= 1920 && m.feld.b >= 1080
+    m.klasse.startsWith('ansicht news') && !m.klasse.includes('ohnebild') && m.bild.startsWith('url("data:') && m.feld.l <= 0 && m.feld.t <= 0 && m.feld.r >= 1920 && m.feld.b >= 1080
     && m.titel.t > 540 && m.titel.b < 1080 && m.meta === 'Gunzwil - 25.11.2026' && m.rubrik === 'Mosaik' && m.zeichen && m.schrift.includes('Besley'), JSON.stringify(m));
   await ctx.close();
 }
@@ -332,6 +332,32 @@ const kopf = (seite) => seite.evaluate(() => ({
   const arten = [];
   for (let i = 0; i < 5; i++) { arten.push((await sicht(seite)).art.split(' ')[0]); await vor(seite, 10800); }
   pruefe('Agenda ausgeschaltet (0): es laufen nur News', arten.every((a) => a === 'news'), arten.join(','));
+  await ctx.close();
+}
+{
+  // Ungerade Anzahl News: Die Agenda kommt nie schon nach einem einzigen Artikel
+  const { ctx, seite } = await neueSeite(browser, { liefert: (z) => { const a = mitAgenda(z); a.news = NEWS.slice(0, 3); return a; } });
+  const proben = [];
+  for (let i = 0; i < 24; i++) {
+    const s = await sicht(seite);
+    proben.push(s.art.startsWith('agenda') ? 'A' : s.text.split(' ').find((w) => /Erster|Zweiter|Dritter/.test(w))?.[0] || '?');
+    await vor(seite, 2800);
+  }
+  const folge = proben.filter((x, i) => i === 0 || x !== proben[i - 1]).join('');
+  pruefe('drei News: zwei News, Agenda, dritte News, dann von vorn', folge.startsWith('EZADEZA'), folge);
+  await ctx.close();
+}
+{
+  // Der unscharfe Hintergrund ist nur da, wenn das Bild den Schirm nicht füllt
+  const quer = [{ id: 'q', titel: 'Bild im Querformat', ort: 'Gunzwil', rubrik: 'Mosaik', datum: '25.11.2026', bild: BILD }];
+  const { ctx, seite } = await neueSeite(browser, { liefert: (z) => antwort(z, { news: quer }) });
+  const messe = () => seite.evaluate(() => {
+    const a = document.querySelector('.ebene.sichtbar .ansicht');
+    return { klasse: a.className, hinten: window.getComputedStyle(a.querySelector('.hinten')).display };
+  });
+  const m = await messe();
+  // Das Testbild ist winzig (4 × 3 Pixel): Es müsste zu stark vergrössert werden und erscheint darum ganz, mit Hintergrund
+  pruefe('kleines Bild: erscheint ganz, mit unscharfem Hintergrund', m.klasse.includes('mitrand') && m.hinten === 'block', JSON.stringify(m));
   await ctx.close();
 }
 {

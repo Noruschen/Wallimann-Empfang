@@ -167,7 +167,7 @@ export async function ersetzeAgenda(db, eintraege, jetzt, bildMaxAlterMs) {
        VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
        ON CONFLICT(link) DO UPDATE SET titel = ?2, ort = ?3, rubrik = ?4, von = ?5, bis = ?6, rang = ?7, gesehen = ?8,
          bild = CASE WHEN quelle_bild IS ?9 AND bild_zeit >= ?12 THEN bild ELSE NULL END,
-         fehlversuche = CASE WHEN quelle_bild IS ?9 AND bild_zeit >= ?12 THEN fehlversuche ELSE 0 END,
+         fehlversuche = CASE WHEN quelle_bild IS ?9 AND (bild IS NULL OR bild_zeit >= ?12) THEN fehlversuche ELSE 0 END,
          quelle_bild = ?9, bild_breite = ?10, bild_hoehe = ?11`,
     ).bind(a.link, a.titel, a.ort ?? null, a.rubrik ?? null, a.von, a.bis, rang, jetzt,
       a.bildUrl ?? null, a.bildBreite ?? null, a.bildHoehe ?? null, grenze));
