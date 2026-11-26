@@ -113,7 +113,7 @@ Der Server entscheidet anhand des Schlüssels, was er herausgibt. Der externe Bi
 
 So richtest du die externe Anzeige ein:
 
-1. Öffne die Hilfsseite `https://empfang.wallimann.workers.dev/status/schluessel/` und kopiere den Schlüssel an einen sicheren Ort. Die Seite würfelt bei jedem Laden neue Werte: Hast du sie schon für den Empfang benutzt, lade sie zuerst neu. Der Schlüssel muss mindestens 20 Zeichen haben und darf nicht derselbe sein wie der Schlüssel für den Empfang. Ist er derselbe, nimmt ihn der Server nicht an, und die Statusseite warnt.
+1. Öffne die Hilfsseite `https://empfang.wallimann.workers.dev/status/schluessel/` und kopiere den Wert aus dem Feld «Schlüssel für den externen Bildschirm» an einen sicheren Ort. Die Seite zeigt je einen eigenen Schlüssel für die Firma und für extern. Der Schlüssel muss mindestens 20 Zeichen haben und darf nicht derselbe sein wie der Schlüssel für den Empfang. Ist er derselbe, nimmt ihn der Server nicht an, und die Statusseite warnt.
 2. Melde dich im Cloudflare-Konto an und öffne den Worker «empfang». Gehe zu «Settings», dann «Variables and Secrets».
 3. Füge ein neues «Secret» mit dem Namen `ANZEIGE_SCHLUESSEL_EXTERN` hinzu, trage den Schlüssel als Wert ein und speichere («Deploy»).
 4. Öffne am externen Bildschirm die Adresse `https://empfang.wallimann.workers.dev/anzeige/#k=EXTERNER-SCHLUESSEL`, mit deinem Schlüssel statt EXTERNER-SCHLUESSEL.

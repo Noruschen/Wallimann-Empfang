@@ -16,8 +16,11 @@
   <section class="karte">
     <h2>Zufällige Geheimnisse</h2>
     <p>Diese Seite würfelt die Werte in deinem Browser. Sie werden nirgends gespeichert und nicht übers Internet geschickt. Kopiere sie direkt in die geschützten Einstellungen von Cloudflare und bewahre sie an einem sicheren Ort auf.</p>
-    <label>Geheimer Schlüssel für einen Link am Fernseher (ANZEIGE_SCHLUESSEL für den Empfang. Für die externe Anzeige die Seite neu laden und den neuen Wert als ANZEIGE_SCHLUESSEL_EXTERN eintragen)
+    <label>Schlüssel für den Fernseher in der Firma, mit Begrüssung (ANZEIGE_SCHLUESSEL)
       <input type="text" id="schluessel" readonly>
+    </label>
+    <label>Schlüssel für den externen Bildschirm, nur News und Agenda (ANZEIGE_SCHLUESSEL_EXTERN)
+      <input type="text" id="extern" readonly>
     </label>
     <label>Passwort der Statusseite (STATUS_PASSWORT)
       <input type="text" id="passwort" readonly>
@@ -28,7 +31,7 @@
     <div class="knopfzeile">
       <button type="button" class="knopf rot" id="neu">Neu würfeln</button>
     </div>
-    <p class="klein">Der Link für den Fernseher lautet danach: Adresse der Website, dann <code>/anzeige/#k=</code> und der geheime Schlüssel.</p>
+    <p class="klein">Der Link für einen Bildschirm lautet danach: Adresse der Website, dann <code>/anzeige/#k=</code> und der Schlüssel für diesen Bildschirm. Die beiden Schlüssel sind immer verschieden. Du brauchst nur die Werte, die du neu eintragen willst: Ein Wert gilt erst, wenn er bei Cloudflare gespeichert ist.</p>
   </section>
 </main>
 <script src="/status/schluessel/schluessel.js"></script>

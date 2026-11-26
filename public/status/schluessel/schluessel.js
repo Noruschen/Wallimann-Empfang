@@ -15,7 +15,11 @@
   function gruppen(text) { return text.replace(/(.{4})(?=.)/g, '$1-'); }
 
   function wuerfle() {
-    document.getElementById('schluessel').value = zufall(28);
+    var firma = zufall(28);
+    var extern = zufall(28);
+    while (extern === firma) { extern = zufall(28); } // die beiden Schlüssel sind nie gleich
+    document.getElementById('schluessel').value = firma;
+    document.getElementById('extern').value = extern;
     document.getElementById('passwort').value = gruppen(zufall(16));
     document.getElementById('solar').value = zufall(28);
   }
