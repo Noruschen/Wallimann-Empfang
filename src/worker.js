@@ -22,10 +22,10 @@ import {
   erstelleSitzung, pruefeSitzung, leseCookie, SITZUNG_MS,
 } from './schutz.js';
 import {
-  taktgeber, kalenderAbrufen, pruefeSolarWerte, pruefeAlarme, istBeispiel, tagesBeginn, newsPlan,
+  taktgeber, kalenderAbrufen, pruefeSolarWerte, pruefeAlarme, istBeispiel, tagesBeginn, newsPlan, datumIso,
 } from './aufgaben.js';
 import { mailEingerichtet } from './mail.js';
-import { BEISPIEL_NEWS, BEISPIEL_VORLAUF_MIN, BEISPIEL_NACHLAUF_MIN } from './beispiel.js';
+import { BEISPIEL_NEWS, BEISPIEL_VORLAUF_MIN, BEISPIEL_NACHLAUF_MIN, beispielAgenda } from './beispiel.js';
 import { formatZeit, formatDatum, inBetriebszeit } from './lib/zeit.js';
 import * as speicher from './speicher.js';
 
@@ -79,6 +79,13 @@ async function beispielTakt(env, jetzt) {
   await taktgeber(env, e, jetzt, { warte: async () => {} });
 }
 
+// Die nächsten Veranstaltungen: alles, was heute in Zürcher Zeit noch nicht vorbei ist.
+async function ladeAgenda(env, e, jetzt, beispiel) {
+  if (!(e.agendaNachArtikeln > 0)) return [];
+  if (beispiel) return beispielAgenda((tage) => datumIso(jetzt, tage)).slice(0, e.agendaAnzahl);
+  return speicher.ladeAgenda(env.DB, datumIso(jetzt), e.agendaAnzahl);
+}
+
 // ---------- Anzeige ----------
 
 async function anzeige(request, env, ctx) {
@@ -93,11 +100,12 @@ async function anzeige(request, env, ctx) {
   const { zustand, e } = await ladeAlles(env);
   const beispiel = istBeispiel(env);
 
-  const [besuche, news] = await Promise.all([
+  const [besuche, news, agenda] = await Promise.all([
     e.begruessungAn
       ? speicher.ladeBesuche(env.DB, jetzt - (e.nachlaufMin + 1) * 60000, jetzt + (e.vorlaufMin + 5) * 60000)
       : [],
     beispiel ? BEISPIEL_NEWS.slice(0, e.newsAnzahl) : speicher.ladeNews(env.DB, e.newsAnzahl),
+    ladeAgenda(env, e, jetzt, beispiel),
   ]);
 
   const antwort = baueAnzeigeAntwort({
@@ -105,6 +113,7 @@ async function anzeige(request, env, ctx) {
     einstellungen: e,
     besuche,
     news,
+    agenda,
     solar: zustand.solar,
     kalenderErfolg: zustand.kalender && zustand.kalender.letzterErfolg,
     version: version(env),
@@ -222,10 +231,12 @@ async function statusDaten(env) {
   const { zustand, e } = await ladeAlles(env);
   const beispiel = istBeispiel(env);
   const heute = tagesBeginn(jetzt);
-  const [besuche, bilderOffen] = await Promise.all([
+  const [besuche, bilderOffen, agenda] = await Promise.all([
     speicher.ladeBesuche(env.DB, heute, heute + 50 * 60 * 60 * 1000),
     speicher.zaehleOffeneBilder(env.DB),
+    ladeAgenda(env, e, jetzt, beispiel),
   ]);
+  const ag = zustand.agenda || {};
   const morgen = tagesBeginn(heute + 26 * 60 * 60 * 1000);
   const k = zustand.kalender || {};
   const n = zustand.news || {};
@@ -242,6 +253,8 @@ async function statusDaten(env) {
   if (!beispiel && !n.fehler && typeof n.letzterErfolg === 'number' && (n.anzahl ?? 0) === 0) {
     hinweise.push('Zum eingestellten Filter passt im Moment kein Artikel. Es laufen keine News.');
   }
+  if (e.agendaNachArtikeln === 0) hinweise.push('Die Agenda ist ausgeschaltet.');
+  if (!beispiel && e.agendaNachArtikeln > 0 && ag.fehler) hinweise.push('Agenda: ' + ag.fehler + ' Die zuletzt gespeicherten Einträge laufen weiter, solange sie nicht vorbei sind.');
   if (e.solarQuelle === 'aus') hinweise.push('Die Solar-Ansicht ist ausgeschaltet.');
   if (e.solarQuelle === 'beispiel') hinweise.push('Die Solar-Ansicht zeigt Beispieldaten.');
   if (e.solarQuelle !== 'aus' && !solarFuerAnzeige(zustand.solar, jetzt, e)) {
@@ -271,6 +284,12 @@ async function statusDaten(env) {
       fehler: n.fehler || null,
       anzahl: beispiel ? BEISPIEL_NEWS.length : (n.anzahl ?? 0),
       bilderOffen,
+    },
+    agenda: {
+      an: e.agendaNachArtikeln > 0,
+      letzterErfolg: beispiel ? null : alter(ag.letzterErfolg, jetzt),
+      fehler: beispiel ? null : (ag.fehler || null),
+      eintraege: agenda.map((a) => ({ von: a.von, bis: a.bis, titel: a.titel, ort: a.ort ?? null })),
     },
     solar: {
       quelle: e.solarQuelle,

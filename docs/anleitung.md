@@ -4,7 +4,7 @@ Stand: 25.11.2026
 
 ## Kurz erklärt
 
-Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt im Vollbild eine Website. Die Website wechselt zwischen drei Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch und Solarstrom der eigenen Anlage. Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt) und ihr Code liegt auf GitHub (eine Plattform für Programmdateien). Den Besuch holt die Website aus einem eigenen Outlook.com-Kalender: Mitarbeitende laden die Adresse `empfang.wallimann@outlook.com` zum Termin ein. Heute läuft die Testversion nur bei dir lokal, mit Beispieldaten. Die Website ist seit dem 25.11.2026 unter `https://empfang.wallimann.workers.dev` veröffentlicht. Ohne geheimen Schlüssel und ohne Passwort gibt sie nichts heraus. Die Begrüssung und die Solar-Ansicht sind in den Einstellungen noch ausgeschaltet. Du betreust das Ganze. Programmieren musst du nichts: Claude führt dich durch alle Schritte.
+Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt im Vollbild eine Website. Die Website wechselt zwischen vier Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch, die Agenda von michelnews.ch und Solarstrom der eigenen Anlage. Ohne Besuch laufen zwei Artikel, dann die Agenda mit den nächsten vier Veranstaltungen, dann wieder zwei Artikel und so weiter. Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt) und ihr Code liegt auf GitHub (eine Plattform für Programmdateien). Den Besuch holt die Website aus einem eigenen Outlook.com-Kalender: Mitarbeitende laden die Adresse `empfang.wallimann@outlook.com` zum Termin ein. Heute läuft die Testversion nur bei dir lokal, mit Beispieldaten. Die Website ist seit dem 25.11.2026 unter `https://empfang.wallimann.workers.dev` veröffentlicht. Ohne geheimen Schlüssel und ohne Passwort gibt sie nichts heraus. Die Begrüssung und die Solar-Ansicht sind in den Einstellungen noch ausgeschaltet. Du betreust das Ganze. Programmieren musst du nichts: Claude führt dich durch alle Schritte.
 
 ## Lokal ansehen am Mac
 
@@ -61,10 +61,13 @@ Der Fernseher übernimmt Änderungen innert einer Minute.
 | Adresse des RSS-Feeds | Sobald eingetragen, nimmt die Website den Feed statt der Startseite von michelnews.ch. | Leer (Startseite auslesen) |
 | News holen um | Zu diesen Uhrzeiten holt die Website jeden Tag die Artikelliste von michelnews.ch. Beim ersten Start holt sie sofort. Scheitert ein Abruf, versucht sie es alle 15 Minuten nochmals. | 08:00 und 13:00 |
 | Nur ohne Uhrzeiten: News holen alle | Gilt nur, wenn das Feld mit den Uhrzeiten leer ist. Dann holt die Website im Abstand, mindestens alle 15 Minuten. | 15 Minuten |
+| Agenda-Seite nach je wie vielen Artikeln | Nach so vielen Artikeln erscheint die Agenda. 0 schaltet die Agenda aus. | Nach je 2 Artikeln |
+| Anzahl Veranstaltungen auf der Agenda-Seite | Wie viele der nächsten Veranstaltungen auf der Seite stehen (1 bis 4). | 4 |
+| Sekunden für die Agenda-Seite | Wie lange die Agenda steht (10 bis 40). | 20 Sekunden |
 | Quelle (Solar) | «ausgeschaltet», «Beispieldaten» oder «Werte von einem Zusatzgerät». | Ausgeschaltet |
 | Solar-Ansicht nach jedem wievielten Artikel | Wie oft die Solar-Ansicht dazwischen kommt. | Nach jedem 3. Artikel |
-| Sekunden pro Ansicht | Wie lange jede Ansicht steht (10 bis 15). | 12 Sekunden |
-| Design | 1 Papier, 2 Rot, 3 Dunkel, 4 Sprechblase. | 1 Papier |
+| Sekunden pro Ansicht | Wie lange ein Artikel oder die Solar-Ansicht steht (10 bis 15). | 12 Sekunden |
+| Design für Begrüssung und Solarstrom | 1 Papier, 2 Rot, 3 Dunkel, 4 Sprechblase. News und Agenda erscheinen immer im Stil von michelnews.ch. | 1 Papier |
 | Ausrichtung des Fernsehers | «quer» oder «hochkant» mit gedrehtem Inhalt. Hängt der Fernseher hochkant, dreht er sein Bild meist nicht selbst. Dann dreht die Seite ihren Inhalt um 90 Grad, im oder gegen den Uhrzeigersinn. Dreht das Gerät sein Bild selbst, stellt sich die Seite von allein auf hochkant um. | quer |
 | Betriebstage und Betriebszeiten | Wann der Bildschirm etwas zeigt. Sonst bleibt er schwarz. | Montag bis Freitag, 07:00 bis 19:00 |
 | Empfänger und Absender der Warn-E-Mails | Adressen für Warnungen per E-Mail. | Noch nicht eingerichtet, siehe «Was noch nicht getestet ist» |
@@ -146,6 +149,7 @@ Einstellungen auf der Statusseite brauchen das nicht. Sie gelten innert einer Mi
 | Bildschirm schwarz | Ausserhalb der Betriebszeiten (Montag bis Freitag, 07:00 bis 19:00) oder Fernseher ausgeschaltet oder nach Stromausfall nicht wieder eingeschaltet. | Betriebszeiten auf der Statusseite prüfen. Fernseher einschalten. Bei wiederholtem Problem die IT fragen (Timer, Verhalten nach Stromausfall). |
 | Nur Logo | Der geheime Schlüssel in der Adresse fehlt oder ist falsch, zum Beispiel nach einem Wechsel. Oder es gibt noch gar keine Daten. | Adresse am Fernseher prüfen: `https://empfang.wallimann.workers.dev/anzeige/#k=GEHEIMER-SCHLUESSEL`. Danach auf der Statusseite schauen, ob die Anzeige Daten abholt. |
 | Keine Begrüssung | Begrüssung ausgeschaltet. Oder Termin nicht im Kalender oder nicht erlaubt (privat, ganztägig, abgesagt, kein Firmenname im Betreff). Oder der letzte Kalenderabruf ist älter als 15 Minuten. Oder der Kalender-Link wurde zurückgesetzt. | Auf der Statusseite «Kalender jetzt abrufen» drücken und die Besuche und die Gründe für nicht angezeigte Termine ansehen. Einstellung «Begrüssung» prüfen. Ist der Link ungültig, meldet das die Statusseite: neuen Link veröffentlichen und eintragen. |
+| Keine Agenda | Die Agenda ist ausgeschaltet (Einstellung 0). Oder auf michelnews.ch steht im Moment keine kommende Veranstaltung. Oder die Startseite von michelnews.ch wurde umgebaut und die Website findet die Agenda nicht mehr. | Auf der Statusseite die Zeile «Agenda zuletzt geladen» und die Hinweise ansehen. Steht dort eine Meldung zur Agenda, Claude melden. Die News laufen in jedem Fall weiter. |
 | Alte News | michelnews.ch war nicht erreichbar, dann laufen die zuletzt gespeicherten Artikel weiter. Oder der Fernseher hat kein Internet. | Auf der Statusseite ansehen, wann News zuletzt geladen wurden. Internet am Empfang prüfen. Meist erledigt sich das von selbst. |
 | Keine Solar-Ansicht | Die Quelle ist ausgeschaltet, oder die Solarwerte sind älter als 10 Minuten. | Einstellung «Quelle» bei Solar prüfen. Echte Solardaten gibt es erst, wenn der Zugang geklärt ist. |
 | Statusseite gesperrt | 5 falsche Passwörter innert 15 Minuten. | 15 Minuten warten, dann mit dem richtigen Passwort anmelden. |

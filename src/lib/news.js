@@ -58,7 +58,7 @@ function startTag(html, von) {
 }
 
 function datumAusKurzform(text) {
-  const m = /(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})/.exec(text);
+  const m = /(\d{1,2})\.(\d{1,2})\.(\d{4}|\d{2})(?!\d)/.exec(text);
   if (!m) return null;
   const jahr = m[3].length === 2 ? `20${m[3]}` : m[3];
   return `${jahr}-${m[2].padStart(2, '0')}-${m[1].padStart(2, '0')}`;
@@ -163,6 +163,84 @@ export function leseStartseite(html, basisUrl = STANDARD_BASIS) {
     }
   }
   return nachDatumAbsteigend(ohneDoppelte(artikel));
+}
+
+// ---------------- Agenda ----------------
+
+// Datum eines Agenda-Eintrags: «26.11.2026» oder ein Zeitraum «10.10.2026 - 29.11.2026».
+function agendaDatum(text) {
+  const alle = (text ?? '').match(/\d{1,2}\.\d{1,2}\.\d{4}/g) || [];
+  const von = alle.length ? datumAusKurzform(alle[0]) : null;
+  const bis = alle.length > 1 ? datumAusKurzform(alle[alle.length - 1]) : von;
+  if (!von || !bis || bis < von) return von ? { von, bis: von } : null;
+  return { von, bis };
+}
+
+function textNach(chunk, marke, endTag) {
+  const pos = chunk.indexOf(marke);
+  if (pos === -1) return null;
+  const von = chunk.indexOf('>', pos) + 1;
+  const bis = chunk.indexOf(endTag, von);
+  if (von === 0 || bis === -1) return null;
+  return bereinigen(chunk.slice(von, bis));
+}
+
+function leseAgendaEintrag(roh, basis) {
+  // Die Seite enthält auskommentierte Varianten einzelner Felder. Sie zählen nicht.
+  const chunk = roh.replace(/<!--[\s\S]*?-->/g, '');
+  const kopf = chunk.indexOf('class="event-title"');
+  if (kopf === -1) return null;
+  const aStart = chunk.indexOf('<a', kopf);
+  const aEnde = chunk.indexOf('</a>', aStart);
+  if (aStart === -1 || aEnde === -1) return null;
+  const aTag = startTag(chunk, aStart);
+  const link = absolut(attribut(aTag, 'href'), basis);
+  const titel = bereinigen(chunk.slice(aStart + aTag.length, aEnde));
+  const datum = agendaDatum(textNach(chunk, 'event-startdate', '</div>'));
+  if (!link || !/^https:\/\//.test(link) || !titel || !datum) return null;
+
+  let bildUrl = null;
+  let bildBreite = null;
+  let bildHoehe = null;
+  const bildfeld = chunk.indexOf('event-image');
+  const img = bildfeld === -1 || bildfeld > kopf ? -1 : chunk.indexOf('<img', bildfeld);
+  if (img !== -1 && img < kopf) {
+    const tag = startTag(chunk, img);
+    bildUrl = absolut(attribut(tag, 'src'), basis);
+    bildBreite = zahlOderNull(attribut(tag, 'width'));
+    bildHoehe = zahlOderNull(attribut(tag, 'height'));
+  }
+  return {
+    titel,
+    link,
+    von: datum.von,
+    bis: datum.bis,
+    rubrik: textNach(chunk, 'class="event-category"', '</div>'),
+    ort: textNach(chunk, 'event-location"', '</div>'),
+    bildUrl,
+    bildBreite,
+    bildHoehe,
+  };
+}
+
+// Liest die Agenda von der Startseite von michelnews.ch (Bereich «Agenda», höchstens 20 Einträge).
+// Die Reihenfolge der Seite bleibt erhalten. Einträge ohne Datum oder Titel fallen weg.
+export function leseAgenda(html, basisUrl = STANDARD_BASIS) {
+  if (typeof html !== 'string' || html === '') return [];
+  const start = html.indexOf('event-slider');
+  if (start === -1) return [];
+  const eintraege = [];
+  const marke = 'class="event-list-item';
+  let pos = html.indexOf(marke, start);
+  while (pos !== -1 && eintraege.length < 20) {
+    const naechster = html.indexOf(marke, pos + marke.length);
+    const ende = naechster === -1 ? Math.min(html.length, pos + 8000) : Math.min(naechster, pos + 8000);
+    const anfang = html.lastIndexOf('<', pos);
+    const e = leseAgendaEintrag(html.slice(anfang === -1 ? pos : anfang, ende), basisUrl);
+    if (e) eintraege.push(e);
+    pos = naechster;
+  }
+  return ohneDoppelte(eintraege);
 }
 
 export function leseArtikelBild(html) {
@@ -320,6 +398,7 @@ export async function holeNews({
   abruf = fetch,
   max = 10,
   filter,
+  beiStartseite, // wird mit dem Text der Startseite aufgerufen, falls sie geladen wurde (für die Agenda)
 } = {}) {
   const url = feedUrl || startseiteUrl;
   const quelle = feedUrl ? 'Feed' : 'Startseite';
@@ -333,6 +412,7 @@ export async function holeNews({
   } catch (fehler) {
     throw new Error(`News konnten nicht geladen werden (${quelle} ${url}): ${fehler?.message ?? fehler}`);
   }
+  if (!feedUrl && typeof beiStartseite === 'function') beiStartseite(text, url);
   let artikel = feedUrl ? leseFeed(text, url) : leseStartseite(text, url);
   if (artikel.length === 0) {
     throw new Error(

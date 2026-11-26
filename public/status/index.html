@@ -80,6 +80,12 @@
           <label>Nur ohne Uhrzeiten: News holen alle (Minuten, mindestens 15) <input type="number" name="newsMinuten" min="15" max="240"></label>
         </fieldset>
         <fieldset>
+          <legend>Agenda von michelnews.ch</legend>
+          <label>Agenda-Seite nach je wie vielen Artikeln (0 schaltet die Agenda aus) <input type="number" name="agendaNachArtikeln" min="0" max="10"></label>
+          <label>Anzahl Veranstaltungen auf der Agenda-Seite (1 bis 4) <input type="number" name="agendaAnzahl" min="1" max="4"></label>
+          <label>Sekunden für die Agenda-Seite (10 bis 40) <input type="number" name="dauerAgendaSek" min="10" max="40"></label>
+        </fieldset>
+        <fieldset>
           <legend>Solarstrom</legend>
           <label>Quelle
             <select name="solarQuelle">
@@ -93,7 +99,7 @@
         <fieldset>
           <legend>Anzeige</legend>
           <label>Sekunden pro Ansicht (10 bis 15) <input type="number" name="dauerAnsichtSek" min="10" max="15"></label>
-          <label>Design
+          <label>Design für Begrüssung und Solarstrom (News und Agenda erscheinen immer im Stil von michelnews.ch)
             <select name="design">
               <option value="1">1 Papier (hell, wie die Website)</option>
               <option value="2">2 Rot (Begrüssung auf rotem Grund)</option>

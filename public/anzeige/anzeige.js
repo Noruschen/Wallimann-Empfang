@@ -22,19 +22,23 @@
   var SOLAR_MAX_ALTER_MS = 10 * 60 * 1000;
   var ABFRAGE_TIMEOUT_MS = 15 * 1000;
   var VERSCHIEBEN_MS = 4 * 60 * 1000;  // feste Elemente leicht verschieben, gegen Einbrennen
-  var BILD_MAX_VERGROESSERN = 1.3;     // kleine Bilder höchstens so stark vergrössern
+  var BILD_MAX_VERGROESSERN = 2.2;     // Bilder höchstens so stark vergrössern
+  var BILD_MIN_SICHTBAR = 0.7;         // füllt das Bild sein Feld, muss mindestens so viel davon sichtbar bleiben
   var SPEICHER = 'empfang.';
 
   var STANDARD = {
     dauerAnsichtSek: 12,
     dauerBesuchSek: 10,
     solarNachArtikeln: 3,
+    agendaNachArtikeln: 2,
+    dauerAgendaSek: 20,
     design: 1,
     drehung: 0,
     betrieb: { tage: [1, 2, 3, 4, 5], von: '07:00', bis: '19:00' }
   };
 
   var WOCHENTAGE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'];
+  var WOCHENTAGE_KURZ = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
   var VERSCHIEBUNGEN = [[0, 0], [6, 4], [-6, 4], [-6, -4], [6, -4], [0, 6], [8, 0], [0, -6], [-8, 0]];
 
   // ---------- kleine Helfer ----------
@@ -149,6 +153,9 @@
     aus.dauerAnsichtSek = Math.min(15, Math.max(10, +aus.dauerAnsichtSek || 12));
     aus.dauerBesuchSek = Math.min(30, Math.max(5, +aus.dauerBesuchSek || 10));
     aus.solarNachArtikeln = Math.max(1, +aus.solarNachArtikeln || 3);
+    var nachAgenda = parseInt(aus.agendaNachArtikeln, 10);
+    aus.agendaNachArtikeln = isNaN(nachAgenda) ? 2 : Math.min(10, Math.max(0, nachAgenda)); // 0: keine Agenda
+    aus.dauerAgendaSek = Math.min(40, Math.max(10, +aus.dauerAgendaSek || 20));
     return aus;
   }
 
@@ -218,18 +225,71 @@
     return h;
   }
 
+  // News im Stil von michelnews.ch: Das Bild füllt den Bildschirm, der Text steht im Bild.
   function htmlNews(n) {
     var meta = [];
     if (n.ort) { meta.push(text(n.ort)); }
     if (n.datum) { meta.push(text(n.datum)); }
     var h = '<div class="ansicht news' + (n.bild ? '' : ' ohnebild') + '">';
+    h += '<div class="hinten"></div><div class="dunkel"></div>';
     h += '<div class="bildfeld"><div class="bild"></div></div>';
+    h += '<div class="verlauf"></div>';
+    h += '<img class="mzeichen" src="/bild/michelnews-m.png" alt="michelnews">';
     h += '<div class="text">';
     if (n.rubrik) { h += '<div class="rubrik">' + text(n.rubrik) + '</div>'; }
-    h += '<div class="titel passend" data-min="50">' + text(n.titel) + '</div>';
-    h += '<div class="meta">' + meta.join(' · ') + '</div>';
-    h += '<div class="quelle">michelnews.ch</div>';
+    h += '<div class="titel passend" data-min="52" data-max="' + (hochkant ? 590 : 340) + '">' + text(n.titel) + '</div>';
+    if (meta.length) { h += '<div class="meta">' + meta.join(' - ') + '</div>'; }
     h += '</div></div>';
+    return h;
+  }
+
+  // Heutiges Datum in Zürcher Zeit als JJJJ-MM-TT
+  function heuteIso(jetzt) {
+    var o = ortszeit(jetzt);
+    return o.getUTCFullYear() + '-' + zwei(o.getUTCMonth() + 1) + '-' + zwei(o.getUTCDate());
+  }
+
+  function tagMonat(iso) {
+    var t = String(iso).split('-');
+    return t[2] + '.' + t[1] + '.';
+  }
+
+  // Datum einer Veranstaltung: «Heute, 26.11.2026», «Sa, 28.11.2026», «bis 29.11.2026»
+  // (läuft schon) oder «28.11. bis 29.11.2026».
+  function agendaDatum(a, heute) {
+    var von = String(a.von || '');
+    var bis = String(a.bis || von);
+    var jahr = bis.split('-')[0];
+    if (bis === von) {
+      var t = von.split('-');
+      var tag = WOCHENTAGE_KURZ[new Date(Date.UTC(+t[0], +t[1] - 1, +t[2])).getUTCDay()] || '';
+      return (von === heute ? 'Heute' : tag) + ', ' + tagMonat(von) + jahr;
+    }
+    if (von <= heute) { return 'bis ' + tagMonat(bis) + jahr; }
+    return tagMonat(von) + ' bis ' + tagMonat(bis) + jahr;
+  }
+
+  // Agenda von michelnews.ch: die nächsten Veranstaltungen nebeneinander auf blauem Grund
+  function htmlAgenda(liste, heute) {
+    var h = '<div class="ansicht agenda n' + liste.length + '">';
+    h += '<img class="mzeichen" src="/bild/michelnews-m.png" alt="michelnews">';
+    h += '<div class="atitel">Agenda</div>';
+    for (var i = 0; i < liste.length; i++) {
+      var a = liste[i];
+      h += '<div class="karte k' + (i + 1) + '">';
+      // Feld ohne Bild: grosses Datum. Läuft die Veranstaltung schon, steht dort ihr letzter Tag.
+      var grossesDatum = tagMonat(a.bis && a.bis !== a.von && a.von <= heute ? a.bis : a.von);
+      h += '<div class="kbild' + (a.bild ? '' : ' ohne') + '"><div class="kgross">' + text(grossesDatum) + '</div></div>';
+      h += '<div class="kdatum">' + text(agendaDatum(a, heute)) + '</div>';
+      h += '<div class="ktitel passend" data-min="30" data-max="' + (hochkant ? 236 : 224) + '">' + text(a.titel) + '</div>';
+      h += '<div class="kmarken">';
+      if (a.rubrik) { h += '<span class="kmarke">' + text(a.rubrik) + '</span>'; }
+      if (a.ort) { h += '<span class="kmarke">' + text(a.ort) + '</span>'; }
+      h += '</div></div>';
+    }
+    h += '<div class="trenner t1"></div><div class="trenner t2"></div><div class="trenner t3"></div>';
+    h += '<div class="aquelle">Alle Veranstaltungen auf michelnews.ch</div>';
+    h += '</div>';
     return h;
   }
 
@@ -263,7 +323,10 @@
       var t = teile[i];
       var min = parseInt(t.getAttribute('data-min'), 10) || 40;
       var maxHoehe;
-      if (t.className.indexOf('titel') >= 0) {
+      var vorgabe = parseInt(t.getAttribute('data-max'), 10);
+      if (vorgabe) {
+        maxHoehe = vorgabe;
+      } else if (t.className.indexOf('titel') >= 0) {
         var feld = t.parentNode;
         var rubrik = feld.querySelector('.rubrik');
         maxHoehe = feld.clientHeight - 150 - (rubrik ? rubrik.offsetHeight + 34 : 0);
@@ -339,21 +402,46 @@
     }
   }
 
-  // Bild ins Feld setzen: grosse Bilder füllen das Feld, kleine bleiben klein
+  // Bild der News setzen. Es füllt sein Feld, wenn es dafür nicht zu stark vergrössert werden muss
+  // und genug davon sichtbar bleibt. Sonst erscheint es ganz, und rundherum liegt dasselbe Bild
+  // unscharf im Hintergrund. Quer ist das Feld der ganze Bildschirm. Hochkant ist es zuerst der
+  // ganze Bildschirm (für Bilder im Hochformat), dann die oberen zwei Drittel.
   function setzeBild(ebene, folie, bild) {
     var feld = ebene.querySelector('.bildfeld');
     var div = ebene.querySelector('.bild');
-    if (!feld || !div) { return; }
-    var fb = feld.clientWidth, fh = feld.clientHeight;
+    var hinten = ebene.querySelector('.hinten');
+    var ansicht = ebene.querySelector('.ansicht');
+    if (!feld || !div || !ansicht) { return; }
+    var adresse = 'url("' + folie.daten.bild + '")';
+    div.style.backgroundImage = adresse;
+    if (hinten) { hinten.style.backgroundImage = adresse; }
     var b = bild.naturalWidth || bild.width || folie.daten.bildBreite || 0;
     var h = bild.naturalHeight || bild.height || folie.daten.bildHoehe || 0;
-    div.style.backgroundImage = 'url("' + folie.daten.bild + '")';
-    if (!b || !h) { return; }
-    var fuellen = Math.max(fb / b, fh / h);       // Faktor, damit das Bild das Feld füllt
-    if (fuellen <= BILD_MAX_VERGROESSERN) { return; } // gross genug: Feld füllen (cover)
-    var f = Math.min(BILD_MAX_VERGROESSERN, fb / b, fh / h);
-    div.className = 'bild klein';
+    var fb = feld.clientWidth;
+    var hoehen = hochkant ? [ansicht.clientHeight, feld.clientHeight] : [feld.clientHeight];
+    if (!b || !h || !fb || !hoehen[0]) { return; }
+    var fh, decken, ganz;
+    for (var i = 0; i < hoehen.length; i++) {
+      fh = hoehen[i];
+      decken = Math.max(fb / b, fh / h);   // Faktor, mit dem das Bild das Feld füllt
+      ganz = Math.min(fb / b, fh / h);     // Faktor, mit dem das Bild ganz ins Feld passt
+      if (decken <= BILD_MAX_VERGROESSERN && ganz / decken >= BILD_MIN_SICHTBAR) {
+        feld.style.height = fh + 'px';      // Feld füllen
+        if (hochkant && i === 0) { ansicht.className += ' ganzschirm'; }
+        return;
+      }
+    }
+    var f = Math.min(ganz, BILD_MAX_VERGROESSERN);
+    div.className = 'bild ganz';
     div.style.backgroundSize = Math.round(b * f) + 'px ' + Math.round(h * f) + 'px';
+  }
+
+  // Kopfzeile passend zur Ansicht: über News und Agenda durchsichtig, sonst weiss mit Logo
+  function setzeRahmen(folie) {
+    var k = 'rahmen';
+    if (folie && folie.art === 'news') { k = 'rahmen voll vnews'; }
+    if (folie && folie.art === 'agenda') { k = 'rahmen voll vagenda'; }
+    if (el('rahmen').className !== k) { el('rahmen').className = k; }
   }
 
   function zeigeEbene(html, folie) {
@@ -366,6 +454,7 @@
       neu.className = 'ebene sichtbar';
       alt.className = 'ebene';
       obenA = !obenA;
+      setzeRahmen(folie);
       window.setTimeout(function () { if (alt.className === 'ebene') { alt.innerHTML = ''; } }, 1500);
     }
 
@@ -387,6 +476,30 @@
       bild.onerror = function () { weiter(false); };
       window.setTimeout(function () { weiter(false); }, 4000);
       bild.src = folie.daten.bild;
+    } else if (folie && folie.art === 'agenda') {
+      // Die Bilder der Karten laden. Eingeblendet wird, sobald alle da sind, spätestens nach 3 Sekunden.
+      var felder = neu.querySelectorAll('.kbild');
+      var offen = 0;
+      var gezeigt = false;
+      var zeige = function () { if (!gezeigt) { gezeigt = true; einblenden(); } };
+      var lade = function (feld, adresse) {
+        var b = new Image();
+        var erledigt = false;
+        var ende = function (ok) {
+          if (erledigt) { return; }
+          erledigt = true;
+          if (ok) { feld.style.backgroundImage = 'url("' + adresse + '")'; } else { feld.className = 'kbild ohne'; }
+          offen--;
+          if (offen <= 0) { zeige(); }
+        };
+        b.onload = function () { ende(true); };
+        b.onerror = function () { ende(false); };
+        b.src = adresse;
+      };
+      for (var i = 0; i < felder.length; i++) { if (folie.daten[i] && folie.daten[i].bild) { offen++; } }
+      if (!offen) { zeige(); }
+      for (var j = 0; j < felder.length; j++) { if (folie.daten[j] && folie.daten[j].bild) { lade(felder[j], folie.daten[j].bild); } }
+      window.setTimeout(zeige, 3000);
     } else {
       einblenden();
     }
@@ -440,10 +553,25 @@
       var news = (daten && daten.news) || [];
       var solar = solarGueltig(jetzt);
       var nach = einstellungen().solarNachArtikeln;
+      // Agenda: nur Veranstaltungen, die heute noch nicht vorbei sind, höchstens vier auf einer Seite
+      var heute = heuteIso(jetzt);
+      var alleAgenda = (daten && daten.agenda) || [];
+      var nachAgenda = einstellungen().agendaNachArtikeln;
+      var agenda = [];
+      var kennungAgenda = 'a' + heute;
+      for (i = 0; i < alleAgenda.length && agenda.length < 4 && nachAgenda > 0; i++) {
+        if (alleAgenda[i] && alleAgenda[i].von && String(alleAgenda[i].bis || alleAgenda[i].von) >= heute) {
+          agenda.push(alleAgenda[i]);
+          kennungAgenda += '|' + alleAgenda[i].id;
+        }
+      }
+      // Reihenfolge: zwei News, dann die Agenda, dann wieder zwei News und so weiter
       for (i = 0; i < news.length; i++) {
         liste.push({ art: 'news', id: 'n' + news[i].id, daten: news[i] });
+        if (agenda.length && (i + 1) % nachAgenda === 0) { liste.push({ art: 'agenda', id: kennungAgenda, daten: agenda, heute: heute }); }
         if (solar && (i + 1) % nach === 0) { liste.push({ art: 'solar', id: 's' + i, daten: solar }); }
       }
+      if (agenda.length && (news.length === 0 || news.length % nachAgenda !== 0)) { liste.push({ art: 'agenda', id: kennungAgenda, daten: agenda, heute: heute }); }
       if (solar && news.length < nach) { liste.push({ art: 'solar', id: 's', daten: solar }); }
       if (!liste.length) { liste.push({ art: 'standard', id: 'standard', daten: null }); }
     } else {
@@ -464,11 +592,14 @@
     var html;
     if (f.art === 'begruessung') { html = htmlBegruessung(f.daten); }
     else if (f.art === 'news') { html = htmlNews(f.daten); }
+    else if (f.art === 'agenda') { html = htmlAgenda(f.daten, f.heute); }
     else if (f.art === 'solar') { html = htmlSolar(f.daten); }
     else { html = htmlStandard(); }
     zeigeEbene(html, f);
     zeigePunkte();
-    var dauer = f.art === 'begruessung' ? einstellungen().dauerBesuchSek : einstellungen().dauerAnsichtSek;
+    var dauer = einstellungen().dauerAnsichtSek;
+    if (f.art === 'begruessung') { dauer = einstellungen().dauerBesuchSek; }
+    if (f.art === 'agenda') { dauer = einstellungen().dauerAgendaSek; }
     naechsterWechsel = laufzeit() + dauer * 1000;
   }
 
@@ -535,6 +666,7 @@
     daten = {
       zone: antwort.zone || (daten && daten.zone) || null,
       news: antwort.news || [],
+      agenda: antwort.agenda || [],
       solar: antwort.solar || null,
       einstellungen: antwort.einstellungen || (daten && daten.einstellungen) || null
     };
@@ -542,8 +674,8 @@
       begruessungen = antwort.begruessungen || [];
       zeitAnker = { server: antwort.zeit, laufzeit: laufzeit() };
       letzterErfolg = laufzeit();
-      // Auf dem Gerät gespeichert werden nur News, Solar und Einstellungen, nie Namen von Besuchen
-      merke('daten', { zone: daten.zone, news: daten.news, solar: daten.solar, einstellungen: daten.einstellungen });
+      // Auf dem Gerät gespeichert werden nur News, Agenda, Solar und Einstellungen, nie Namen von Besuchen
+      merke('daten', { zone: daten.zone, news: daten.news, agenda: daten.agenda, solar: daten.solar, einstellungen: daten.einstellungen });
       pruefeVersion(antwort.version);
     }
   }
@@ -677,7 +809,7 @@
 
     if (demo && typeof window.EMPFANG_DEMO === 'function') {
       var d = window.EMPFANG_DEMO(demo);
-      daten = { zone: d.zone, news: d.news, solar: d.solar, einstellungen: d.einstellungen };
+      daten = { zone: d.zone, news: d.news, agenda: d.agenda || [], solar: d.solar, einstellungen: d.einstellungen };
       begruessungen = d.begruessungen;
       zeitAnker = { server: d.zeit, laufzeit: laufzeit() };
     } else {

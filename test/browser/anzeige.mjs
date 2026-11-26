@@ -43,8 +43,8 @@ function antwort(zeit, zusatz = {}) {
 
 const besuch = (zeit, firma, name = null) => ({ von: zeit - 10 * MIN, bis: zeit + 30 * MIN, firma, name });
 
-async function neueSeite(browser, { zeit = START, liefert, mitSchluessel = true } = {}) {
-  const ctx = await browser.newContext({ viewport: { width: 1920, height: 1080 } });
+async function neueSeite(browser, { zeit = START, liefert, mitSchluessel = true, breite = 1920, hoehe = 1080 } = {}) {
+  const ctx = await browser.newContext({ viewport: { width: breite, height: hoehe } });
   const seite = await ctx.newPage();
   const fehler = [];
   seite.on('pageerror', (e) => fehler.push(String(e)));
@@ -238,6 +238,113 @@ const browser = await chromium.launch();
   pruefe('14 Minuten nach Terminbeginn: Begrüssung läuft noch', (await sicht(seite)).art === 'begruessung');
   await vor(seite, 75 * 1000);
   pruefe('15 Minuten nach Terminbeginn: wieder News', (await sicht(seite)).art.startsWith('news'));
+  await ctx.close();
+}
+
+// ---------- 10. News im Stil von michelnews.ch und Agenda ----------
+// Ein kleines Bild als data-Adresse, damit die Prüfung kein Internet braucht
+const BILD = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAQAAAADCAIAAAA7ljmRAAAAEElEQVR4nGP4z8AARwzEcQCukw/x0F8jngAAAABJRU5ErkJggg==';
+const AGENDA = [
+  { id: 'v0', titel: 'Schon vorbei', ort: 'Beromünster', rubrik: 'Kultur', von: '2026-11-24', bis: '2026-11-24', bild: null },
+  { id: 'v1', titel: 'Lesung im Gartensaal', ort: 'Beromünster', rubrik: 'Kultur', von: '2026-11-25', bis: '2026-11-25', bild: BILD },
+  { id: 'v2', titel: 'Ausstellung im Stift', ort: 'Beromünster', rubrik: 'Kultur', von: '2026-10-10', bis: '2026-11-29', bild: null },
+  { id: 'v3', titel: 'Adventsmarkt', ort: 'Rickenbach', rubrik: 'Sonstiges', von: '2026-11-28', bis: '2026-11-28', bild: BILD },
+  { id: 'v4', titel: 'Heimrunde <img src=x onerror="window.gehackt=1">', ort: 'Gunzwil', rubrik: 'Sport', von: '2026-11-28', bis: '2026-11-29', bild: BILD },
+  { id: 'v5', titel: 'Fünfter Eintrag', ort: 'Neudorf', rubrik: 'Musik', von: '2026-12-05', bis: '2026-12-05', bild: BILD },
+];
+const mitAgenda = (z, zusatz = {}) => {
+  const a = antwort(z, { agenda: AGENDA, ...zusatz });
+  a.einstellungen = { ...a.einstellungen, agendaNachArtikeln: 2, dauerAgendaSek: 20, ...(zusatz.einstellungen || {}) };
+  return a;
+};
+const kopf = (seite) => seite.evaluate(() => ({
+  rahmen: document.getElementById('rahmen').className,
+  logo: window.getComputedStyle(document.querySelector('.logo')).opacity,
+  punkte: window.getComputedStyle(document.getElementById('punkte')).display,
+}));
+{
+  const { ctx, seite, fehler } = await neueSeite(browser, { liefert: (z) => mitAgenda(z) });
+  // Alle 4 Sekunden nachsehen, was läuft. Gleiche Ansichten hintereinander zählen als eine.
+  const proben = [];
+  let agendaSicht = null;
+  let agendaKopf = null;
+  let newsKopf = null;
+  for (let i = 0; i < 26; i++) {
+    const s = await sicht(seite);
+    if (s.art.startsWith('agenda') && !agendaSicht) { agendaSicht = s; agendaKopf = await kopf(seite); }
+    // Das Ausblenden des Logos dauert 0.9 Sekunden echte Zeit, darum kurz warten
+    if (s.art.startsWith('news') && i === 1) { await seite.waitForTimeout(1100); newsKopf = await kopf(seite); }
+    proben.push(s.art.startsWith('agenda') ? 'A' : s.text.split(' ').find((w) => /Erster|Zweiter|Dritter|Vierter/.test(w))?.[0] || '?');
+    await vor(seite, 2800);
+  }
+  const folge = proben.filter((x, i) => i === 0 || x !== proben[i - 1]).join('');
+  const ersteAgenda = proben.indexOf('A');
+  let dauerAgenda = 0;
+  while (proben[ersteAgenda + dauerAgenda] === 'A') dauerAgenda++;
+  pruefe('Reihenfolge: zwei News, Agenda, zwei News, Agenda, dann von vorn', folge.startsWith('EZADVAE'), folge + ' (' + proben.join('') + ')');
+  pruefe('die Agenda bleibt 20 Sekunden stehen, ein Artikel 12', dauerAgenda >= 4 && dauerAgenda <= 6 && proben.filter((x) => x === 'E').length >= 3, proben.join(''));
+  const t = agendaSicht ? agendaSicht.text : '';
+  pruefe('Agenda zeigt die nächsten vier Veranstaltungen, vergangene und die fünfte fehlen',
+    agendaSicht && agendaSicht.art === 'agenda n4' && t.includes('Agenda') && t.includes('Lesung im Gartensaal') && t.includes('Ausstellung im Stift')
+    && t.includes('Adventsmarkt') && t.includes('Heimrunde') && !t.includes('Schon vorbei') && !t.includes('Fünfter Eintrag'), t);
+  pruefe('Agenda schreibt das Datum aus: Heute, Wochentag, Zeitraum mit «bis»',
+    t.includes('Heute, 25.11.2026') && t.includes('bis 29.11.2026') && t.includes('Sa, 28.11.2026') && t.includes('28.11. bis 29.11.2026'), t);
+  pruefe('Kopfzeile über der Agenda: durchsichtig, ohne Logo, ohne Punkte', agendaKopf && agendaKopf.rahmen === 'rahmen voll vagenda' && agendaKopf.logo === '0' && agendaKopf.punkte === 'none', JSON.stringify(agendaKopf));
+  pruefe('Kopfzeile über den News: durchsichtig, ohne Logo', newsKopf && newsKopf.rahmen === 'rahmen voll vnews' && newsKopf.logo === '0', JSON.stringify(newsKopf));
+  const r = await seite.evaluate(() => ({ gehackt: window.gehackt === 1 }));
+  pruefe('Text aus der Agenda wird nie als HTML ausgeführt', !r.gehackt, JSON.stringify(r));
+  pruefe('keine Skriptfehler mit Agenda', fehler.length === 0, fehler.join(' | '));
+  await ctx.close();
+}
+{
+  // News mit Bild: Das Bild füllt den Bildschirm, der Text steht im Bild
+  const news = [{ id: 'x', titel: 'Artikel mit Bild', ort: 'Gunzwil', rubrik: 'Mosaik', datum: '25.11.2026', bild: BILD, bildBreite: 1200, bildHoehe: 900 }];
+  const { ctx, seite } = await neueSeite(browser, { liefert: (z) => antwort(z, { news }) });
+  const m = await seite.evaluate(() => {
+    const a = document.querySelector('.ebene.sichtbar .ansicht');
+    const r = (e) => { const b = e.getBoundingClientRect(); return { l: Math.round(b.left), t: Math.round(b.top), r: Math.round(b.right), b: Math.round(b.bottom) }; };
+    return {
+      klasse: a.className,
+      bild: a.querySelector('.bild').style.backgroundImage.slice(0, 15),
+      feld: r(a.querySelector('.bildfeld')),
+      titel: r(a.querySelector('.titel')),
+      meta: a.querySelector('.meta').innerText,
+      rubrik: a.querySelector('.rubrik').innerText,
+      zeichen: !!a.querySelector('.mzeichen'),
+      schrift: window.getComputedStyle(a.querySelector('.titel')).fontFamily,
+    };
+  });
+  pruefe('News mit Bild: Bild über den ganzen Bildschirm, Titel im Bild, Rubrik, Ort und Datum, Zeichen von michelnews',
+    m.klasse === 'ansicht news' && m.bild.startsWith('url("data:') && m.feld.l <= 0 && m.feld.t <= 0 && m.feld.r >= 1920 && m.feld.b >= 1080
+    && m.titel.t > 540 && m.titel.b < 1080 && m.meta === 'Gunzwil - 25.11.2026' && m.rubrik === 'Mosaik' && m.zeichen && m.schrift.includes('Besley'), JSON.stringify(m));
+  await ctx.close();
+}
+{
+  // Begrüssung behält die weisse Kopfzeile mit Logo
+  const { ctx, seite } = await neueSeite(browser, { liefert: (z) => mitAgenda(z, { begruessungen: [besuch(START, 'Muster Verpackungen AG')] }) });
+  const k = await kopf(seite);
+  pruefe('Begrüssung: Kopfzeile mit Logo bleibt, auch wenn News und Agenda bereitstehen', (await sicht(seite)).art === 'begruessung' && k.rahmen === 'rahmen' && k.logo === '1', JSON.stringify(k));
+  await ctx.close();
+}
+{
+  // Agenda ausgeschaltet: nur News
+  const { ctx, seite } = await neueSeite(browser, { liefert: (z) => mitAgenda(z, { einstellungen: { agendaNachArtikeln: 0 } }) });
+  const arten = [];
+  for (let i = 0; i < 5; i++) { arten.push((await sicht(seite)).art.split(' ')[0]); await vor(seite, 10800); }
+  pruefe('Agenda ausgeschaltet (0): es laufen nur News', arten.every((a) => a === 'news'), arten.join(','));
+  await ctx.close();
+}
+{
+  // Hochkant: zwei Karten nebeneinander, zwei darunter, Titel passen in die Karte
+  const { ctx, seite } = await neueSeite(browser, { breite: 1080, hoehe: 1920, liefert: (z) => { const a = mitAgenda(z); a.news = []; return a; } });
+  const m = await seite.evaluate(() => {
+    const k = Array.from(document.querySelectorAll('.ebene.sichtbar .karte')).map((e) => { const b = e.getBoundingClientRect(); return { l: Math.round(b.left), t: Math.round(b.top), r: Math.round(b.right), b: Math.round(b.bottom) }; });
+    const zuBreit = Array.from(document.querySelectorAll('.ebene.sichtbar .ktitel')).filter((e) => e.scrollWidth > e.clientWidth + 1).length;
+    return { hoch: document.body.className.includes('hoch'), k, zuBreit };
+  });
+  pruefe('Agenda hochkant: zwei Karten oben, zwei unten, alles auf dem Bildschirm',
+    m.hoch && m.k.length === 4 && m.k[0].t === m.k[1].t && m.k[2].t > m.k[0].b && m.k[2].t === m.k[3].t && m.k[1].l > m.k[0].r
+    && m.k.every((x) => x.l >= 0 && x.r <= 1080 && x.b <= 1920) && m.zuBreit === 0, JSON.stringify(m));
   await ctx.close();
 }
 

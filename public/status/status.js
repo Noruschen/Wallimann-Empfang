@@ -46,7 +46,7 @@
     f.begruessungAn.checked = !!e.begruessungAn;
     f.organisatorPflicht.checked = !!e.organisatorPflicht;
     ['vorlaufMin', 'nachlaufMin', 'dauerBesuchSek', 'kalenderMinuten', 'newsAnzahl', 'newsMinuten',
-      'solarNachArtikeln', 'dauerAnsichtSek', 'feedUrl', 'betriebVon', 'betriebBis', 'alarmEmail', 'alarmAbsender'
+      'agendaNachArtikeln', 'agendaAnzahl', 'dauerAgendaSek', 'solarNachArtikeln', 'dauerAnsichtSek', 'feedUrl', 'betriebVon', 'betriebBis', 'alarmEmail', 'alarmAbsender'
     ].forEach(function (name) { f[name].value = e[name] === undefined || e[name] === null ? '' : e[name]; });
     f.domains.value = (e.domains || []).join(', ');
     f.newsOrte.value = (e.newsOrte || []).join(', ');
@@ -86,6 +86,9 @@
       newsRubriken: f.newsRubriken.value,
       feedUrl: f.feedUrl.value,
       solarQuelle: f.solarQuelle.value,
+      agendaNachArtikeln: Number(f.agendaNachArtikeln.value),
+      agendaAnzahl: Number(f.agendaAnzahl.value),
+      dauerAgendaSek: Number(f.dauerAgendaSek.value),
       solarNachArtikeln: Number(f.solarNachArtikeln.value),
       dauerAnsichtSek: Number(f.dauerAnsichtSek.value),
       design: Number(f.design.value),
@@ -126,6 +129,13 @@
       zeile(t, ['News: nächster Abruf', s.news.naechsterAbruf.vorMin >= 0 ? 'in der nächsten Minute' : s.news.naechsterAbruf.text]);
     }
     zeile(t, ['Bilder noch ausstehend', String(s.news.bilderOffen)]);
+    if (s.agenda) {
+      var naechste = s.agenda.eintraege.map(function (a) { return a.von.split('-').reverse().join('.') + ' ' + a.titel; }).join(' / ');
+      var agendaText = !s.agenda.an ? 'ausgeschaltet'
+        : (s.beispiel ? '' : vor(s.agenda.letzterErfolg) + ', ') + s.agenda.eintraege.length + ' kommende Einträge' + (naechste ? ': ' + naechste : '');
+      zeile(t, ['Agenda zuletzt geladen', agendaText],
+        [null, !s.agenda.an ? '' : (s.agenda.fehler ? 'schlecht' : (s.agenda.eintraege.length ? 'gut' : ''))]);
+    }
     var solarText = { aus: 'ausgeschaltet', beispiel: 'Beispieldaten', empfang: 'Zusatzgerät' }[s.solar.quelle] || s.solar.quelle;
     zeile(t, ['Solar', solarText + (s.solar.quelle !== 'aus' ? ', zuletzt ' + vor(s.solar.letzterEmpfang) : '')],
       [null, s.solar.quelle === 'aus' ? '' : (s.solar.werte ? 'gut' : 'schlecht')]);

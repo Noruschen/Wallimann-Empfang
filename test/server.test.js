@@ -120,7 +120,7 @@ after(async () => {
 
 beforeEach(async () => {
   setzeZeit(START);
-  await env.DB.batch(['besuche', 'news', 'zustand', 'versuche'].map((t) => env.DB.prepare(`DELETE FROM ${t}`)));
+  await env.DB.batch(['besuche', 'news', 'agenda', 'zustand', 'versuche'].map((t) => env.DB.prepare(`DELETE FROM ${t}`)));
 });
 
 // ---------------------------------------------------------------------------
@@ -661,6 +661,136 @@ describe('News', () => {
     assert.ok(abruf.aufrufe.some((u) => u.includes('feed.example')));
     assert.ok(!abruf.aufrufe.some((u) => u.includes('michelnews.ch/')));
     assert.equal((await anzeige()).inhalt.news.length, 3);
+  });
+});
+
+describe('Agenda von michelnews.ch', () => {
+  const bildDaten = new Uint8Array([0xff, 0xd8, 0xff, 0xe0, 9, 8, 7, 6]);
+  const quelle = (startseite = STARTSEITE) => attrappe([
+    ['kalender.invalid', () => ics([])],
+    ['/fileadmin/', () => new Response(bildDaten, { status: 200, headers: { 'content-type': 'image/jpeg' } })],
+    ['/news/', ARTIKEL],
+    ['michelnews.ch', startseite],
+  ]);
+  const startseiteAbrufe = (abruf) => abruf.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
+
+  test('die nächsten vier Veranstaltungen kommen mit den News im selben Abruf', async () => {
+    const abruf = quelle();
+    await takt(abruf);
+    const r = (await anzeige()).inhalt;
+    assert.deepEqual(r.agenda.map((a) => [a.von, a.bis, a.titel, a.rubrik, a.ort, a.bild]), [
+      ['2026-11-26', '2026-11-26', 'Lesung mit Laura Vogt aus «Das Jahr des Kalks»', 'Kultur', 'Beromünster', null],
+      ['2026-11-28', '2026-11-28', 'Christmas in Beromünster', 'Kultur', 'Beromünster', null],
+      ['2026-11-28', '2026-11-28', 'Adventsmarkt', 'Sonstiges', 'Beromünster', null],
+      ['2026-11-29', '2026-11-29', 'Adventskonzert 2026', 'Musik', 'Beromünster', null],
+    ]);
+    assert.equal(r.einstellungen.agendaNachArtikeln, 2);
+    assert.equal(r.einstellungen.dauerAgendaSek, 20);
+    assert.equal(startseiteAbrufe(abruf), 1);
+    setzeZeit(START + 1 * MIN);
+    await takt(abruf);
+    assert.equal(startseiteAbrufe(abruf), 1); // kein zweiter Abruf der Startseite für die Agenda
+  });
+
+  test('vergangene Veranstaltungen fallen von selbst weg, laufende bleiben bis zum letzten Tag', async () => {
+    await takt(quelle());
+    setzeZeit(START + 2 * 24 * 60 * MIN); // Freitag, 27.11.2026
+    let titel = (await anzeige()).inhalt.agenda.map((a) => a.titel);
+    assert.equal(titel[0], 'Christmas in Beromünster');
+    assert.equal(titel.includes('Lesung mit Laura Vogt aus «Das Jahr des Kalks»'), false);
+    setzeZeit(START + 4 * 24 * 60 * MIN); // Sonntag, 29.11.2026: die Ausstellung bis 29.11. läuft noch
+    titel = (await anzeige()).inhalt.agenda.map((a) => a.titel);
+    assert.deepEqual(titel, ['Adventskonzert 2026', 'Geboren werden', 'Geboren werden', 'Geboren werden']);
+    setzeZeit(START + 5 * 24 * 60 * MIN); // Montag, 30.11.2026: alles vorbei
+    assert.deepEqual((await anzeige()).inhalt.agenda, []);
+  });
+
+  test('mit der Einstellung 0 gibt es keine Agenda, weniger als vier Einträge lassen sich einstellen', async () => {
+    await takt(quelle());
+    await setzeEinstellungen({ agendaAnzahl: 2 });
+    assert.equal((await anzeige()).inhalt.agenda.length, 2);
+    await setzeEinstellungen({ agendaNachArtikeln: 0 });
+    const r = (await anzeige()).inhalt;
+    assert.deepEqual(r.agenda, []);
+    assert.equal(r.einstellungen.agendaNachArtikeln, 0);
+    const p = pruefeEinstellungen({ agendaNachArtikeln: 99, agendaAnzahl: 9, dauerAgendaSek: 1 });
+    assert.deepEqual([p.agendaNachArtikeln, p.agendaAnzahl, p.dauerAgendaSek], [10, 4, 10]);
+    const alt = pruefeEinstellungen({}); // früher gespeicherte Einstellungen ohne diese Felder
+    assert.deepEqual([alt.agendaNachArtikeln, alt.agendaAnzahl, alt.dauerAgendaSek], [2, 4, 20]);
+  });
+
+  test('die Bilder der Agenda werden nach den Bildern der News geholt und bleiben beim nächsten Abruf erhalten', async () => {
+    const abruf = quelle();
+    await takt(abruf);
+    let schritte = 0;
+    while (schritte < 80 && await bildSchritt(env, env.DB, abruf)) schritte++;
+    assert.equal(schritte, 30); // 10 Artikel mit je zwei Schritten, dann 10 Bilder der Agenda
+    const erster = (await anzeige()).inhalt.agenda[0];
+    assert.match(erster.bild, /^\/newsbild\/[a-f0-9]{24}$/);
+    const bild = await rufe(erster.bild);
+    assert.equal(bild.status, 200);
+    assert.deepEqual(new Uint8Array(await bild.antwort.arrayBuffer()), bildDaten);
+    setzeZeit(START + 4 * 60 * MIN); // 13:00: nächster Abruf der Liste
+    await takt(abruf);
+    assert.equal((await anzeige()).inhalt.agenda[0].bild, erster.bild);
+    assert.equal(await bildSchritt(env, env.DB, abruf), false);
+  });
+
+  test('ein Bild, das älter als 30 Tage ist, wird neu geholt (der Bildspeicher löscht nach 40 Tagen)', async () => {
+    const abruf = quelle();
+    await takt(abruf);
+    while (await bildSchritt(env, env.DB, abruf)) { /* alle Bilder holen */ }
+    const tag = 24 * 60 * MIN;
+    const eintrag = [{ link: 'https://michelnews.ch/agenda/event/lesung-mit-laura-vogt-aus-das-jahr-des-kalks-40877', titel: 'Lesung', von: '2026-11-26', bis: '2027-01-31',
+      bildUrl: 'https://michelnews.ch/fileadmin/_processed_/9/e/csm_laura-vogt_hannes_thalmann_bb147cb56e.jpeg' }];
+    await speicher.ersetzeAgenda(env.DB, eintrag, START + 10 * tag, 30 * tag);
+    assert.ok((await speicher.ladeAgenda(env.DB, '2026-11-25', 4))[0].bild);
+    await speicher.ersetzeAgenda(env.DB, eintrag, START + 31 * tag, 30 * tag);
+    assert.equal((await speicher.ladeAgenda(env.DB, '2026-11-25', 4))[0].bild, null);
+    assert.equal((await speicher.naechsterBildSchritt(env.DB)).agenda, true);
+  });
+
+  test('fehlt die Agenda auf der Startseite, bleiben die gespeicherten Einträge und die Statusseite meldet es', async () => {
+    await takt(quelle());
+    setzeZeit(START + 4 * 60 * MIN);
+    await takt(quelle(STARTSEITE.replace(/event-slider/g, 'anders')));
+    assert.equal((await anzeige()).inhalt.agenda.length, 4);
+    const cookie = await sitzung();
+    const s = (await rufe('/api/status', { kopf: { Cookie: cookie } })).inhalt;
+    assert.equal(s.agenda.an, true);
+    assert.equal(s.agenda.eintraege.length, 4);
+    assert.ok(s.hinweise.some((h) => h.startsWith('Agenda:')));
+    assert.equal((await anzeige()).inhalt.news.length, 10); // die News sind davon nicht betroffen
+  });
+
+  test('kommen die News aus dem RSS-Feed, holt die Agenda die Startseite in einem eigenen Abruf', async () => {
+    const feed = readFileSync(new URL('./fixtures/news-feed-beispiel.xml', import.meta.url), 'utf8');
+    await setzeEinstellungen({ feedUrl: 'https://feed.example/michelnews.xml' });
+    const abruf = attrappe([
+      ['kalender.invalid', () => ics([])],
+      ['feed.example', feed],
+      ['/fileadmin/', () => new Response(bildDaten, { status: 200, headers: { 'content-type': 'image/jpeg' } })],
+      ['michelnews.ch', STARTSEITE],
+    ]);
+    await takt(abruf);
+    assert.equal(startseiteAbrufe(abruf), 0);
+    assert.deepEqual((await anzeige()).inhalt.agenda, []);
+    setzeZeit(START + 1 * MIN);
+    await takt(abruf);
+    assert.equal(startseiteAbrufe(abruf), 1);
+    assert.equal((await anzeige()).inhalt.agenda.length, 4);
+    setzeZeit(START + 2 * MIN);
+    await takt(abruf);
+    assert.equal(startseiteAbrufe(abruf), 1); // danach erst wieder nach dem nächsten Abruf der News
+  });
+
+  test('scheitert der Abruf der News, gibt es keinen zusätzlichen Abruf für die Agenda', async () => {
+    const kaputt = attrappe([['kalender.invalid', () => ics([])], ['michelnews.ch', new Response('weg', { status: 503 })]]);
+    await takt(kaputt);
+    setzeZeit(START + 1 * MIN);
+    await takt(kaputt);
+    assert.equal(startseiteAbrufe(kaputt), 1);
+    assert.deepEqual((await anzeige()).inhalt.agenda, []);
   });
 });
 

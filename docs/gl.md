@@ -4,13 +4,14 @@ Stand: 25.11.2026
 
 ## Was die Website kann
 
-Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt eine Website im Vollbild. Sie wechselt zwischen drei Ansichten:
+Am Empfang der Wallimann Druck AG hängt ein Fernseher im Querformat. Er zeigt eine Website im Vollbild. Sie wechselt zwischen vier Ansichten:
 
 - **Begrüssung von Besuch:** Firma und, falls angegeben, Name des Besuchs, ab 30 Minuten vor bis 15 Minuten nach Terminbeginn. Die Termine kommen aus einem Outlook-Kalender.
-- **News:** die 10 neusten Artikel von michelnews.ch mit Bild, Überschrift, Rubrik, Ort und Datum, ohne Artikeltext und ohne Werbung.
+- **News:** die 10 neusten Artikel von michelnews.ch im Stil von michelnews.ch. Das Bild füllt den Bildschirm, darin stehen Überschrift, Rubrik, Ort und Datum, ohne Artikeltext und ohne Werbung.
+- **Agenda:** die nächsten vier Veranstaltungen aus der Agenda von michelnews.ch auf einer Seite, mit Bild, Datum, Titel, Rubrik und Ort. Sie erscheint nach je zwei Artikeln.
 - **Solarstrom:** aktuelle Leistung und Tagesertrag der Fronius-Anlage.
 
-Immer sichtbar sind Logo, Datum und Uhrzeit. Ausserhalb der Betriebszeiten (Montag bis Freitag, 07:00 bis 19:00) bleibt der Bildschirm schwarz, ausser bei einer Begrüssung. Der Bildschirm zeigt nie eine Fehlermeldung. Fällt eine Quelle aus, laufen die zuletzt gespeicherten News weiter.
+Immer sichtbar sind Datum und Uhrzeit. Das Logo von Wallimann steht bei der Begrüssung, beim Solarstrom und auf der Standardfolie. Bei News und Agenda steht stattdessen das rote M von michelnews.ch. Ausserhalb der Betriebszeiten (Montag bis Freitag, 07:00 bis 19:00) bleibt der Bildschirm schwarz, ausser bei einer Begrüssung. Der Bildschirm zeigt nie eine Fehlermeldung. Fällt eine Quelle aus, laufen die zuletzt gespeicherten News weiter.
 
 ## Wo die Daten liegen
 
@@ -62,3 +63,4 @@ Die Website ist seit dem 25.11.2026 unter `https://empfang.wallimann.workers.dev
 5. Soll später auf ein Postfach im Firmen-Outlook umgestiegen werden?
 6. Soll für Warn-E-Mails eine Domain zu Cloudflare genommen werden (grob CHF 10 bis 20 pro Jahr), oder reicht die Statusseite?
 7. Passt das Logo «wallimann medien und kommunikation» am Empfang, oder soll das Logo der Wallimann Druck AG geliefert werden?
+8. Ist es in Ordnung, dass News und Agenda mit dem roten M, den Schriften und den Farben von michelnews.ch erscheinen? Das öffentliche GitHub-Projekt enthält dafür eine kleine Bilddatei mit dem M.

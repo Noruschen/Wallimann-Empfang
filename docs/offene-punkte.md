@@ -1,6 +1,6 @@
 # Offene Punkte
 
-Stand: 25.11.2026
+Stand: 26.11.2026
 
 | Punkt | Wer ist am Zug | Was genau zu tun ist |
 |---|---|---|
@@ -20,6 +20,8 @@ Stand: 25.11.2026
 | Einstellungen am Fernseher | IT | Energiesparen, Abschalten bei Inaktivität und Bildschirmschoner ausschalten. Ein- und Aus-Timer passend zu 07:00 und 19:00 stellen. Verhalten nach Stromausfall prüfen. |
 | Warn-E-Mails | GL | Entscheiden: Domain zu Cloudflare nehmen (grob CHF 10 bis 20 pro Jahr) oder darauf verzichten. Bis dahin stehen Störungen nur auf der Statusseite. |
 | Logo | Alexander | Prüfen, ob das Logo «wallimann medien und kommunikation» passt, sonst das Logo der Wallimann Druck AG liefern. |
+| Gestaltung von News und Agenda | Alexander, Wallimann Medien | Am 26.11.2026 umgebaut nach den Vorlagen von Alexander: News als Vollbild mit Text im Bild, nach je zwei Artikeln die Agenda mit vier Veranstaltungen auf Blau. Zu bestätigen: Darf das rote M von michelnews.ch auf jedem Artikel stehen? Auf michelnews.ch kennzeichnet es nur Artikel für Abonnenten. Die kleine Bilddatei mit dem M liegt im öffentlichen GitHub-Projekt. |
+| Grössere Bilder für die Agenda | Wallimann Medien | Die Startseite liefert für die Agenda nur Vorschaubilder mit 360 × 272 Pixeln. Für schärfere Bilder am Fernseher bräuchte es grössere, zum Beispiel über den RSS-Feed. |
 | Erstes Veröffentlichen im Internet | erledigt | Veröffentlicht am 25.11.2026, mit Erlaubnis von Alexander. |
 
 ## Fragen an den Installateur der Solaranlage
@@ -37,6 +39,7 @@ Stand: 25.11.2026
 - Ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt, und ob Einladungen im Junk-Ordner landen.
 - Die Rechenzeit bei Cloudflare über längere Zeit.
 - Die Begrüssung auf dem Fernseher am Empfang.
+- Die neue Gestaltung von News und Agenda auf dem Fernseher am Empfang. Geprüft ist sie im Browser Chromium, quer und hochkant. Der unscharfe Hintergrund braucht eine Funktion, die sehr alte TV-Browser nicht kennen. Dort sollte der Hintergrund scharf und abgedunkelt erscheinen, getestet ist das nicht.
 - Der Browser des Fernsehers am Empfang.
 - Der E-Mail-Versand.
 - Echte Solardaten.

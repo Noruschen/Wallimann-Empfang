@@ -19,6 +19,11 @@
 @font-face { font-family: "Figtree"; font-weight: 600; font-style: normal; src: url("/schrift/figtree-600.woff") format("woff"); }
 @font-face { font-family: "Figtree"; font-weight: 700; font-style: normal; src: url("/schrift/figtree-700.woff") format("woff"); }
 @font-face { font-family: "Architects Daughter"; font-weight: 400; font-style: normal; src: url("/schrift/architects-daughter-400.woff") format("woff"); }
+/* Schriften von michelnews.ch für News und Agenda (beide frei, SIL Open Font License) */
+@font-face { font-family: "Besley"; font-weight: 400; font-style: normal; src: url("/schrift/besley-400.woff") format("woff"); }
+@font-face { font-family: "Besley"; font-weight: 600; font-style: normal; src: url("/schrift/besley-600.woff") format("woff"); }
+@font-face { font-family: "Inter"; font-weight: 400; font-style: normal; src: url("/schrift/inter-400.woff") format("woff"); }
+@font-face { font-family: "Inter"; font-weight: 600; font-style: normal; src: url("/schrift/inter-600.woff") format("woff"); }
 
 html, body {
   margin: 0;
@@ -68,6 +73,9 @@ body {
   height: 150px;
   background: #ffffff;
   border-bottom: 2px solid #d9d5cc;
+  z-index: 3;
+  -webkit-transition: background-color 0.9s ease, border-color 0.9s ease;
+  transition: background-color 0.9s ease, border-color 0.9s ease;
 }
 .logo {
   position: absolute;
@@ -75,6 +83,8 @@ body {
   top: 33px;
   height: 84px;
   width: auto;
+  -webkit-transition: opacity 0.9s ease;
+  transition: opacity 0.9s ease;
 }
 .uhr {
   position: absolute;
@@ -208,79 +218,203 @@ body {
   transform: translateY(-50%);
 }
 
-/* ---------- News ---------- */
-.news .bildfeld {
+/* ---------- News im Stil von michelnews.ch ----------
+   Das Bild füllt den ganzen Bildschirm, der Text steht im Bild. Die Ansicht ragt auf allen
+   Seiten 12 Pixel über die Bühne hinaus, damit beim leichten Verschieben gegen das Einbrennen
+   kein Rand sichtbar wird. Sie liegt auch unter der Kopfzeile, die dann durchsichtig ist. */
+.ansicht.news, .ansicht.agenda {
+  left: -12px;
+  top: -164px;
+  width: 1944px;
+  height: 1104px;
+}
+.ansicht.news { background: #111111; }
+.news .hinten, .news .dunkel, .news .bildfeld, .news .verlauf {
   position: absolute;
-  left: 80px;
-  top: 44px;
-  width: 1010px;
-  height: 760px;
-  background: #efebe2;
-  border: 2px solid #1d1d1b;
-  border-radius: 34px 34px 34px 8px;
-  overflow: hidden;
+  left: 0;
+  top: 0;
+  width: 1944px;
+  height: 1104px;
 }
 .news .bild {
   position: absolute;
   left: 0;
   top: 0;
-  width: 1010px;
-  height: 760px;
+  width: 100%;
+  height: 100%;
+}
+/* Hintergrund: dasselbe Bild, unscharf und abgedunkelt. Sichtbar, wo das Bild den Schirm nicht füllt. */
+.news .hinten {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
+  -webkit-filter: blur(36px);
+  filter: blur(36px);
+  -webkit-transform: scale(1.12);
+  transform: scale(1.12);
+}
+.news .dunkel { background: #000000; opacity: 0.4; }
+.news .bildfeld { overflow: hidden; }
+.news .bild {
+  background-repeat: no-repeat;
+  background-position: center 30%;
+  background-size: cover;
+}
+.news .bild.ganz { background-position: center center; }
+.news .verlauf {
+  background: -webkit-linear-gradient(bottom, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.6) 26%, rgba(0,0,0,0) 60%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.38) 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.6) 26%, rgba(0,0,0,0) 60%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.38) 100%);
+}
+.mzeichen {
+  position: absolute;
+  left: 92px;
+  top: 58px;
+  width: 104px;
+  height: auto;
+}
+.news .text {
+  position: absolute;
+  left: 122px;
+  bottom: 96px;
+  width: 1580px;
+}
+.news .rubrik {
+  display: inline-block;
+  font-family: "Inter", "Figtree", Arial, Helvetica, sans-serif;
+  font-size: 32px;
+  font-weight: 400;
+  color: #ffffff;
+  border: 3px solid #ffffff;
+  border-radius: 12px;
+  padding: 5px 20px 7px;
+  margin-bottom: 28px;
+}
+.news .titel {
+  font-family: "Besley", Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  font-size: 92px;
+  line-height: 1.18;
+  color: #ffffff;
+  text-shadow: 4px 4px 0 #000000;
+  word-wrap: break-word;
+}
+.news .meta {
+  margin-top: 26px;
+  font-family: "Inter", "Figtree", Arial, Helvetica, sans-serif;
+  font-size: 38px;
+  font-weight: 600;
+  color: #ffffff;
+  text-shadow: 3px 3px 0 #000000;
+}
+/* Artikel ohne Bild: roter Grund */
+.news.ohnebild { background: #E30613; }
+.news.ohnebild .hinten, .news.ohnebild .dunkel, .news.ohnebild .bildfeld, .news.ohnebild .verlauf, .news.ohnebild .mzeichen { display: none; }
+.news.ohnebild .text { bottom: 150px; }
+.news.ohnebild .titel { font-size: 112px; text-shadow: none; }
+.news.ohnebild .meta { text-shadow: none; }
+
+/* ---------- Agenda von michelnews.ch: die nächsten vier Veranstaltungen auf blauem Grund ---------- */
+.ansicht.agenda { background: #C0D6FF; }
+.agenda .mzeichen { left: 102px; top: 58px; width: 90px; }
+.agenda .atitel {
+  position: absolute;
+  left: 224px;
+  top: 48px;
+  font-family: "Besley", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 100px;
+  line-height: 1.2;
+  color: #000000;
+}
+.agenda .karte {
+  position: absolute;
+  top: 262px;
+  width: 405px;
+}
+.agenda .k1 { left: 102px; }
+.agenda .k2 { left: 547px; }
+.agenda .k3 { left: 992px; }
+.agenda .k4 { left: 1437px; }
+.agenda .trenner {
+  position: absolute;
+  top: 262px;
+  width: 3px;
+  height: 680px;
+  background: #ffffff;
+}
+.agenda .t1 { left: 525px; }
+.agenda .t2 { left: 970px; }
+.agenda .t3 { left: 1415px; }
+.agenda.n1 .trenner, .agenda.n2 .t2, .agenda.n2 .t3, .agenda.n3 .t3 { display: none; }
+.agenda .kbild {
+  width: 405px;
+  height: 306px;
+  background-color: #000000;
   background-repeat: no-repeat;
   background-position: center center;
   background-size: cover;
 }
-.news .bild.klein { background-size: auto; }
-.news .text {
-  position: absolute;
-  left: 1160px;
-  top: 44px;
-  width: 680px;
-  height: 760px;
+/* Eintrag ohne Bild: gelbes Feld mit dem Datum, wie auf michelnews.ch */
+.agenda .kbild.ohne { background: #FFFAC6; }
+.agenda .kgross {
+  display: none;
+  font-family: "Besley", Georgia, "Times New Roman", serif;
+  font-weight: 600;
+  font-size: 96px;
+  line-height: 306px;
+  text-align: center;
+  color: #E30613;
 }
-.news .rubrik {
-  display: inline-block;
+.agenda .kbild.ohne .kgross { display: block; }
+.agenda .kdatum {
+  margin-top: 24px;
+  font-family: "Inter", "Figtree", Arial, Helvetica, sans-serif;
   font-size: 34px;
-  font-weight: 700;
-  color: #d10a11;
-  border: 3px solid #d10a11;
-  border-radius: 40px;
-  padding: 8px 28px 9px;
-  margin-bottom: 34px;
-  background: #ffffff;
+  font-weight: 600;
+  color: #E30613;
+  white-space: nowrap;
 }
-.news .titel {
-  font-family: "Nunito", "Arial Rounded MT Bold", "Trebuchet MS", Arial, sans-serif;
-  font-weight: 900;
-  font-size: 82px;
-  line-height: 1.1;
-  letter-spacing: -1px;
-  color: #1d1d1b;
+.agenda .ktitel {
+  margin-top: 10px;
+  font-family: "Besley", Georgia, "Times New Roman", serif;
+  font-weight: 400;
+  font-size: 44px;
+  line-height: 1.24;
+  color: #000000;
   word-wrap: break-word;
 }
-.news .meta {
-  position: absolute;
-  left: 0;
-  bottom: 62px;
-  width: 680px;
-  font-size: 40px;
-  font-weight: 500;
-  color: #5f5d58;
+.agenda .kmarken { margin-top: 20px; font-size: 0; }
+.agenda .kmarke {
+  display: inline-block;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 3px 16px 5px;
+  margin: 0 10px 10px 0;
+  font-family: "Inter", "Figtree", Arial, Helvetica, sans-serif;
+  font-size: 26px;
+  font-weight: 400;
+  color: #000000;
 }
-.news .quelle {
+.agenda .aquelle {
   position: absolute;
-  left: 0;
-  bottom: 0;
-  width: 680px;
-  font-size: 36px;
-  font-weight: 700;
-  color: #d10a11;
+  right: 92px;
+  bottom: 58px;
+  font-family: "Inter", "Figtree", Arial, Helvetica, sans-serif;
+  font-size: 30px;
+  font-weight: 400;
+  color: #000000;
 }
-/* Artikel ohne Bild: Text über die ganze Breite */
-.news.ohnebild .bildfeld { display: none; }
-.news.ohnebild .text { left: 110px; width: 1700px; }
-.news.ohnebild .titel { font-size: 110px; }
-.news.ohnebild .meta, .news.ohnebild .quelle { width: 1700px; }
+
+/* Kopfzeile über News und Agenda: durchsichtig, ohne Logo, nur Datum und Uhrzeit */
+.rahmen.voll .kopf { background-color: transparent; border-bottom-color: transparent; }
+.rahmen.voll .logo { opacity: 0; }
+.rahmen.voll .punkte { display: none; }
+.rahmen.voll .datum, .rahmen.voll .zeit { font-family: "Inter", "Figtree", Arial, Helvetica, sans-serif; font-weight: 600; }
+.rahmen.voll .datum { font-size: 34px; }
+.rahmen.voll .zeit { font-size: 62px; }
+.rahmen.vnews .datum { color: #ffffff; text-shadow: 2px 2px 0 #000000; }
+.rahmen.vnews .zeit { color: #ffffff; text-shadow: 3px 3px 0 #000000; }
+.rahmen.vagenda .datum, .rahmen.vagenda .zeit { color: #000000; text-shadow: none; }
 
 /* ---------- Solarstrom ---------- */
 .solar .sonne {
@@ -399,11 +533,6 @@ body {
 .d2 .begruessung .firma { color: #ffffff; }
 .d2 .begruessung .besuch { color: #ffffff; }
 .d2 .begruessung .stoerer { background: #ffffff; color: #d10a11; }
-.d2 .news .bildfeld { border: 0; border-radius: 0; left: 0; top: 0; width: 1090px; height: 928px; }
-.d2 .news .bild { width: 1090px; height: 928px; }
-.d2 .news .text { top: 70px; height: 734px; }
-.d2 .news .rubrik { background: #d10a11; color: #ffffff; }
-.d2 .punkte { left: 1090px; width: 830px; }
 .d2 .solar .wert { border: 0; background: #d10a11; border-radius: 20px; }
 .d2 .solar .zahl, .d2 .solar .zahl span { color: #ffffff; }
 .d2 .solar .label { color: #ffd9db; }
@@ -419,11 +548,6 @@ body {
 .d3 .punkt.aktiv { background: #ff3b42; }
 .d3 .begruessung .gruss { color: #ff3b42; }
 .d3 .begruessung .firma, .d3 .begruessung .besuch { color: #ffffff; }
-.d3 .news .bildfeld { background: #23221f; border-color: #3a3937; }
-.d3 .news .rubrik { background: transparent; color: #ff3b42; border-color: #ff3b42; }
-.d3 .news .titel { color: #ffffff; }
-.d3 .news .meta { color: #b9b5ac; }
-.d3 .news .quelle { color: #ff3b42; }
 .d3 .solar .stitel { color: #ffffff; }
 .d3 .solar .suntertitel { color: #ff3b42; }
 .d3 .solar .wert { background: #23221f; border-color: #3a3937; }
@@ -438,7 +562,6 @@ body {
 .d4, .d4 .buehne { background: #ffffff; }
 .d4 .kopf { border-bottom: 0; }
 .d4 .ansicht.begruessung,
-.d4 .ansicht.news,
 .d4 .ansicht.solar {
   left: 60px;
   top: 10px;
@@ -453,11 +576,6 @@ body {
 .d4 .begruessung .firma { font-size: 156px; }
 .d4 .begruessung .stoerer { right: 70px; bottom: 50px; width: 260px; height: 260px; border-radius: 130px; font-size: 40px; }
 .d4 .begruessung .stoerer span { width: 260px; }
-.d4 .news .bildfeld { left: 50px; top: 50px; width: 930px; height: 738px; border: 0; border-radius: 50px 50px 50px 10px; }
-.d4 .news .bild { width: 930px; height: 738px; }
-.d4 .news .text { left: 1050px; top: 50px; width: 680px; height: 738px; }
-.d4 .news .rubrik { font-family: "Architects Daughter", "Bradley Hand", "Segoe Print", cursive; border: 0; padding: 0; font-size: 50px; background: transparent; margin-bottom: 18px; }
-.d4 .news .titel { font-size: 78px; }
 .d4 .solar .sonne { left: 90px; top: 60px; }
 .d4 .solar .stitel { left: 320px; top: 64px; }
 .d4 .solar .suntertitel { left: 324px; top: 166px; }
@@ -489,17 +607,6 @@ body {
 .hoch .begruessung .stoerer { right: 70px; bottom: 300px; width: 300px; height: 300px; border-radius: 150px; font-size: 46px; }
 .hoch .begruessung .stoerer span { width: 300px; }
 
-/* News: Bild oben, Text darunter */
-.hoch .news .bildfeld { left: 60px; top: 50px; width: 956px; height: 720px; }
-.hoch .news .bild { width: 956px; height: 720px; }
-.hoch .news .text { left: 70px; top: 840px; width: 940px; height: 760px; }
-.hoch .news .rubrik { font-size: 38px; margin-bottom: 36px; }
-.hoch .news .titel { font-size: 88px; }
-.hoch .news .meta { width: 940px; font-size: 42px; bottom: 66px; }
-.hoch .news .quelle { width: 940px; font-size: 38px; }
-.hoch .news.ohnebild .text { left: 70px; top: 120px; width: 940px; height: 1480px; }
-.hoch .news.ohnebild .titel { font-size: 116px; }
-.hoch .news.ohnebild .meta, .hoch .news.ohnebild .quelle { width: 940px; }
 
 /* Solarstrom: die zwei Werte untereinander */
 .hoch .solar .sonne { left: 80px; top: 90px; width: 140px; height: 140px; border-radius: 70px; }
@@ -516,10 +623,6 @@ body {
 .hoch .standard .gross { left: 140px; top: 700px; width: 800px; }
 
 /* Design 2 «Rot» hochkant */
-.d2.hoch .news .bildfeld { left: -30px; top: 0; width: 1140px; height: 800px; }
-.d2.hoch .news .bild { width: 1140px; height: 800px; }
-.d2.hoch .news .text { top: 880px; height: 720px; }
-.d2.hoch .punkte { left: 0; width: 1080px; }
 .d2.hoch .solar .wert { left: 70px; }
 
 /* Design 3 «Dunkel» hochkant */
@@ -528,18 +631,12 @@ body {
 
 /* Design 4 «Sprechblase» hochkant */
 .d4.hoch .ansicht.begruessung,
-.d4.hoch .ansicht.news,
 .d4.hoch .ansicht.solar { left: 40px; top: 10px; width: 980px; height: 1610px; }
 .d4.hoch .begruessung .mitte { left: 60px; width: 860px; top: 40%; }
 .d4.hoch .begruessung .gruss { font-size: 84px; }
 .d4.hoch .begruessung .firma { font-size: 124px; }
 .d4.hoch .begruessung .stoerer { right: 50px; bottom: 210px; width: 260px; height: 260px; border-radius: 130px; font-size: 40px; }
 .d4.hoch .begruessung .stoerer span { width: 260px; }
-.d4.hoch .news .bildfeld { left: 40px; top: 40px; width: 900px; height: 660px; }
-.d4.hoch .news .bild { width: 900px; height: 660px; }
-.d4.hoch .news .text { left: 50px; top: 750px; width: 880px; height: 800px; }
-.d4.hoch .news .titel { font-size: 82px; }
-.d4.hoch .news .meta, .d4.hoch .news .quelle { width: 880px; }
 .d4.hoch .solar .sonne { left: 60px; top: 60px; }
 .d4.hoch .solar .stitel { left: 270px; top: 66px; font-size: 68px; }
 .d4.hoch .solar .suntertitel { left: 274px; top: 154px; font-size: 32px; width: 660px; }
@@ -549,3 +646,45 @@ body {
 .d4.hoch .solar .zahl { font-size: 196px; }
 .d4.hoch .solar .zusatz { left: 50px; top: 1200px; width: 860px; }
 .d4.hoch .solar .beispiel { right: 50px; top: 1400px; }
+
+/* ================= News und Agenda hochkant =================
+   Das Bild füllt die oberen zwei Drittel, der Text steht im unteren Teil des Bildes und darunter. */
+.hoch .ansicht.news, .hoch .ansicht.agenda { left: -12px; top: -204px; width: 1104px; height: 1944px; }
+.hoch .news .hinten, .hoch .news .dunkel { width: 1104px; height: 1944px; }
+.hoch .news .bildfeld { width: 1104px; height: 1240px; }
+/* Hochkant steht der Text unter der Bildmitte: bei Bildern im Querformat unter dem Bild auf dem
+   unscharfen Hintergrund, bei Bildern im Hochformat im unteren Teil des Bildes. */
+.hoch .news .verlauf {
+  width: 1104px;
+  height: 1944px;
+  background: -webkit-linear-gradient(top, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 12%, rgba(0,0,0,0) 44%, rgba(0,0,0,0.5) 58%, rgba(0,0,0,0.5) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 12%, rgba(0,0,0,0) 44%, rgba(0,0,0,0.5) 58%, rgba(0,0,0,0.5) 100%);
+}
+.hoch .mzeichen { left: 72px; top: 62px; width: 100px; }
+.hoch .news .text { left: 82px; top: 1110px; bottom: auto; width: 940px; }
+.hoch .news.ganzschirm .text { top: auto; bottom: 170px; }
+.hoch .news .rubrik { font-size: 36px; }
+.hoch .news .titel { font-size: 96px; }
+.hoch .news .meta { font-size: 44px; margin-top: 34px; }
+.hoch .news.ohnebild .text { top: 620px; }
+.hoch .news.ohnebild .titel { font-size: 100px; }
+
+.hoch .agenda .mzeichen { left: 72px; top: 62px; width: 90px; }
+.hoch .agenda .atitel { left: 190px; top: 56px; font-size: 88px; }
+.hoch .agenda .karte { width: 445px; }
+.hoch .agenda .k1 { left: 82px; top: 300px; }
+.hoch .agenda .k2 { left: 577px; top: 300px; }
+.hoch .agenda .k3 { left: 82px; top: 1090px; }
+.hoch .agenda .k4 { left: 577px; top: 1090px; }
+.hoch .agenda .kbild { width: 445px; height: 336px; }
+.hoch .agenda .kgross { line-height: 336px; }
+.hoch .agenda .kdatum { font-size: 36px; }
+.hoch .agenda .ktitel { font-size: 46px; }
+.hoch .agenda .kmarke { font-size: 28px; }
+.hoch .agenda .t1 { left: 550px; top: 300px; height: 1500px; }
+.hoch .agenda .t2 { left: 82px; top: 1058px; width: 940px; height: 3px; }
+.hoch .agenda .t3 { display: none; }
+.hoch .agenda.n2 .t1 { height: 730px; }
+.hoch .agenda .aquelle { right: 82px; bottom: 44px; }
+.hoch .rahmen.voll .datum { font-size: 30px; }
+.hoch .rahmen.voll .zeit { font-size: 64px; }

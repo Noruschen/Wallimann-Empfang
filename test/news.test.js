@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
   leseStartseite,
+  leseAgenda,
   leseArtikelBild,
   leseFeed,
   filtereNews,
@@ -181,3 +182,67 @@ test('Laufzeit von leseStartseite (Mittel aus 50 Läufen)', () => {
   console.log(`Mittlere Laufzeit leseStartseite: ${ms.toFixed(2)} ms`);
   assert.ok(ms < 50);
 });
+
+// ---------------- Agenda ----------------
+
+test('Agenda: die Startseite liefert 10 Veranstaltungen in der Reihenfolge der Seite', () => {
+  const a = leseAgenda(startseite);
+  assert.equal(a.length, 10);
+  assert.deepEqual(a.slice(0, 4).map((x) => x.titel), [
+    'Lesung mit Laura Vogt aus «Das Jahr des Kalks»', 'Christmas in Beromünster', 'Adventsmarkt', 'Adventskonzert 2026',
+  ]);
+});
+
+test('Agenda: Titel, Link, Datum, Rubrik, Ort und Bild des ersten Eintrags stimmen', () => {
+  assert.deepEqual(leseAgenda(startseite)[0], {
+    titel: 'Lesung mit Laura Vogt aus «Das Jahr des Kalks»',
+    link: 'https://michelnews.ch/agenda/event/lesung-mit-laura-vogt-aus-das-jahr-des-kalks-40877',
+    von: '2026-11-26',
+    bis: '2026-11-26',
+    rubrik: 'Kultur',
+    ort: 'Beromünster',
+    bildUrl: 'https://michelnews.ch/fileadmin/_processed_/9/e/csm_laura-vogt_hannes_thalmann_bb147cb56e.jpeg',
+    bildBreite: 360,
+    bildHoehe: 272,
+  });
+});
+
+test('Agenda: ein Zeitraum «10.10.2026 - 29.11.2026» ergibt Beginn und Ende', () => {
+  const lang = leseAgenda(startseite).find((x) => x.von !== x.bis);
+  assert.equal(lang.titel, 'Geboren werden');
+  assert.equal(lang.von, '2026-10-10');
+  assert.equal(lang.bis, '2026-11-29');
+});
+
+test('Agenda: der auskommentierte Ort zählt nicht, der sichtbare schon', () => {
+  const html = '<div class="row event-slider"><div class="event-list-item"><div class="event-startdate">01.12.2026</div>'
+    + '<h3 class="event-title"><a href="/agenda/event/a-1">Test &amp; Probe <b>fett</b></a></h3>'
+    + '<!-- <div class="event-list-value event-location"><a href="#">Falsch</a></div> -->'
+    + '<div class="event-list-value event-location"><a href="#">Richtig</a></div></div></div>';
+  const [e] = leseAgenda(html);
+  assert.equal(e.ort, 'Richtig');
+  assert.equal(e.titel, 'Test & Probe fett');
+  assert.equal(e.bildUrl, null);
+  assert.equal(e.rubrik, null);
+});
+
+test('Agenda: Einträge ohne Datum, ohne Titel oder mit fremdartigem Link fallen weg', () => {
+  const eintrag = (datum, link, titel) => '<div class="event-list-item"><div class="event-startdate">' + datum + '</div>'
+    + '<h3 class="event-title"><a href="' + link + '">' + titel + '</a></h3></div>';
+  const html = '<div class="event-slider">' + eintrag('', '/agenda/event/a', 'Ohne Datum') + eintrag('02.12.2026', '/agenda/event/b', '')
+    + eintrag('02.12.2026', 'javascript:alert(1)', 'Böser Link') + eintrag('03.12.2026', '/agenda/event/c', 'Gut') + '</div>';
+  assert.deepEqual(leseAgenda(html).map((x) => x.titel), ['Gut']);
+});
+
+test('Agenda: leere oder fremde Eingaben ergeben eine leere Liste', () => {
+  assert.deepEqual(leseAgenda(''), []);
+  assert.deepEqual(leseAgenda(null), []);
+  assert.deepEqual(leseAgenda('<html><body>Keine Agenda</body></html>'), []);
+});
+
+test('Datum der News mit vierstelligem Jahr wird nicht als 2020 gelesen', () => {
+  const html = '<div class="news-list-view template-top"><div class="news-list-item"><h3 itemprop="headline"><a href="/news/x">Titel</a></h3>'
+    + '<div class="news-meta">Gunzwil - 25.11.2026</div></div></div>';
+  assert.equal(leseStartseite(html)[0].datum, '2026-11-25');
+});
+

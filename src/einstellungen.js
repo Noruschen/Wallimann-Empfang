@@ -23,6 +23,11 @@ export const STANDARD = Object.freeze({
   newsRubriken: [],            // leer bedeutet alle Rubriken
   feedUrl: '',                 // Adresse des RSS-Feeds, sobald es ihn gibt
 
+  // Agenda von michelnews.ch
+  agendaNachArtikeln: 2,       // Agenda-Seite nach je so vielen Artikeln. 0 schaltet die Agenda aus
+  agendaAnzahl: 4,             // so viele nächste Veranstaltungen auf einer Seite (1 bis 4)
+  dauerAgendaSek: 20,          // Sekunden für die Agenda-Seite
+
   // Solar
   solarQuelle: 'aus',          // 'aus', 'beispiel' oder 'empfang' (Werte kommen von einem Zusatzgerät)
   solarNachArtikeln: 3,        // Solar-Ansicht nach jedem dritten Artikel
@@ -127,6 +132,9 @@ export function pruefeEinstellungen(roh) {
     newsOrte: liste(r.newsOrte ?? s.newsOrte, 30, 60),
     newsRubriken: liste(r.newsRubriken ?? s.newsRubriken, 30, 60),
     feedUrl: httpsAdresse(r.feedUrl),
+    agendaNachArtikeln: ganzzahl(r.agendaNachArtikeln, 0, 10, s.agendaNachArtikeln),
+    agendaAnzahl: ganzzahl(r.agendaAnzahl, 1, 4, s.agendaAnzahl),
+    dauerAgendaSek: ganzzahl(r.dauerAgendaSek, 10, 40, s.dauerAgendaSek),
     solarQuelle: SOLAR_QUELLEN.includes(r.solarQuelle) ? r.solarQuelle : s.solarQuelle,
     solarNachArtikeln: ganzzahl(r.solarNachArtikeln, 1, 10, s.solarNachArtikeln),
     dauerAnsichtSek: ganzzahl(r.dauerAnsichtSek, 10, 15, s.dauerAnsichtSek),

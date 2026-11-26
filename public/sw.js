@@ -4,7 +4,7 @@
   So startet die Anzeige auch ohne Internet, zum Beispiel nach einem Neuladen.
   Daten von Besuchen werden hier nie gespeichert: Alles unter /api/ geht immer direkt ins Netz.
 */
-var SPEICHER = 'empfang-v1';
+var SPEICHER = 'empfang-v2';
 var BILDER = 'empfang-bilder-v1';
 var GRUNDDATEIEN = [
   '/anzeige/',
@@ -12,6 +12,11 @@ var GRUNDDATEIEN = [
   '/anzeige/anzeige.js',
   '/anzeige/demo.js',
   '/bild/logo-wallimann.png',
+  '/bild/michelnews-m.png',
+  '/schrift/besley-400.woff',
+  '/schrift/besley-600.woff',
+  '/schrift/inter-400.woff',
+  '/schrift/inter-600.woff',
   '/schrift/nunito-700.woff',
   '/schrift/nunito-800.woff',
   '/schrift/nunito-900.woff',

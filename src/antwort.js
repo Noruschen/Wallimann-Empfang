@@ -84,7 +84,21 @@ export function newsFuerAnzeige(zeilen) {
   }));
 }
 
-export function baueAnzeigeAntwort({ jetzt, einstellungen: e, besuche, news, solar, kalenderErfolg, version }) {
+// Die nächsten Veranstaltungen für die Agenda-Seite. Datum bleibt in der Form JJJJ-MM-TT,
+// die Anzeige schreibt es aus (mit Wochentag und «Heute»).
+export function agendaFuerAnzeige(zeilen) {
+  return zeilen.map((a) => ({
+    id: kurzKennung(a.link),
+    titel: a.titel,
+    ort: a.ort ?? null,
+    rubrik: a.rubrik ?? null,
+    von: a.von,
+    bis: a.bis,
+    bild: a.bild ? (/^https?:/.test(a.bild) ? a.bild : '/newsbild/' + a.bild) : null,
+  }));
+}
+
+export function baueAnzeigeAntwort({ jetzt, einstellungen: e, besuche, news, agenda, solar, kalenderErfolg, version }) {
   // Ist der letzte erfolgreiche Abruf des Kalenders älter als 15 Minuten, gibt es keine
   // Begrüssung: Ein abgesagter Besuch soll nicht stehen bleiben.
   const kalenderFrisch = typeof kalenderErfolg === 'number' && jetzt - kalenderErfolg <= KALENDER_MAX_ALTER_MS;
@@ -94,11 +108,14 @@ export function baueAnzeigeAntwort({ jetzt, einstellungen: e, besuche, news, sol
     zone: zoneInfo(jetzt),
     begruessungen: e.begruessungAn && kalenderFrisch ? begruessungenFuerAnzeige(besuche, jetzt, e) : [],
     news: newsFuerAnzeige(news),
+    agenda: e.agendaNachArtikeln > 0 ? agendaFuerAnzeige(agenda || []) : [],
     solar: solarFuerAnzeige(solar, jetzt, e),
     einstellungen: {
       dauerAnsichtSek: e.dauerAnsichtSek,
       dauerBesuchSek: e.dauerBesuchSek,
       solarNachArtikeln: e.solarNachArtikeln,
+      agendaNachArtikeln: e.agendaNachArtikeln,
+      dauerAgendaSek: e.dauerAgendaSek,
       design: e.design,
       drehung: e.drehung,
       betrieb: { tage: e.betriebTage, von: e.betriebVon, bis: e.betriebBis },

@@ -63,6 +63,23 @@ export const BEISPIEL_NEWS = [
     bild: BILD + '1/8/csm_20250527_095538_c2ac6fd049.jpg', bild_breite: 1200, bild_hoehe: 555 },
 ];
 
+// Beispiel-Agenda mit Veranstaltungen von michelnews.ch vom 25.11.2026. Die Daten werden auf
+// «heute» umgerechnet, damit die Testversion immer kommende Einträge zeigt.
+export function beispielAgenda(datum) {
+  return [
+    { link: 'https://michelnews.ch/agenda/event/lesung-mit-laura-vogt-aus-das-jahr-des-kalks-40877', titel: 'Lesung mit Laura Vogt aus «Das Jahr des Kalks»', ort: 'Beromünster', rubrik: 'Kultur', von: datum(0), bis: datum(0),
+      bild: BILD + '9/e/csm_laura-vogt_hannes_thalmann_bb147cb56e.jpeg' },
+    { link: 'https://michelnews.ch/agenda/event/christmas-in-beromuenster-39936', titel: 'Christmas in Beromünster', ort: 'Beromünster', rubrik: 'Kultur', von: datum(2), bis: datum(2),
+      bild: BILD + 'a/7/csm_FINAL-Werbebanner-weiss-langer-Kupfer-Turmhelm-ohne-Ziegel_04_5c28f6e42d.png' },
+    { link: 'https://michelnews.ch/agenda/event/adventsmarkt-37588', titel: 'Adventsmarkt', ort: 'Beromünster', rubrik: 'Sonstiges', von: datum(2), bis: datum(2),
+      bild: BILD + '8/0/csm_Adventsmarkt-26_Karussell_Bild1_01_c69e545671.png' },
+    { link: 'https://michelnews.ch/agenda/event/adventskonzert-2026-40482', titel: 'Adventskonzert 2026', ort: 'Beromünster', rubrik: 'Musik', von: datum(3), bis: datum(3),
+      bild: BILD + '3/2/csm_adventskonzert-mgberom%C3%BCnster-2025-kw49-14_6120ba25d4.jpg' },
+    { link: 'https://michelnews.ch/agenda/event/kerzenziehen-41887', titel: 'Kerzenziehen', ort: 'Schlierbach', rubrik: 'Kinder', von: datum(3), bis: datum(3),
+      bild: BILD + '7/4/csm_WhatsApp_Image_2026-11-16_at_12.53.17_01_8a446de697.jpeg' },
+  ];
+}
+
 // Erfundene Solarwerte, die dem Tagesverlauf folgen: nachts 0, mittags am höchsten.
 export function beispielSolar(jetzt) {
   const t = zuerichTeile(new Date(jetzt));

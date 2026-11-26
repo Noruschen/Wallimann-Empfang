@@ -1,10 +1,10 @@
 # Empfangsbildschirm Wallimann
 
-Eine kleine Website für den Fernseher am Empfang der Wallimann Druck AG. Sie läuft im Vollbild und wechselt zwischen drei Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch und der Solarstrom der eigenen Anlage.
+Eine kleine Website für den Fernseher am Empfang der Wallimann Druck AG. Sie läuft im Vollbild und wechselt zwischen vier Ansichten: Begrüssung von Besuch, die neusten Artikel von michelnews.ch, die Agenda von michelnews.ch und der Solarstrom der eigenen Anlage. Ohne Besuch laufen zwei Artikel, dann die Agenda mit den nächsten vier Veranstaltungen, dann wieder zwei Artikel.
 
 **Stand 25.11.2026:** Die Website ist unter `https://empfang.wallimann.workers.dev` veröffentlicht. Ohne geheimen Schlüssel und ohne Passwort gibt sie nichts heraus. Frei zugänglich sind nur die Testseite für den Fernseher (`/test/`) und eine Vorschau mit Beispieldaten (`/vorschau`). Die Begrüssung und die Solar-Ansicht sind ausgeschaltet, bis ihre Zugänge getestet sind.
 
-Dieses Projekt ist öffentlich einsehbar. Es enthält darum keine Geheimnisse und keine echten Kundennamen. Alle Firmen und Personen in Beispielen und Tests sind erfunden.
+Dieses Projekt ist öffentlich einsehbar. Es enthält darum keine Geheimnisse und keine echten Kundennamen. Alle Besuche in Beispielen und Tests sind erfunden (Firmen und Personen). Die Artikel und Veranstaltungen in den Beispielen stammen von der öffentlichen Seite michelnews.ch.
 
 ## Ansehen am Mac
 
@@ -20,7 +20,9 @@ Danach im Browser:
 - Anzeige: `http://localhost:8787/anzeige/#k=beispiel-schluessel-nur-lokal`
 - Statusseite: `http://localhost:8787/status/` (Passwort lokal: `beispiel`)
 - Testseite für den Fernseher: `http://localhost:8787/test/`
-- Vorschau der vier Designs: `http://localhost:8787/anzeige/?demo=alles&design=1` (bis `design=4`)
+- Vorschau mit News und Agenda im Wechsel: `http://localhost:8787/anzeige/?demo=news`, nur die Agenda: `?demo=agenda`
+- Vorschau der vier Designs für Begrüssung und Solarstrom: `http://localhost:8787/anzeige/?demo=begruessung&design=1` (bis `design=4`)
+- Hochkant: Fenster hochkant ziehen oder `&drehung=90` anhängen
 
 In der Testversion wechseln Begrüssung und News alle 10 Minuten ab, damit man beides sieht.
 
@@ -56,7 +58,8 @@ Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neulade
 | `src/worker.js` | Der Server bei Cloudflare: gibt Daten nur mit Schlüssel oder Passwort heraus |
 | `src/aufgaben.js` | Zeitgesteuerte Abrufe: Kalender, News, Bilder, Aufräumen, Warnungen |
 | `src/lib/kalender.js` | Liest den Kalender (ICS) und wendet die Regeln für Besuche an |
-| `src/lib/news.js` | Die eine Funktion für News: Feed oder Auslesen der Startseite |
+| `src/lib/news.js` | Die eine Funktion für News: Feed oder Auslesen der Startseite. Dazu das Auslesen der Agenda von der Startseite |
+| `public/schrift/` | Schriften. Besley und Inter (wie michelnews.ch) sowie Nunito, Figtree und Architects Daughter, alle unter der SIL Open Font License |
 | `src/lib/zeit.js` | Zeitlogik in der Zeitzone Europe/Zurich |
 | `src/einstellungen.js` | Standardwerte aller Einstellungen |
 | `test/` | Tests und gespeicherte Kopien (Startseite von michelnews.ch, Beispielkalender) |
@@ -75,6 +78,10 @@ Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neulade
 **Besuche über einen veröffentlichten Kalender-Link (ICS).** Dafür braucht es keine Anmeldung, die ablaufen kann, und die Website kann nur lesen. Der Link von Outlook.com liefert nicht mit, wer einen Termin angelegt hat. Die Website kann darum nicht prüfen, wer eingeladen hat, und zeigt jeden Termin im Kalender, ausser er ist privat, abgesagt oder ganztägig. Neue Termine standen im Test innert 5 Minuten im Link.
 
 **Begrüssung nur mit frischen Daten.** Der Server gibt einen Namen erst kurz vor dem Zeitfenster heraus und nur, wenn der Kalender in den letzten 15 Minuten geladen wurde. Die Anzeige zeigt ihn nur, wenn sie in den letzten 2 Minuten Kontakt zum Server hatte, und speichert Namen nie auf dem Gerät.
+
+**News und Agenda im Stil von michelnews.ch.** Das Bild eines Artikels füllt den Bildschirm, die Überschrift steht im Bild, wie beim Aufmacher auf michelnews.ch. Schriften (Besley und Inter), das Rot und das Blau der Agenda sind von dort übernommen, das rote M ebenfalls. Passt ein Bild schlecht zum Bildschirm (Hochformat auf einem Fernseher im Querformat oder umgekehrt, oder sehr kleines Bild), erscheint es ganz, und rundherum liegt dasselbe Bild unscharf im Hintergrund. So wird kein Kopf abgeschnitten. Die Begrüssung behält ihre eigene Gestaltung.
+
+**Agenda ohne zusätzlichen Abruf.** Die Agenda steht auf der Startseite von michelnews.ch, die für die News ohnehin geholt wird. Gezeigt werden die nächsten vier Veranstaltungen, die noch nicht vorbei sind. Die Bilder der Agenda sind die kleinen Vorschaubilder der Startseite (360 × 272 Pixel), grössere liefert die Seite dort nicht.
 
 **News über eine einzige Funktion.** Heute liest sie jeden Tag um 08:00 und um 13:00 die Startseite von michelnews.ch aus und holt das grösste Bild von der Artikelseite. Sobald die Adresse eines RSS-Feeds eingetragen ist, nimmt dieselbe Funktion den Feed.
 

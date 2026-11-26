@@ -4,7 +4,7 @@ Stand: 25.11.2026
 
 ## Worum es geht
 
-Am Empfang der Wallimann Druck AG in Beromünster hängt ein Fernseher im Querformat (Full HD). Er zeigt im Vollbild eine Website. Sie wechselt zwischen der Begrüssung von Besuch, den neusten Artikeln von michelnews.ch und dem Solarstrom der eigenen Anlage (Fronius). Alexander Fischer, Stv. Leiter Druck, betreut das Ganze. Er ist kein Programmierer.
+Am Empfang der Wallimann Druck AG in Beromünster hängt ein Fernseher im Querformat (Full HD). Er zeigt im Vollbild eine Website. Sie wechselt zwischen der Begrüssung von Besuch, den neusten Artikeln und der Agenda von michelnews.ch und dem Solarstrom der eigenen Anlage (Fronius). Alexander Fischer, Stv. Leiter Druck, betreut das Ganze. Er ist kein Programmierer.
 
 Die Website läuft bei Cloudflare (ein Dienst, der Websites betreibt), der Code liegt auf GitHub. Der Fernseher braucht nur einen Browser und eine Internetverbindung. Die Website ist seit dem 25.11.2026 unter `https://empfang.wallimann.workers.dev` veröffentlicht. Ohne geheimen Schlüssel und ohne Passwort gibt sie nichts heraus. Hängt der Fernseher hochkant: Ein gewöhnlicher Fernseher dreht sein Bild nicht selbst. Dafür gibt es auf der Statusseite die Einstellung «Ausrichtung des Fernsehers», die den Inhalt um 90 Grad dreht.
 

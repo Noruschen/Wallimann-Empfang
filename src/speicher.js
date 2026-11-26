@@ -2,6 +2,7 @@
 // Gespeichert wird so wenig wie möglich:
 //   besuche   Firma, Name und Zeit der Besuche von heute und morgen
 //   news      Titel, Ort, Rubrik, Datum und Bildverweis der neusten Artikel
+//   agenda    Titel, Ort, Rubrik, Datum und Bildverweis der nächsten Veranstaltungen von michelnews.ch
 //   zustand   Zeitpunkte der letzten Abrufe, Einstellungen, Solarwerte
 //   versuche  Zähler für falsche Passwörter (nur ein Hashwert des Absenders, keine IP-Adresse)
 
@@ -14,6 +15,11 @@ const TABELLEN = [
      rang INTEGER NOT NULL, gesehen INTEGER NOT NULL,
      quelle_bild TEXT, bild TEXT, bild_breite INTEGER, bild_hoehe INTEGER,
      artikel_geprueft INTEGER NOT NULL DEFAULT 0, fehlversuche INTEGER NOT NULL DEFAULT 0)`,
+  `CREATE TABLE IF NOT EXISTS agenda (
+     link TEXT PRIMARY KEY, titel TEXT NOT NULL, ort TEXT, rubrik TEXT, von TEXT NOT NULL, bis TEXT NOT NULL,
+     rang INTEGER NOT NULL, gesehen INTEGER NOT NULL,
+     quelle_bild TEXT, bild TEXT, bild_breite INTEGER, bild_hoehe INTEGER, bild_zeit INTEGER,
+     fehlversuche INTEGER NOT NULL DEFAULT 0)`,
   `CREATE TABLE IF NOT EXISTS zustand (name TEXT PRIMARY KEY, wert TEXT)`,
   `CREATE TABLE IF NOT EXISTS versuche (
      absender TEXT PRIMARY KEY, anzahl INTEGER NOT NULL, erster INTEGER NOT NULL,
@@ -108,18 +114,28 @@ export async function ladeNews(db, anzahl) {
 
 export async function zaehleOffeneBilder(db) {
   const zeile = await db
-    .prepare('SELECT COUNT(*) AS n FROM news WHERE bild IS NULL AND fehlversuche < 3 AND (artikel_geprueft = 0 OR quelle_bild IS NOT NULL)')
+    .prepare(`SELECT
+       (SELECT COUNT(*) FROM news WHERE bild IS NULL AND fehlversuche < 3 AND (artikel_geprueft = 0 OR quelle_bild IS NOT NULL))
+       + (SELECT COUNT(*) FROM agenda WHERE bild IS NULL AND fehlversuche < 3 AND quelle_bild IS NOT NULL) AS n`)
     .first();
   return zeile ? zeile.n : 0;
 }
 
 // Der nächste Artikel, bei dem noch etwas fehlt: zuerst die Artikelseite prüfen, dann das Bild holen.
+// Sind die News vollständig, kommen die Bilder der Agenda an die Reihe.
 export async function naechsterBildSchritt(db) {
-  return db
+  const news = await db
     .prepare(`SELECT link, quelle_bild, artikel_geprueft FROM news
               WHERE bild IS NULL AND fehlversuche < 3 AND (artikel_geprueft = 0 OR quelle_bild IS NOT NULL)
               ORDER BY rang LIMIT 1`)
     .first();
+  if (news) return news;
+  const agenda = await db
+    .prepare(`SELECT link, quelle_bild FROM agenda
+              WHERE bild IS NULL AND fehlversuche < 3 AND quelle_bild IS NOT NULL
+              ORDER BY rang LIMIT 1`)
+    .first();
+  return agenda ? { ...agenda, artikel_geprueft: 1, agenda: true } : null;
 }
 
 export async function merkeArtikelBild(db, link, quelle) {
@@ -135,6 +151,46 @@ export async function merkeGespeichertesBild(db, link, bildSchluessel) {
 
 export async function zaehleFehlversuch(db, link) {
   await db.prepare('UPDATE news SET fehlversuche = fehlversuche + 1 WHERE link = ?1').bind(link).run();
+}
+
+// ---------- Agenda ----------
+
+// Übernimmt die frisch gelesene Agenda. Bestehende Einträge behalten ihr gespeichertes Bild,
+// ausser die Quelle des Bildes hat gewechselt oder das Bild ist älter als bildMaxAlterMs
+// (der Bildspeicher löscht Bilder nach 40 Tagen). Einträge, die fehlen, werden entfernt.
+export async function ersetzeAgenda(db, eintraege, jetzt, bildMaxAlterMs) {
+  const schritte = [];
+  const grenze = jetzt - bildMaxAlterMs;
+  eintraege.forEach((a, rang) => {
+    schritte.push(db.prepare(
+      `INSERT INTO agenda (link, titel, ort, rubrik, von, bis, rang, gesehen, quelle_bild, bild_breite, bild_hoehe)
+       VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11)
+       ON CONFLICT(link) DO UPDATE SET titel = ?2, ort = ?3, rubrik = ?4, von = ?5, bis = ?6, rang = ?7, gesehen = ?8,
+         bild = CASE WHEN quelle_bild IS ?9 AND bild_zeit >= ?12 THEN bild ELSE NULL END,
+         fehlversuche = CASE WHEN quelle_bild IS ?9 AND bild_zeit >= ?12 THEN fehlversuche ELSE 0 END,
+         quelle_bild = ?9, bild_breite = ?10, bild_hoehe = ?11`,
+    ).bind(a.link, a.titel, a.ort ?? null, a.rubrik ?? null, a.von, a.bis, rang, jetzt,
+      a.bildUrl ?? null, a.bildBreite ?? null, a.bildHoehe ?? null, grenze));
+  });
+  schritte.push(db.prepare('DELETE FROM agenda WHERE gesehen < ?1').bind(jetzt));
+  await db.batch(schritte);
+}
+
+// Die nächsten Veranstaltungen: alles, was heute (Datum als JJJJ-MM-TT) noch nicht vorbei ist.
+export async function ladeAgenda(db, heute, anzahl) {
+  const { results } = await db
+    .prepare(`SELECT link, titel, ort, rubrik, von, bis, bild, bild_breite, bild_hoehe FROM agenda
+              WHERE bis >= ?1 ORDER BY rang LIMIT ?2`)
+    .bind(heute, anzahl).all();
+  return results;
+}
+
+export async function merkeAgendaBild(db, link, bildSchluessel, jetzt) {
+  await db.prepare('UPDATE agenda SET bild = ?2, bild_zeit = ?3, fehlversuche = 0 WHERE link = ?1').bind(link, bildSchluessel, jetzt).run();
+}
+
+export async function zaehleAgendaFehlversuch(db, link) {
+  await db.prepare('UPDATE agenda SET fehlversuche = fehlversuche + 1 WHERE link = ?1').bind(link).run();
 }
 
 // ---------- Bremse bei falschen Passwörtern ----------
