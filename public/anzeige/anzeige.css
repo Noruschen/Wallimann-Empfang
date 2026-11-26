@@ -262,8 +262,8 @@ body {
 }
 .news .bild.ganz { background-position: center center; }
 .news .verlauf {
-  background: -webkit-linear-gradient(bottom, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.6) 26%, rgba(0,0,0,0) 60%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.38) 100%);
-  background: linear-gradient(to top, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.6) 26%, rgba(0,0,0,0) 60%, rgba(0,0,0,0) 80%, rgba(0,0,0,0.38) 100%);
+  background: -webkit-linear-gradient(bottom, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.6) 26%, rgba(0,0,0,0) 60%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.5) 100%);
+  background: linear-gradient(to top, rgba(0,0,0,0.86) 0%, rgba(0,0,0,0.6) 26%, rgba(0,0,0,0) 60%, rgba(0,0,0,0) 78%, rgba(0,0,0,0.5) 100%);
 }
 .mzeichen {
   position: absolute;
@@ -412,8 +412,9 @@ body {
 .rahmen.voll .datum, .rahmen.voll .zeit { font-family: "Inter", "Figtree", Arial, Helvetica, sans-serif; font-weight: 600; }
 .rahmen.voll .datum { font-size: 34px; }
 .rahmen.voll .zeit { font-size: 62px; }
-.rahmen.vnews .datum { color: #ffffff; text-shadow: 2px 2px 0 #000000; }
-.rahmen.vnews .zeit { color: #ffffff; text-shadow: 3px 3px 0 #000000; }
+/* Harter Schatten wie bei michelnews.ch, dazu ein weicher dunkler Hof: So bleiben Datum und Uhrzeit auch auf sehr hellen Bildern lesbar. */
+.rahmen.vnews .datum { color: #ffffff; text-shadow: 2px 2px 0 #000000, 0 0 16px rgba(0,0,0,0.85), 0 0 6px rgba(0,0,0,0.7); }
+.rahmen.vnews .zeit { color: #ffffff; text-shadow: 3px 3px 0 #000000, 0 0 20px rgba(0,0,0,0.85), 0 0 8px rgba(0,0,0,0.7); }
 .rahmen.vagenda .datum, .rahmen.vagenda .zeit { color: #000000; text-shadow: none; }
 
 /* ---------- Solarstrom ---------- */
@@ -657,8 +658,8 @@ body {
 .hoch .news .verlauf {
   width: 1104px;
   height: 1944px;
-  background: -webkit-linear-gradient(top, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 12%, rgba(0,0,0,0) 44%, rgba(0,0,0,0.5) 58%, rgba(0,0,0,0.5) 100%);
-  background: linear-gradient(to bottom, rgba(0,0,0,0.35) 0%, rgba(0,0,0,0) 12%, rgba(0,0,0,0) 44%, rgba(0,0,0,0.5) 58%, rgba(0,0,0,0.5) 100%);
+  background: -webkit-linear-gradient(top, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 14%, rgba(0,0,0,0) 44%, rgba(0,0,0,0.5) 58%, rgba(0,0,0,0.5) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.5) 0%, rgba(0,0,0,0) 14%, rgba(0,0,0,0) 44%, rgba(0,0,0,0.5) 58%, rgba(0,0,0,0.5) 100%);
 }
 .hoch .mzeichen { left: 72px; top: 62px; width: 100px; }
 .hoch .news .text { left: 82px; top: 1110px; bottom: auto; width: 940px; }

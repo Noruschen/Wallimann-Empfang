@@ -160,6 +160,7 @@ Der Bildschirm zeigt nie eine Fehlermeldung. Fällt das Internet am Empfang aus,
 ## Was noch nicht getestet ist
 
 - Wie schnell gelöschte Termine aus dem Kalender-Link von Outlook.com verschwinden, und ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt, und ob Einladungen im Junk-Ordner landen (siehe «Besuch testen»).
+- Die neue Gestaltung von News und Agenda (seit dem 26.11.2026) auf dem Fernseher am Empfang. Geprüft ist sie nur im Browser am Rechner, quer und hochkant.
 - Der Browser des Fernsehers am Empfang und die Begrüssung auf diesem Fernseher. Marke und Modell sind noch nicht bekannt.
 - Die Rechenzeit bei Cloudflare über längere Zeit. Die Gratis-Stufe erlaubt 10 Millisekunden pro Aufruf. Reicht es nicht, kostet die nächste Stufe USD 5 pro Monat.
 - Der E-Mail-Versand für Warnungen. Dafür braucht es eine eigene Domain im Cloudflare-Konto, die es noch nicht gibt. Ob eine neue Domain (grob CHF 10 bis 20 pro Jahr) angeschafft wird, ist offen.
