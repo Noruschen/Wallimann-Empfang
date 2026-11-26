@@ -201,11 +201,13 @@ function ohneKommentare(text) {
   }
 }
 
-// Nur Adressen mit https auf demselben Server wie die Seite selbst, sonst null
+// Nur Adressen mit https auf demselben Server wie die Seite selbst, sonst null.
+// Mit und ohne «www.» gilt als derselbe Server.
 function gleicherServer(adresse, basis) {
   try {
     const u = new URL(adresse);
-    return u.protocol === 'https:' && u.hostname === new URL(basis).hostname ? u.href : null;
+    const ohneWww = (h) => h.toLowerCase().replace(/^www\./, '');
+    return u.protocol === 'https:' && ohneWww(u.hostname) === ohneWww(new URL(basis).hostname) ? u.href : null;
   } catch {
     return null;
   }

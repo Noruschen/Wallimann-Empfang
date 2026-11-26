@@ -272,3 +272,11 @@ test('Agenda: viele offene Kommentare bremsen den Leser nicht und liefern nichts
   assert.ok(Date.now() - start < 500);
 });
 
+test('Agenda: Adressen mit und ohne «www.» gelten als derselbe Server', () => {
+  const html = '<div class="event-slider"><div class="event-list-item"><div class="event-image"><img src="https://www.michelnews.ch/fileadmin/a.jpg" width="360" height="272"></div>'
+    + '<div class="event-startdate">03.12.2026</div><h3 class="event-title"><a href="https://www.michelnews.ch/agenda/event/a">Titel</a></h3></div></div>';
+  const [e] = leseAgenda(html, 'https://michelnews.ch/');
+  assert.equal(e.link, 'https://www.michelnews.ch/agenda/event/a');
+  assert.equal(e.bildUrl, 'https://www.michelnews.ch/fileadmin/a.jpg');
+});
+
