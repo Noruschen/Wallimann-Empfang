@@ -139,8 +139,11 @@
     var solarText = { aus: 'ausgeschaltet', beispiel: 'Beispieldaten', empfang: 'Zusatzgerät' }[s.solar.quelle] || s.solar.quelle;
     zeile(t, ['Solar', solarText + (s.solar.quelle !== 'aus' ? ', zuletzt ' + vor(s.solar.letzterEmpfang) : '')],
       [null, s.solar.quelle === 'aus' ? '' : (s.solar.werte ? 'gut' : 'schlecht')]);
-    zeile(t, ['Anzeige hat zuletzt Daten geholt', vor(s.anzeige.zuletzt)],
+    zeile(t, ['Anzeige am Empfang hat zuletzt Daten geholt', vor(s.anzeige.zuletzt)],
       [null, s.anzeige.zuletzt && s.anzeige.zuletzt.vorMin <= 5 ? 'gut' : (s.inBetrieb ? 'schlecht' : '')]);
+    if (s.anzeigeExtern) {
+      zeile(t, ['Externe Anzeige (nur News und Agenda)', s.anzeigeExtern.eingerichtet ? 'Schlüssel eingerichtet, zuletzt Daten geholt: ' + vor(s.anzeigeExtern.zuletzt) : 'kein Schlüssel eingerichtet']);
+    }
     zeile(t, ['Jetzt in der Betriebszeit', s.inBetrieb ? 'ja' : 'nein']);
     zeile(t, ['Warnungen per E-Mail', s.mailEingerichtet ? 'eingerichtet' : 'nicht eingerichtet']);
 

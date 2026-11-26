@@ -46,6 +46,7 @@ Offen ist, wie bei Abwesenheit oder Austritt der Zugang gesichert wird. Für das
 ## Schutz
 
 - **Geheimer Link:** Die Anzeige am Fernseher öffnet sich nur mit einem geheimen Schlüssel im Link. Ohne gültigen Schlüssel zeigt sie nur das Logo und bekommt keine Daten.
+- **Zwei Schlüssel für zwei Bildschirme:** Der Schlüssel für den Empfang zeigt alles, auch die Begrüssung. Ein zweiter Schlüssel ist für einen Bildschirm an einem anderen Ort gedacht. Mit ihm gibt der Server nur News und Agenda heraus, nie Namen von Besuchen und nie Solarwerte.
 - **Statusseite mit Passwort:** Nach 5 falschen Versuchen innert 15 Minuten wird der Absender 15 Minuten gesperrt. Die Anmeldung gilt 12 Stunden.
 - **Was auf den Bildschirm kommt:** Jeder Termin im Kalender des Empfangskontos, ausser er ist privat, abgesagt oder ganztägig. Vom Betreff kommt nur bereinigter Text auf den Bildschirm: Firma und Name, keine Links, keine Bilder, je höchstens 60 Zeichen, und nur im Zeitfenster des Termins.
 - **Grenzen:** Der Kalender-Link von Outlook.com liefert nicht mit, wer einen Termin angelegt hat (getestet am 25.11.2026). Die Website kann darum nicht prüfen, ob eine Einladung von einer Wallimann-Adresse stammt. Wer die Adresse des Empfangskontos kennt, kann eine Einladung schicken. Ob Outlook.com Einladungen fremder Absender von selbst in den Kalender stellt, ist noch nicht getestet. Zusätzlich möglich und noch zu testen: in Outlook.com nur sichere Absender zulassen. Wer den geheimen Link kennt, kann die Anzeige sehen.

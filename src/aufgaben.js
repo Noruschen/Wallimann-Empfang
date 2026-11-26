@@ -33,7 +33,7 @@ function faellig(letzter, minuten, jetzt, toleranzMs = 20000) {
 const NEWS_WIEDERHOLEN_MS = 15 * 60 * 1000; // nach einem gescheiterten Abruf frühestens so spät nochmals
 
 // Wann werden die News geholt? Gibt zurück, ob der Abruf jetzt fällig ist und wann der nächste ansteht.
-// Mit festen Uhrzeiten (Standard 08:00 und 13:00, Zürcher Zeit): einmal nach jeder Uhrzeit.
+// Mit festen Uhrzeiten (Standard: jede volle Stunde von 07:00 bis 20:00, Zürcher Zeit): einmal nach jeder Uhrzeit.
 // Scheitert der Abruf oder wurde noch nie geladen: alle 15 Minuten nochmals versuchen.
 // Ohne Uhrzeiten: im eingestellten Abstand, mindestens 15 Minuten.
 export function newsPlan(news, e, jetzt) {

@@ -10,7 +10,9 @@
 //   /test/                       Testseite für den Browser des Fernsehers
 //
 // Geheimnisse stehen in den geschützten Einstellungen von Cloudflare, nie im Code:
-//   ANZEIGE_SCHLUESSEL  geheimer Teil des Links für den Fernseher
+//   ANZEIGE_SCHLUESSEL  geheimer Teil des Links für den Fernseher am Empfang (mit Begrüssung)
+//   ANZEIGE_SCHLUESSEL_EXTERN  freiwillig: geheimer Teil des Links für einen Bildschirm an einem
+//                       anderen Ort. Er bekommt nur News und Agenda, nie Besuche und nie Solarwerte
 //   STATUS_PASSWORT     Passwort der Statusseite
 //   KALENDER_URL        geheimer ICS-Link des Outlook.com-Kalenders
 //   SOLAR_SCHLUESSEL    Schlüssel für ein Zusatzgerät, das Solarwerte schickt (freiwillig)
@@ -88,11 +90,31 @@ async function ladeAgenda(env, e, jetzt, beispiel) {
 
 // ---------- Anzeige ----------
 
+// Der Schlüssel für die externe Anzeige gilt nur, wenn er lang genug ist und sich vom Schlüssel
+// für den Empfang unterscheidet. Sonst bekäme ein externer Bildschirm die Begrüssungen.
+async function externerSchluessel(env) {
+  const extern = env.ANZEIGE_SCHLUESSEL_EXTERN;
+  if (!schluesselBrauchbar(extern)) return { eingerichtet: false, gleich: false, wert: null };
+  const doppelt = schluesselBrauchbar(env.ANZEIGE_SCHLUESSEL) && (await gleich(extern, env.ANZEIGE_SCHLUESSEL));
+  return { eingerichtet: !doppelt, gleich: doppelt, wert: doppelt ? null : extern };
+}
+
+// Welche Anzeige fragt? 'empfang' (mit Begrüssung), 'extern' (nur News und Agenda) oder null.
+// Beide Schlüssel werden immer geprüft, damit die Antwortzeit nichts verrät.
+async function anzeigeRolle(env, erhalten) {
+  const haupt = env.ANZEIGE_SCHLUESSEL;
+  const extern = (await externerSchluessel(env)).wert;
+  const istEmpfang = schluesselBrauchbar(haupt) && (await gleich(erhalten, haupt));
+  const istExtern = extern !== null && (await gleich(erhalten, extern));
+  if (istEmpfang) return 'empfang';
+  return istExtern ? 'extern' : null;
+}
+
 async function anzeige(request, env, ctx) {
-  const erwartet = env.ANZEIGE_SCHLUESSEL;
   const erhalten = request.headers.get('X-Anzeige-Schluessel') || '';
+  const rolle = await anzeigeRolle(env, erhalten);
   // Ohne gültigen Schlüssel gibt es keine Daten, auch keine News.
-  if (!schluesselBrauchbar(erwartet) || !(await gleich(erhalten, erwartet))) {
+  if (!rolle) {
     return json({ ok: false, fehler: 'Kein Zugriff' }, 401);
   }
   const jetzt = Date.now();
@@ -100,8 +122,11 @@ async function anzeige(request, env, ctx) {
   const { zustand, e } = await ladeAlles(env);
   const beispiel = istBeispiel(env);
 
+  // Die externe Anzeige bekommt nie Besuche und nie Solarwerte: Die Besuche werden für sie gar nicht
+  // erst aus der Datenbank gelesen.
+  const extern = rolle === 'extern';
   const [besuche, news, agenda] = await Promise.all([
-    e.begruessungAn
+    e.begruessungAn && !extern
       ? speicher.ladeBesuche(env.DB, jetzt - (e.nachlaufMin + 1) * 60000, jetzt + (e.vorlaufMin + 5) * 60000)
       : [],
     beispiel ? BEISPIEL_NEWS.slice(0, e.newsAnzahl) : speicher.ladeNews(env.DB, e.newsAnzahl),
@@ -110,19 +135,21 @@ async function anzeige(request, env, ctx) {
 
   const antwort = baueAnzeigeAntwort({
     jetzt,
-    einstellungen: e,
+    einstellungen: extern ? { ...e, begruessungAn: false, solarQuelle: 'aus' } : e,
     besuche,
     news,
     agenda,
-    solar: zustand.solar,
+    solar: extern ? null : zustand.solar,
     kalenderErfolg: zustand.kalender && zustand.kalender.letzterErfolg,
     version: version(env),
   });
 
-  // Lebenszeichen der Anzeige merken (höchstens einmal pro Minute schreiben)
-  const zuletzt = zustand.anzeige && zustand.anzeige.zuletzt;
+  // Lebenszeichen der Anzeige merken (höchstens einmal pro Minute schreiben). Die externe Anzeige
+  // hat ihr eigenes Lebenszeichen: Die Warnung «Anzeige am Empfang holt nichts ab» hängt nur am Empfang.
+  const merkname = extern ? 'anzeigeExtern' : 'anzeige';
+  const zuletzt = zustand[merkname] && zustand[merkname].zuletzt;
   if (typeof zuletzt !== 'number' || jetzt - zuletzt > 50000) {
-    ctx.waitUntil(speicher.setzeZustand(env.DB, { anzeige: { zuletzt: jetzt } }).catch(() => {}));
+    ctx.waitUntil(speicher.setzeZustand(env.DB, { [merkname]: { zuletzt: jetzt } }).catch(() => {}));
   }
   return json(antwort);
 }
@@ -237,6 +264,7 @@ async function statusDaten(env) {
     ladeAgenda(env, e, jetzt, beispiel),
   ]);
   const ag = zustand.agenda || {};
+  const externSchluessel = await externerSchluessel(env);
   const morgen = tagesBeginn(heute + 26 * 60 * 60 * 1000);
   const k = zustand.kalender || {};
   const n = zustand.news || {};
@@ -253,6 +281,7 @@ async function statusDaten(env) {
   if (!beispiel && !n.fehler && typeof n.letzterErfolg === 'number' && (n.anzahl ?? 0) === 0) {
     hinweise.push('Zum eingestellten Filter passt im Moment kein Artikel. Es laufen keine News.');
   }
+  if (externSchluessel.gleich) hinweise.push('Der Schlüssel für die externe Anzeige ist derselbe wie für den Empfang. Er wird darum nicht angenommen. Bitte bei Cloudflare einen eigenen Wert für ANZEIGE_SCHLUESSEL_EXTERN eintragen.');
   if (e.agendaNachArtikeln === 0) hinweise.push('Die Agenda ist ausgeschaltet.');
   if (!beispiel && e.agendaNachArtikeln > 0 && ag.fehler) hinweise.push('Agenda: ' + ag.fehler + ' Die zuletzt gespeicherten Einträge laufen weiter, solange sie nicht vorbei sind.');
   if (e.solarQuelle === 'aus') hinweise.push('Die Solar-Ansicht ist ausgeschaltet.');
@@ -297,6 +326,7 @@ async function statusDaten(env) {
       werte: solarFuerAnzeige(zustand.solar, jetzt, e),
     },
     anzeige: { zuletzt: alter(zustand.anzeige && zustand.anzeige.zuletzt, jetzt) },
+    anzeigeExtern: { eingerichtet: externSchluessel.eingerichtet, zuletzt: alter(zustand.anzeigeExtern && zustand.anzeigeExtern.zuletzt, jetzt) },
     besuche: besuche.map((b) => ({
       tag: b.start < morgen ? 'heute' : 'morgen',
       zeit: formatZeit(new Date(b.start)),

@@ -83,7 +83,9 @@ Zusätzlich gibt es Prüfungen im echten Browser (Ausfall des Internets, Neulade
 
 **Agenda ohne zusätzlichen Abruf.** Die Agenda steht auf der Startseite von michelnews.ch, die für die News ohnehin geholt wird. Gezeigt werden die nächsten vier Veranstaltungen, die noch nicht vorbei sind. Die Bilder der Agenda sind die kleinen Vorschaubilder der Startseite (360 × 272 Pixel), grössere liefert die Seite dort nicht.
 
-**News über eine einzige Funktion.** Heute liest sie jeden Tag um 08:00 und um 13:00 die Startseite von michelnews.ch aus und holt das grösste Bild von der Artikelseite. Sobald die Adresse eines RSS-Feeds eingetragen ist, nimmt dieselbe Funktion den Feed.
+**Zwei Schlüssel, zwei Bildschirme.** Mit dem Schlüssel `ANZEIGE_SCHLUESSEL` bekommt der Fernseher am Empfang alles, auch die Begrüssung. Mit dem freiwilligen zweiten Schlüssel `ANZEIGE_SCHLUESSEL_EXTERN` gibt der Server nur News und Agenda heraus. Die Besuche werden für diese Anfrage gar nicht erst aus der Datenbank gelesen. Lokal: `http://localhost:8787/anzeige/#k=beispiel-schluessel-extern-lokal`.
+
+**News über eine einzige Funktion.** Heute liest sie jeden Tag zu jeder vollen Stunde von 07:00 bis 20:00 die Startseite von michelnews.ch aus und holt das grösste Bild von der Artikelseite. Sobald die Adresse eines RSS-Feeds eingetragen ist, nimmt dieselbe Funktion den Feed.
 
 **Einstellungen auf der Statusseite statt im Code.** So lassen sich Zeiten, Filter und Design am iPhone ändern, ohne etwas zu veröffentlichen. Geheimnisse sind davon getrennt und stehen nur in den geschützten Einstellungen von Cloudflare.
 

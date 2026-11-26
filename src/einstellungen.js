@@ -17,7 +17,8 @@ export const STANDARD = Object.freeze({
 
   // News
   newsAnzahl: 10,
-  newsZeiten: ['08:00', '13:00'], // News jeden Tag zu diesen Uhrzeiten holen (Zürcher Zeit)
+  // News und Agenda jeden Tag zu diesen Uhrzeiten holen (Zürcher Zeit): jede volle Stunde von 07:00 bis 20:00
+  newsZeiten: ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'],
   newsMinuten: 15,             // nur ohne Uhrzeiten: Abstand in Minuten, mindestens 15
   newsOrte: [],                // leer bedeutet alle Gemeinden
   newsRubriken: [],            // leer bedeutet alle Rubriken
@@ -81,7 +82,7 @@ function zeitListe(wert) {
   for (const eintrag of roh) {
     const z = uhrzeit(eintrag, null);
     if (z && z !== '24:00' && !aus.includes(z)) aus.push(z);
-    if (aus.length >= 6) break;
+    if (aus.length >= 24) break;
   }
   return aus.sort();
 }

@@ -59,7 +59,7 @@ Der Fernseher übernimmt Änderungen innert einer Minute.
 | Nur diese Gemeinden | Filter nach Gemeinde. Leer heisst alle. | Leer (alle) |
 | Nur diese Rubriken | Filter nach Rubrik. Leer heisst alle. | Leer (alle) |
 | Adresse des RSS-Feeds | Sobald eingetragen, nimmt die Website den Feed statt der Startseite von michelnews.ch. | Leer (Startseite auslesen) |
-| News holen um | Zu diesen Uhrzeiten holt die Website jeden Tag die Artikelliste von michelnews.ch. Beim ersten Start holt sie sofort. Scheitert ein Abruf, versucht sie es alle 15 Minuten nochmals. | 08:00 und 13:00 |
+| News und Agenda holen um | Zu diesen Uhrzeiten holt die Website jeden Tag die Artikel und die Agenda von michelnews.ch (bis zu 24 Uhrzeiten). Beim ersten Start holt sie sofort. Scheitert ein Abruf, versucht sie es alle 15 Minuten nochmals. Der Outlook-Kalender mit den Besuchen ist davon unabhängig, ihn holt die Website alle 5 Minuten. | Jede volle Stunde von 07:00 bis 20:00 |
 | Nur ohne Uhrzeiten: News holen alle | Gilt nur, wenn das Feld mit den Uhrzeiten leer ist. Dann holt die Website im Abstand, mindestens alle 15 Minuten. | 15 Minuten |
 | Agenda-Seite nach je wie vielen Artikeln | Nach so vielen Artikeln erscheint die Agenda. 0 schaltet die Agenda aus. | Nach je 2 Artikeln |
 | Anzahl Veranstaltungen auf der Agenda-Seite | Wie viele der nächsten Veranstaltungen auf der Seite stehen (1 bis 4). | 4 |
@@ -100,14 +100,35 @@ Was du beim Test genau beobachten sollst:
 
 Nicht angezeigt werden: abgesagte Termine, als «privat» markierte Termine, ganztägige Termine und Termine ohne Firmenname im Betreff. Alle anderen Termine im Kalender des Empfangskontos erscheinen, egal wer eingeladen hat. Soll ein Termin nicht erscheinen (zum Beispiel ein vertraulicher Besuch), lade `empfang.wallimann@outlook.com` am sichersten gar nicht ein. Ein als «privat» markierter Termin erscheint ebenfalls nicht.
 
+## Zweite Anzeige an einem anderen Ort (ohne Begrüssung)
+
+Es gibt zwei Schlüssel für zwei Bildschirme:
+
+| Bildschirm | Geheimnis bei Cloudflare | Was er zeigt |
+|---|---|---|
+| Fernseher am Empfang | `ANZEIGE_SCHLUESSEL` | Begrüssung von Besuch, News, Agenda, später Solarstrom |
+| Bildschirm an einem anderen Ort | `ANZEIGE_SCHLUESSEL_EXTERN` | Nur News und Agenda. Nie Besuche, nie Solarwerte |
+
+Der Server entscheidet anhand des Schlüssels, was er herausgibt. Der externe Bildschirm bekommt die Namen der Besuche gar nie geschickt, auch nicht versteckt.
+
+So richtest du die externe Anzeige ein:
+
+1. Öffne die Hilfsseite `https://empfang.wallimann.workers.dev/status/schluessel/` und kopiere den Schlüssel an einen sicheren Ort. Er muss mindestens 20 Zeichen haben und darf nicht derselbe sein wie der Schlüssel für den Empfang. Ist er derselbe, nimmt ihn der Server nicht an, und die Statusseite warnt.
+2. Melde dich im Cloudflare-Konto an und öffne den Worker «empfang». Gehe zu «Settings», dann «Variables and Secrets».
+3. Füge ein neues «Secret» mit dem Namen `ANZEIGE_SCHLUESSEL_EXTERN` hinzu, trage den Schlüssel als Wert ein und speichere («Deploy»).
+4. Öffne am externen Bildschirm die Adresse `https://empfang.wallimann.workers.dev/anzeige/#k=EXTERNER-SCHLUESSEL`, mit deinem Schlüssel statt EXTERNER-SCHLUESSEL.
+5. Prüfe auf der Statusseite die Zeile «Externe Anzeige»: Dort steht, wann sie zuletzt Daten geholt hat.
+
+Für beide Bildschirme gelten dieselben Einstellungen (Betriebszeiten, Dauer, Agenda). Hängt der externe Bildschirm hochkant und dreht sein Bild nicht selbst, hänge `?drehung=90` an: `https://empfang.wallimann.workers.dev/anzeige/?drehung=90#k=EXTERNER-SCHLUESSEL`. Die Warnung «Anzeige holt keine Daten ab» gilt nur für den Empfang.
+
 ## Passwort und geheimen Link wechseln
 
-Es gibt zwei Geheimnisse, die du wechseln kannst: den geheimen Teil der Adresse für den Fernseher (`ANZEIGE_SCHLUESSEL`, mindestens 20 Zeichen) und das Passwort der Statusseite (`STATUS_PASSWORT`, mindestens 12 Zeichen). Nichts davon darf im Chat oder auf GitHub stehen, denn das GitHub-Projekt ist öffentlich einsehbar.
+Es gibt drei Geheimnisse, die du wechseln kannst: den geheimen Teil der Adresse für den Fernseher am Empfang (`ANZEIGE_SCHLUESSEL`, mindestens 20 Zeichen), den für die externe Anzeige (`ANZEIGE_SCHLUESSEL_EXTERN`, mindestens 20 Zeichen) und das Passwort der Statusseite (`STATUS_PASSWORT`, mindestens 12 Zeichen). Nichts davon darf im Chat oder auf GitHub stehen, denn das GitHub-Projekt ist öffentlich einsehbar.
 
 1. Öffne die Hilfsseite `https://empfang.wallimann.workers.dev/status/schluessel/` (lokal: `http://localhost:8787/status/schluessel/`). Sie erzeugt in deinem Browser einen zufälligen Schlüssel und ein zufälliges Passwort. Nichts davon wird gesendet oder gespeichert.
 2. Kopiere die neuen Werte an einen sicheren Ort, zum Beispiel in deinen Passwortmanager.
 3. Melde dich im Cloudflare-Konto an und öffne den Worker «empfang» (so heisst das Serverprogramm). Gehe zu «Settings», dann «Variables and Secrets».
-4. Trage den neuen Wert beim gleichen Namen als «Secret» ein, also `ANZEIGE_SCHLUESSEL` oder `STATUS_PASSWORT`, und speichere («Deploy»).
+4. Trage den neuen Wert beim gleichen Namen als «Secret» ein, also `ANZEIGE_SCHLUESSEL`, `ANZEIGE_SCHLUESSEL_EXTERN` oder `STATUS_PASSWORT`, und speichere («Deploy»).
 5. Nach einem Wechsel von `STATUS_PASSWORT` sind alle Anmeldungen an der Statusseite sofort ungültig. Melde dich mit dem neuen Passwort neu an.
 6. Nach einem Wechsel von `ANZEIGE_SCHLUESSEL` zeigt der Fernseher nur noch das Logo, bis die neue Adresse eingetragen ist. Die neue Adresse lautet `https://empfang.wallimann.workers.dev/anzeige/#k=GEHEIMER-SCHLUESSEL`, mit deinem neuen Schlüssel statt GEHEIMER-SCHLUESSEL.
 7. Trage die neue Adresse am Fernseher ein (mit der Fernbedienung, als Lesezeichen oder als Startseite). Ist ein Zusatzgerät am Fernseher, trägst du sie dort ein. Die IT hilft dabei.
@@ -136,6 +157,7 @@ Einstellungen auf der Statusseite brauchen das nicht. Sie gelten innert einer Mi
 | Website veröffentlicht | erledigt am 25.11.2026, mit deiner Erlaubnis |
 | News von michelnews.ch von Cloudflare aus holen | erledigt, getestet am 25.11.2026 |
 | Geheimnisse `ANZEIGE_SCHLUESSEL` und `STATUS_PASSWORT` | erledigt am 25.11.2026, du hast eigene Werte eingetragen |
+| Geheimnis `ANZEIGE_SCHLUESSEL_EXTERN` für die externe Anzeige | offen. Du trägst es selbst ein, siehe «Zweite Anzeige an einem anderen Ort» |
 | Testseite am Fernseher des Empfangs öffnen und Code melden | offen. Adresse: `https://empfang.wallimann.workers.dev` |
 | Kalender in Outlook.com als ICS-Link veröffentlichen (Berechtigung «Alle Details anzeigen») und als `KALENDER_URL` bei Cloudflare eintragen | erledigt am 25.11.2026 |
 | Mit echten Einladungen testen, siehe «Besuch testen» | zum Teil erledigt, siehe dort |

@@ -160,6 +160,58 @@ describe('Schutz der Anzeige', () => {
     assert.match(r.antwort.headers.get('x-robots-tag'), /noindex/);
   });
 
+  test('zweiter Schlüssel für eine externe Anzeige: News und Agenda, aber nie Besuche und nie Solarwerte', async () => {
+    const EXTERN = 'extern-schluessel-nur-fuer-tests-123';
+    const mitExtern = { ...env, ANZEIGE_SCHLUESSEL_EXTERN: EXTERN };
+    await setzeEinstellungen({ begruessungAn: true, solarQuelle: 'empfang' });
+    await speicher.setzeZustand(env.DB, { solar: { zeit: START, leistungKw: 12.5 } });
+    await takt(attrappe([['kalender.invalid', () => ics([{ uid: 'a', start: START + 10 * MIN, betreff: 'Muster AG | Anna Beispiel' }])], ['michelnews.ch', STARTSEITE]]));
+    const empfang = await rufe('/api/anzeige', { kopf: { 'X-Anzeige-Schluessel': SCHLUESSEL }, umgebung: mitExtern });
+    assert.equal(empfang.inhalt.begruessungen.length, 1);
+    assert.equal(empfang.inhalt.solar.leistungKw, 12.5);
+    const extern = await rufe('/api/anzeige', { kopf: { 'X-Anzeige-Schluessel': EXTERN }, umgebung: mitExtern });
+    assert.equal(extern.status, 200);
+    assert.deepEqual(extern.inhalt.begruessungen, []);
+    assert.equal(extern.inhalt.solar, null);
+    assert.equal(extern.inhalt.news.length, 10);
+    assert.equal(extern.inhalt.agenda.length, 4);
+    assert.ok(!JSON.stringify(extern.inhalt).includes('Muster'));
+    assert.ok(!JSON.stringify(extern.inhalt).includes('Beispiel'));
+    // Ohne eingerichteten externen Schlüssel öffnet derselbe Wert nichts
+    assert.equal((await rufe('/api/anzeige', { kopf: { 'X-Anzeige-Schluessel': EXTERN } })).status, 401);
+    // Ein zu kurzer externer Schlüssel öffnet nichts, auch nicht mit leerem Wert
+    for (const wert of ['', 'kurz']) {
+      assert.equal((await rufe('/api/anzeige', { kopf: { 'X-Anzeige-Schluessel': wert }, umgebung: { ...env, ANZEIGE_SCHLUESSEL_EXTERN: wert } })).status, 401);
+    }
+  });
+
+  test('ist der externe Schlüssel derselbe wie der für den Empfang, gilt er nicht als extern und die Statusseite warnt', async () => {
+    const doppelt = { ...env, ANZEIGE_SCHLUESSEL_EXTERN: SCHLUESSEL };
+    await setzeEinstellungen({ begruessungAn: true });
+    await takt(attrappe([['kalender.invalid', () => ics([{ uid: 'a', start: START + 10 * MIN, betreff: 'Muster AG' }])]]));
+    // Der Empfang funktioniert weiter wie bisher
+    assert.equal((await rufe('/api/anzeige', { kopf: { 'X-Anzeige-Schluessel': SCHLUESSEL }, umgebung: doppelt })).inhalt.begruessungen.length, 1);
+    const cookie = await sitzung();
+    const s = (await rufe('/api/status', { kopf: { Cookie: cookie }, umgebung: doppelt })).inhalt;
+    assert.equal(s.anzeigeExtern.eingerichtet, false);
+    assert.ok(s.hinweise.some((h) => h.includes('ANZEIGE_SCHLUESSEL_EXTERN')));
+  });
+
+  test('die externe Anzeige hat ihr eigenes Lebenszeichen und löst keine Warnung für den Empfang aus', async () => {
+    const EXTERN = 'extern-schluessel-nur-fuer-tests-123';
+    const mitExtern = { ...env, ANZEIGE_SCHLUESSEL_EXTERN: EXTERN };
+    await rufe('/api/anzeige', { kopf: { 'X-Anzeige-Schluessel': EXTERN }, umgebung: mitExtern });
+    const zustand = await speicher.ladeZustand(env.DB);
+    assert.equal(zustand.anzeigeExtern.zuletzt, START);
+    assert.equal(zustand.anzeige, undefined);
+    const cookie = await sitzung();
+    const s = (await rufe('/api/status', { kopf: { Cookie: cookie }, umgebung: mitExtern })).inhalt;
+    assert.equal(s.anzeigeExtern.eingerichtet, true);
+    assert.equal(s.anzeigeExtern.zuletzt.zeit, START);
+    assert.equal(s.anzeige.zuletzt, null);
+    assert.equal((await rufe('/api/status', { kopf: { Cookie: cookie } })).inhalt.anzeigeExtern.eingerichtet, false);
+  });
+
   test('unverschlüsselte Aufrufe bekommen nie Daten und werden auf HTTPS umgeleitet', async () => {
     const unsicher = (pfad, init) => worker.fetch(new Request('http://empfang.test' + pfad, init), env, ctx);
     const a = await unsicher('/api/anzeige', { headers: { 'X-Anzeige-Schluessel': SCHLUESSEL } });
@@ -551,7 +603,33 @@ describe('News', () => {
     assert.equal(listen(), 2);
   });
 
-  test('die News werden jeden Tag um 08:00 und 13:00 geholt, beim ersten Start sofort', async () => {
+  test('Standard: News und Agenda werden jede volle Stunde von 07:00 bis 20:00 geholt', async () => {
+    assert.deepEqual((await wirksam()).newsZeiten, ['07:00', '08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00']);
+    const abruf = news();
+    const listen = () => abruf.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
+    const um = async (stunde, minute, tag = 25) => { setzeZeit(Date.UTC(2026, 10, tag, stunde - 1, minute, 0)); await takt(abruf); return listen(); };
+    assert.equal(await um(9, 0), 1);       // erster Start um 09:00: sofort holen
+    assert.equal(await um(9, 30), 1);
+    assert.equal(await um(9, 59), 1);
+    assert.equal(await um(10, 0), 2);
+    assert.equal(await um(10, 1), 2);
+    assert.equal(await um(11, 0), 3);
+    assert.equal(await um(11, 59), 3);
+    assert.equal(await um(19, 59), 4);     // dazwischen lief der Taktgeber im Test nicht: ein einziger Abruf holt auf
+    assert.equal(await um(20, 0), 4);      // der letzte Abruf ist erst eine Minute her: frühestens 15 Minuten danach
+    assert.equal(await um(20, 14), 5);     // 20:14: der Abruf von 20:00 wird nachgeholt
+    assert.equal(await um(21, 0), 5);      // nach 20:00 ist Ruhe
+    assert.equal(await um(23, 30), 5);
+    assert.equal(await um(6, 59, 26), 5);  // nächster Tag, kurz vor 07:00
+    assert.equal(await um(7, 0, 26), 6);   // 07:00
+    assert.equal(await um(7, 30, 26), 6);
+    assert.equal(await um(8, 0, 28), 7);   // auch am Samstag
+    // Bis zu 24 Uhrzeiten lassen sich einstellen
+    assert.equal(pruefeEinstellungen({ newsZeiten: Array.from({ length: 30 }, (_, i) => `${String(i % 24).padStart(2, '0')}:00`) }).newsZeiten.length, 24);
+  });
+
+  test('mit zwei eingestellten Uhrzeiten (08:00 und 13:00) wird nur dann geholt, beim ersten Start sofort', async () => {
+    await setzeEinstellungen({ newsZeiten: ['08:00', '13:00'] });
     const abruf = news();
     const listen = () => abruf.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
     const um = async (stunde, minute, tag = 25) => { setzeZeit(Date.UTC(2026, 10, tag, stunde - 1, minute, 0)); await takt(abruf); return listen(); };
@@ -588,6 +666,7 @@ describe('News', () => {
   });
 
   test('die Statusseite zeigt den nächsten Abruf der News, Uhrzeiten lassen sich einstellen', async () => {
+    await setzeEinstellungen({ newsZeiten: ['08:00', '13:00'] });
     await takt(news());
     const cookie = await sitzung();
     let s = (await rufe('/api/status', { kopf: { Cookie: cookie } })).inhalt;
@@ -601,6 +680,7 @@ describe('News', () => {
   });
 
   test('Zeitumstellung: 08:00 bleibt 08:00 Zürcher Zeit (29.03.2026)', async () => {
+    await setzeEinstellungen({ newsZeiten: ['08:00', '13:00'] });
     const abruf = news();
     const listen = () => abruf.aufrufe.filter((u) => u === 'https://michelnews.ch/').length;
     setzeZeit(Date.UTC(2026, 2, 28, 12, 0, 0)); await takt(abruf);  // Samstag, 13:00 Winterzeit
